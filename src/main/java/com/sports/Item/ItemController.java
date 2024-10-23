@@ -5,14 +5,12 @@ import com.sports.Category.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
-@Controller
+@RestController
 @RequiredArgsConstructor
 @RequestMapping("/shop")
 public class ItemController {
@@ -32,14 +30,12 @@ public class ItemController {
     }
 
     @GetMapping("/post")
-    public String postItem(Model model){
+    public String postItem(Model m){
 
-        model.addAttribute("categories", categoryService.getAllCategories());
+        m.addAttribute("categories", categoryService.getAllCategories());
 
         return "shopAdd";
-
     }
-
 
     @PostMapping("/add")
     public String addItem(String title, Integer price, String desc, String imgurl, Integer stock, @RequestParam Long categoryId){
@@ -47,6 +43,15 @@ public class ItemController {
         itemService.addItem(title, price, desc, imgurl, stock, categoryId);
 
         return "redirect:/shop/list";
+    }
+
+    @GetMapping("/detail/{id}")
+    String detailItem(@PathVariable Long id, Model m){
+        Optional<Item> item = itemRepository.findById(id);
+
+        m.addAttribute("data", item.get());
+
+        return "shopDetail";
     }
 
 }
