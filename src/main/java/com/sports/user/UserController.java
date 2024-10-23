@@ -13,6 +13,6 @@ public class UserController {
     @PostMapping("/register")
     public ResponseEntity<String> signUp(@RequestBody UserDTO request) {
         userService.signUp(request);
-        return ResponseEntity.ok("회원가입이 성공적으로 완료되었습니다.");
+        return ResponseEntity.ok("회원가입이 성공적으로 완료 되었습니다.");
     }
 }
