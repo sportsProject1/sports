@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>게시물 목록</title>
+    <link href="/main.css" rel="stylesheet">
+    <link href="/list.css" rel="stylesheet">
+</head>
+<body>
+
+<h2>전체 글 보기</h2>
+
+<form action="/shop/add" method="POST">
+    <input name="title" placeholder="상품명">
+    <select name="categoryId">
+        <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"></option>
+    </select>
+    <input name="price" placeholder="가격">
+    <input name="desc" placeholder="상품설명">
+    <input name="stock" placeholder="재고">
+    <input name="imgurl" id="imgurl">
+    <button type="submit">전송</button>
+    <img src="">
+
+    <input type="file" onchange="getURL(this)">
+
+    <script>
+        async function getURL(e){
+            let name = encodeURIComponent(e.files[0].name)
+            let result = await fetch('/presigned-url?filename=' + name)
+            result = await result.text()
+
+            let result1 = await fetch(result, {
+            method : 'PUT',
+            body : e.files[0]
+        });
+
+        console.log(result1);
+        console.log(result1.url.split("?")[0]);
+
+        if(result1.ok){
+            document.querySelector('img').src = result1.url.split("?")[0];
+
+            const imgurl =  result1.url.split("?")[0];
+            document.getElementById('imgurl').value = imgurl;
+        }
+
+        }
+
+    </script>
+</form>
+
+</body>
+</html>
