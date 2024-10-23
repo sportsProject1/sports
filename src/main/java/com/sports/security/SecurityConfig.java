@@ -25,7 +25,15 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers("/member/register", "/", "/member/login").permitAll()
+                .cors(cors -> cors.disable())
+                .authorizeHttpRequests((authorize) -> authorize
+                        .requestMatchers("/register", "/", "/login").permitAll()
                         .anyRequest().authenticated())
+                .formLogin(formLogin -> formLogin
+                        .loginPage("/login")
+                        .permitAll()
+                        .defaultSuccessUrl("/")
+                        .failureUrl("/member/login?error=true"))
                 .logout((logout) -> logout
                         .logoutSuccessUrl("/member/login")
                         .invalidateHttpSession(true))
