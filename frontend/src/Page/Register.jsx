@@ -1,5 +1,6 @@
 import {Link} from "react-router-dom";
 import styled from "styled-components";
+import {useState} from "react";
 
 const RegisterContainer = styled.div`
     margin: auto;
@@ -16,10 +17,24 @@ const RegisterContainer = styled.div`
 `
 
 function Register() {
+
+    const [registerForm, setRegisterForm] = useState({
+        username:"",
+        password:"",
+        nickname:"",
+        phone:"",
+        email:"",
+        address:"imgtest",
+
+    })
+
     return(
         <RegisterContainer>
             <h1>로그인 페이지</h1>
             <form action={"/register"} method={"POST"}>
+
+                <img src={"https://picsum.photos/300/300"} alt="#"/>
+
                 <label>
                     아이디
                     <input placeholder="아이디를 입력하세요."/>
