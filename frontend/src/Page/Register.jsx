@@ -19,7 +19,7 @@ function Register() {
     return(
         <RegisterContainer>
             <h1>로그인 페이지</h1>
-            <form>
+            <form action={"/register"} method={"POST"}>
                 <label>
                     아이디
                     <input placeholder="아이디를 입력하세요."/>

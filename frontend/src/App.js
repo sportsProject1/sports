@@ -9,20 +9,6 @@ import {store} from './Store/store';
 
 function App() {
 
-  const [data,setData] = useState('')
-  useEffect(() => {
-    const fetchData = async () => {
-      try{
-        const response = await axios.get('http://localhost:8090/api/data');
-        setData(response.data);
-      }catch (error) {
-        console.log(error);
-      }
-    };
-    fetchData();
-  }, []);
-
-  console.log(data)
 
   return (
 
