@@ -1,9 +1,7 @@
 package com.sports.Item;
 
-import com.sports.Category.Category;
 import com.sports.Category.CategoryService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -52,6 +50,7 @@ public class ItemController {
         m.addAttribute("categories", categoryService.getAllCategories());
 
         return "shopAdd";
+
     }
 
     @PostMapping("/add")
@@ -60,6 +59,13 @@ public class ItemController {
         itemService.addItem(title, price, desc, imgurl, stock, categoryId);
 
         return "redirect:/shop/list";
+    }
+
+    @GetMapping("/presigned-url")
+    @ResponseBody
+    String getURL(@RequestParam String filename){
+        var result = s3Service.createPreSignedURL("img/" + filename);
+        return result;
     }
 
     @GetMapping("/detail/{id}")
