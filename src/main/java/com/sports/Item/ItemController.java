@@ -35,6 +35,7 @@ public class ItemController {
         m.addAttribute("categories", categoryService.getAllCategories());
 
         return "shopAdd";
+
     }
 
     @PostMapping("/add")
