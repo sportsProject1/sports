@@ -1,10 +1,29 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>쇼핑몰 목록</title>
 </head>
 <body>
-$END$
+
+<h2>전체 글 보기</h2>
+
+<a th:if="${displayName != null}" href="/write" class="write" style="cursor: pointer">글작성</a>
+
+<div class="card" th:each="i : ${items}">
+    <img th:src="${i.imgurl}" class="item-image" alt="Item Image" onerror="this.src='https://placehold.co/300'">
+    <div>
+        <a th:href="@{'/detail/'+ ${i.id}}">
+            <h4 th:text="${i.title}"/>
+        </a>
+        <p th:text="${i.price} + '원'"/>
+    </div>
+</div>
+</div>
+
+
 </body>
 </html>
