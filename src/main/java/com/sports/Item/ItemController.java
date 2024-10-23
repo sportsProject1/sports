@@ -45,6 +45,13 @@ public class ItemController {
         return "redirect:/shop/list";
     }
 
+    @GetMapping("/presigned-url")
+    @ResponseBody
+    String getURL(@RequestParam String filename){
+        var result = s3Service.createPreSignedURL("img/" + filename);
+        return result;
+    }
+
     @GetMapping("/detail/{id}")
     String detailItem(@PathVariable Long id, Model m){
         Optional<Item> item = itemRepository.findById(id);
