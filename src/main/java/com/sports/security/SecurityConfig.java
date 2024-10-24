@@ -18,14 +18,8 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http	.csrf(csrf -> csrf.disable())
-                .httpBasic(httpBasic -> httpBasic.disable())
-                .formLogin(formLogin -> formLogin
-                        .loginPage("/member/login")
-                        .permitAll()
-                )
-                .authorizeHttpRequests((authorize) -> authorize
-                        .requestMatchers("/member/register", "/", "/member/login").permitAll()
                 .cors(cors -> cors.disable())
+                .httpBasic(httpBasic -> httpBasic.disable())
                 .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers("/register", "/", "/login").permitAll()
                         .anyRequest().authenticated())
@@ -33,9 +27,9 @@ public class SecurityConfig {
                         .loginPage("/login")
                         .permitAll()
                         .defaultSuccessUrl("/")
-                        .failureUrl("/member/login?error=true"))
+                        .failureUrl("/login?error=true"))
                 .logout((logout) -> logout
-                        .logoutSuccessUrl("/member/login")
+                        .logoutSuccessUrl("/login")
                         .invalidateHttpSession(true))
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
