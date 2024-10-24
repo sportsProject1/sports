@@ -52,9 +52,9 @@ public class ItemController {
     }
 
     @PostMapping("/add")
-    public String postItem(@RequestBody ItemDTO itemDTO) {
+    public ResponseEntity<String> postItem(@RequestBody ItemDTO itemDTO) {
         itemService.addItem(itemDTO);
-        return "redirect:/shop/list";
+        return ResponseEntity.ok("아이템이 성공적으로 추가되었습니다.");
     }
 
     @GetMapping("/detail/{id}")
