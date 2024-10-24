@@ -18,6 +18,7 @@ import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin
 @RequestMapping("/shop")
 public class ItemController {
 
@@ -33,6 +34,13 @@ public class ItemController {
         m.addAttribute("items", shopList);
 
         return "shopList";
+    }
+
+    @GetMapping("/presigned-url")
+    @ResponseBody
+    String getURL(@RequestParam String filename){
+        var result = s3Service.createPreSignedURL("img/" + filename);
+        return result;
     }
 
     @GetMapping("/post")
@@ -59,13 +67,6 @@ public class ItemController {
         itemService.addItem(title, price, desc, imgurl, stock, categoryId);
 
         return "redirect:/shop/list";
-    }
-
-    @GetMapping("/presigned-url")
-    @ResponseBody
-    String getURL(@RequestParam String filename){
-        var result = s3Service.createPreSignedURL("img/" + filename);
-        return result;
     }
 
     @GetMapping("/detail/{id}")
