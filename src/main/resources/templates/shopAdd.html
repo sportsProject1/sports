@@ -15,9 +15,12 @@
 
 <form action="/shop/add" method="POST">
     <input name="title" placeholder="상품명">
+
     <select name="categoryId">
+        <option value="" disabled selected>카테고리를 선택하세요</option>
         <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"></option>
     </select>
+
     <input name="price" placeholder="가격">
     <input name="desc" placeholder="상품설명">
     <input name="stock" placeholder="재고">
