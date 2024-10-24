@@ -4,6 +4,7 @@ import com.sports.Category.Category;
 import com.sports.Category.CategoryDTO;
 import com.sports.Category.CategoryService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import com.sports.Item.ItemDTO;
@@ -89,13 +90,34 @@ public class ItemController {
         return "redirect:/shop/list";
     }
 
+//    @GetMapping("/detail/{id}")
+//    String detailItem(@PathVariable Long id, Model m){
+//        Optional<Item> item = itemRepository.findById(id);
+//
+//        m.addAttribute("data", item.get());
+//
+//        return "shopDetail";
+//    }
+
     @GetMapping("/detail/{id}")
-    String detailItem(@PathVariable Long id, Model m){
-        Optional<Item> item = itemRepository.findById(id);
+    public ResponseEntity<ItemDTO> detailItem(@PathVariable Long id) {
+        Optional<Item> optionalItem = itemRepository.findById(id);
 
-        m.addAttribute("data", item.get());
-
-        return "shopDetail";
+        if (optionalItem.isPresent()) {
+            Item item = optionalItem.get();
+            ItemDTO itemDTO = new ItemDTO(
+                    item.getId(),
+                    item.getTitle(),
+                    item.getPrice(),
+                    item.getDesc(),
+                    item.getImgurl(),
+                    item.getStock(),
+                    item.getCategory() != null ? item.getCategory().getId() : null
+            );
+            return ResponseEntity.ok(itemDTO);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
 }
