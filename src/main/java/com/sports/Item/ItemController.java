@@ -1,10 +1,14 @@
 package com.sports.Item;
 
+
+import com.sports.Category.CategoryService;
+import lombok.RequiredArgsConstructor;
 import com.sports.Category.Category;
 import com.sports.Category.CategoryDTO;
 import com.sports.Category.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import com.sports.Item.ItemDTO;
@@ -39,6 +43,15 @@ public class ItemController {
                 .collect(Collectors.toList());
     }
 
+
+        @GetMapping("/post")
+
+    public String postItem(Model m){
+
+        m.addAttribute("categories", categoryService.getAllCategories());
+
+        return "shopAdd";
+
     @GetMapping("/presigned-url")
     @ResponseBody
     String getURL(@RequestParam String filename){
@@ -51,6 +64,7 @@ public class ItemController {
         return categories.stream()
                 .map(category -> new CategoryDTO(category.getId(), category.getName()))
                 .collect(Collectors.toList());
+
     }
 
     @PostMapping("/add")
