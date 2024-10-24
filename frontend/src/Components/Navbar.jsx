@@ -35,11 +35,15 @@ function Navbar(){
                         회원가입
                     </Link>
                 </li>
-                
+
                 <li>
                     <Link to={"/login"}>로그인</Link>
                 </li>
-                
+
+                <li>
+                    <Link to={"/shop"}>상점</Link>
+                </li>
+
 
             </ul>
         </NavContainer>

@@ -32,8 +32,8 @@ function Login() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const respones = await axios.post("http://localhost:8090/login", loginForm);
-            console.log("로그인 됨",respones.data)
+            const response  = await axios.post("http://localhost:8090/login", loginForm);
+            console.log("로그인 됨",response.data)
         }catch (err){
             console.log(err);
         }
