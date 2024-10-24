@@ -2,7 +2,7 @@ import {Link} from "react-router-dom";
 import styled from "styled-components";
 import {useState} from "react";
 import axios from "axios";
-import useImageUploader from "../hooks/useImageUploader";
+import useImageUploader from "../../hooks/useImageUploader";
 
 const RegisterContainer = styled.div`
     display: flex;

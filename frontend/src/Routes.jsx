@@ -1,8 +1,8 @@
 import Home from "./Page/Home";
-import Login from "./Page/Login";
+import Login from "./Page/user/Login";
 import Layout from "./Page/Layout";
 import { createBrowserRouter } from "react-router-dom";
-import Register from "./Page/Register";
+import Register from "./Page/user/Register";
 import React from "react";
 import Sports from "./Page/Sports";
 import SportsChild from "./Page/SportsChild";
