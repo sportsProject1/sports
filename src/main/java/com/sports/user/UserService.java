@@ -26,6 +26,7 @@ public class UserService {
                 .email(userDTO.getEmail())
                 .address(userDTO.getAddress())
                 .role("ROLE_USER")
+                .imgURL(userDTO.getImgURL())
                 .build();
 
         userRepository.save(user);
