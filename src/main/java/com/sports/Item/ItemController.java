@@ -39,29 +39,11 @@ public class ItemController {
                 .collect(Collectors.toList());
     }
 
-//    @GetMapping("/list")
-//    String list(Model m){
-//        List<Item> item = itemRepository.findAll();
-//
-//        m.addAttribute("items", item);
-//
-//        return "list";
-//    }
-
     @GetMapping("/presigned-url")
     @ResponseBody
     String getURL(@RequestParam String filename){
         return s3Service.createPreSignedURL("img/" + filename);
     }
-
-//    @GetMapping("/post")
-//    public String postItem(Model m){
-//
-//        m.addAttribute("categories", categoryService.getAllCategories());
-//
-//        return "shopAdd";
-//
-//    }
 
     @GetMapping("/post")
     public List<CategoryDTO> getCategories() {
@@ -70,14 +52,6 @@ public class ItemController {
                 .map(category -> new CategoryDTO(category.getId(), category.getName()))
                 .collect(Collectors.toList());
     }
-
-//    @PostMapping("/add")
-//    public String addItem(String title, Integer price, String desc, String imgurl, Integer stock, @RequestParam Long categoryId){
-//
-//        itemService.addItem(title, price, desc, imgurl, stock, categoryId);
-//
-//        return "redirect:/shop/list";
-//    }
 
     @PostMapping("/add")
     public String addItem(String title,
@@ -89,15 +63,6 @@ public class ItemController {
         itemService.addItem(title, price, desc, imgurl, stock, categoryId);
         return "redirect:/shop/list";
     }
-
-//    @GetMapping("/detail/{id}")
-//    String detailItem(@PathVariable Long id, Model m){
-//        Optional<Item> item = itemRepository.findById(id);
-//
-//        m.addAttribute("data", item.get());
-//
-//        return "shopDetail";
-//    }
 
     @GetMapping("/detail/{id}")
     public ResponseEntity<ItemDTO> detailItem(@PathVariable Long id) {
