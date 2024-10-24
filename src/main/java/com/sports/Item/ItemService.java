@@ -12,22 +12,20 @@ public class ItemService {
     private final ItemRepository itemRepository;
     private final CategoryService categoryService;
 
-    public void addItem(String title, Integer price, String desc, String imgurl, Integer stock, Long categoryId){
-
+    public void addItem(ItemDTO itemDTO) {
         Item item = new Item();
 
-        item.setTitle(title);
-        item.setPrice(price);
-        item.setDesc(desc);
-        item.setImgurl(imgurl);
-        item.setStock(stock);
+        item.setTitle(itemDTO.getTitle());
+        item.setPrice(itemDTO.getPrice());
+        item.setDesc(itemDTO.getDesc());
+        item.setImgurl(itemDTO.getImgurl());
+        item.setStock(itemDTO.getStock());
 
-        Category category = categoryService.findById(categoryId)
+        Category category = categoryService.findById(itemDTO.getCategoryId())
                 .orElseThrow(() -> new RuntimeException("Category not found"));
 
         item.setCategory(category);
 
         itemRepository.save(item);
-
     }
 }
