@@ -53,13 +53,8 @@ public class ItemController {
     }
 
     @PostMapping("/add")
-    public String addItem(String title,
-                          Integer price,
-                          String desc,
-                          String imgurl,
-                          Integer stock,
-                          @RequestParam Long categoryId) {
-        itemService.addItem(title, price, desc, imgurl, stock, categoryId);
+    public String postItem(@RequestBody ItemDTO itemDTO) {
+        itemService.addItem(itemDTO);
         return "redirect:/shop/list";
     }
 
