@@ -7,7 +7,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -52,7 +54,11 @@ public class ItemController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<ItemResponseDTO> postItem(@RequestBody ItemDTO itemDTO) {
+    public ResponseEntity<ItemResponseDTO> postItem(@ModelAttribute ItemDTO itemDTO,
+                                                    @RequestParam("file") MultipartFile file) throws IOException {
+        String imgURL = s3Service.saveFile(file.getOriginalFilename(), file.getInputStream());
+        itemDTO.setImgurl(imgURL);
+
         itemService.addItem(itemDTO);
         ItemResponseDTO response = new ItemResponseDTO("아이템이 성공적으로 추가되었습니다.");
         return ResponseEntity.ok(response);
