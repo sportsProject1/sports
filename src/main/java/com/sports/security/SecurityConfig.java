@@ -24,9 +24,10 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .httpBasic(httpBasic -> httpBasic.disable())
                 .authorizeHttpRequests((authorize) -> authorize
-                        .requestMatchers("/register", "/", "/login").permitAll()
-                        .requestMatchers("/manager").hasRole("MANAGER")
+                        .requestMatchers("/", "/register", "/login", "/shop", "/shop/**").permitAll()
                         .requestMatchers("/admin").hasRole("ADMIN")
+                        .requestMatchers("/manager").hasRole("MANAGER")
+                        .requestMatchers("/clerk").hasRole("CLERK")
                         .anyRequest().authenticated())
                 .formLogin(formLogin -> formLogin
                         .loginProcessingUrl("/login")
@@ -47,7 +48,8 @@ public class SecurityConfig {
 
         return RoleHierarchyImpl.withDefaultRolePrefix()
                 .role("ADMIN").implies("MANAGER")
-                .role("MANAGER").implies("USER")
+                .role("MANAGER").implies("CLERK")
+                .role("CLERK").implies("USER")
                 .build();
     }
 
