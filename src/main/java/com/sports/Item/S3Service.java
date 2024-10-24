@@ -17,15 +17,26 @@ public class S3Service {
     private String bucket;
     private final S3Presigner s3Presigner;
 
-    String createPreSignedURL(String path){
+    String createPreSignedURL(String filename) {
+        // 파일 이름이 null이 아닌지 확인
+        if (filename == null || filename.isEmpty()) {
+            throw new IllegalArgumentException("Filename cannot be null or empty");
+        }
+
+        // 경로를 적절하게 구성
+        String path = "img/" + filename; // "img/"는 원하는 폴더를 나타냄
+
         var putObjectRequest = PutObjectRequest.builder()
                 .bucket(bucket)
                 .key(path)
                 .build();
+
         var preSignRequest = PutObjectPresignRequest.builder()
                 .signatureDuration(Duration.ofMinutes(3))
                 .putObjectRequest(putObjectRequest)
                 .build();
+
         return s3Presigner.presignPutObject(preSignRequest).url().toString();
     }
+
 }

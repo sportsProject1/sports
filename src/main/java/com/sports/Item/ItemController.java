@@ -39,7 +39,7 @@ public class ItemController {
 
     @GetMapping("/presigned-url")
     @ResponseBody
-    String getURL(@RequestParam String filename){
+    String getURL(@RequestParam(name = "filename") String filename) {
         return s3Service.createPreSignedURL("img/" + filename);
     }
 
