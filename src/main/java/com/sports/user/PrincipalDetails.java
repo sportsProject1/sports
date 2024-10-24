@@ -44,12 +44,12 @@ public class PrincipalDetails implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return true; // 계정 잠금 여부 true 안잠김
+        return true; // 계정 잠금 여부
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return true; // 자격 증명 만료 여부 true 만료안됨
+        return true; // 자격 증명 만료 여부
     }
 
     @Override
