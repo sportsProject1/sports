@@ -5,9 +5,7 @@ import com.sports.Category.CategoryDTO;
 import com.sports.Category.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import com.sports.Item.ItemDTO;
 
 import java.util.List;
 import java.util.Optional;
