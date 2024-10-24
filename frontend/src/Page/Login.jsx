@@ -32,7 +32,7 @@ function Login() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post("http://localhost:8090/login", loginForm);
+            const response  = await axios.post("http://localhost:8090/login", loginForm);
             console.log("로그인 됨",response.data)
         }catch (err){
             console.log(err);
@@ -42,7 +42,7 @@ function Login() {
     return(
         <LoginContainer>
             <h1>로그인 페이지</h1>
-            <form onSubmit={handleSubmit} action={"/login"} method={"POST"}>
+            <form onSubmit={handleSubmit} action={"/member/login"} method={"POST"}>
                 <label>
                     아이디
                     <input placeholder="아이디를 입력하세요."

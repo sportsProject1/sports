@@ -49,7 +49,7 @@ function Register() {
         e.preventDefault();
 
         try {
-            const response = await axios.post("http://localhost:8090/register", registerForm);
+            const response  = await axios.post("http://localhost:8090/register", registerForm);
             console.log("회원가입성공",response.data)
         }catch (error) {
             console.log(error);

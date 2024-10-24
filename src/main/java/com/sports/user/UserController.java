@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.view.RedirectView;
 
 
-@CrossOrigin
 @RestController
 @RequiredArgsConstructor
 public class UserController {
