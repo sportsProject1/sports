@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 const useImageUploader = (isMultiple = false) => { // 기본값으로 isMultiple 을 false로 지정
-    const [images, setImages] = useState([{}]);
+    const [images, setImages] = useState([]);
 // 이미지를 담아둘 useState
     const handleImageChange = (e) => {
         // 이미지 업로드 및 url따오는 함수

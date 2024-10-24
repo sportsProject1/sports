@@ -33,8 +33,6 @@ function Home() {
 
     const {images,handleImageChange,handleRemoveImage} = useImageUploader(true)
 
-    console.log(images)
-
     return (
         <div>
             <h1>메인</h1>
