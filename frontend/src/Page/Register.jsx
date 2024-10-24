@@ -49,8 +49,8 @@ function Register() {
         e.preventDefault();
 
         try {
-            const respones = await axios.post("http://localhost:8090/member/register", registerForm);
-            console.log("회원가입성공",respones.data)
+            const response = await axios.post("http://localhost:8090/register", registerForm);
+            console.log("회원가입성공",response.data)
         }catch (error) {
             console.log(error);
         }
@@ -59,7 +59,7 @@ function Register() {
     return (
         <RegisterContainer>
             <h1>회원가입 페이지</h1>
-            <form onSubmit={handleSubmit} action={"/member/register"} method={"POST"}>
+            <form onSubmit={handleSubmit} action={"/register"} method={"POST"}>
 
                 {images.length > 0 &&(
                     <div>

@@ -15,19 +15,18 @@ import org.springframework.web.servlet.view.RedirectView;
 @CrossOrigin
 @RestController
 @RequiredArgsConstructor
-@CrossOrigin
 public class UserController {
 
     private final UserService userService;
 
     @PostMapping("/register")
-    public RedirectView signUp(@RequestBody UserDTO userDTO) {
+    public ResponseEntity<String> signUp(@RequestBody UserDTO userDTO) {
         String resultMessage = userService.register(userDTO);
 
         if ("회원가입이 성공적으로 완료되었습니다.".equals(resultMessage)) {
-            return new RedirectView("/");
+            return ResponseEntity.ok("회원가입 성공");
         } else {
-            return new RedirectView("/register?error=true");
+            return ResponseEntity.badRequest().body("회원가입 실패");
         }
     }
 }
