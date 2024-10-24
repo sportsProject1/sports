@@ -60,19 +60,9 @@ public class ItemController {
 
     @GetMapping("/detail/{id}")
     public ResponseEntity<ItemDTO> detailItem(@PathVariable Long id) {
-        Optional<Item> optionalItem = itemRepository.findById(id);
+        ItemDTO itemDTO = itemService.getItemDetail(id);
 
-        if (optionalItem.isPresent()) {
-            Item item = optionalItem.get();
-            ItemDTO itemDTO = new ItemDTO(
-                    item.getId(),
-                    item.getTitle(),
-                    item.getPrice(),
-                    item.getDesc(),
-                    item.getImgurl(),
-                    item.getStock(),
-                    item.getCategory() != null ? item.getCategory().getId() : null
-            );
+        if (itemDTO != null) {
             return ResponseEntity.ok(itemDTO);
         } else {
             return ResponseEntity.notFound().build();
