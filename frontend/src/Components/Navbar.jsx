@@ -25,10 +25,11 @@ function Navbar(){
         <NavContainer>
             <ul>
                 <li>
-                    <Link to={"/sports"}>운동</Link>
+                    <Link to={"/sports/soccer"}>운동</Link>
                 </li>
                 <li>자유</li>
                 <li>모집</li>
+                <li><Link to={"/"}>홈</Link></li>
                 <li>
                     <Link to={"/register"}>
                         회원가입

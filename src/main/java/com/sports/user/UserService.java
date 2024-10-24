@@ -10,19 +10,28 @@ public class UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
-    public void signUp(UserDTO request) {
-        String encodedPassword = passwordEncoder.encode(request.getPassword());
+    public String register(UserDTO userDTO) {
+        boolean isUser = userRepository.existsByUsername(userDTO.getUsername());
+        if (isUser) {
+            return "이미 존재하는 사용자입니다";
+        }
+        try {
+        String encodedPassword = passwordEncoder.encode(userDTO.getPassword());
 
         User user = User.builder()
-                .username(request.getUsername())
+                .username(userDTO.getUsername())
                 .password(encodedPassword)
-                .nickname(request.getNickname())
-                .phone(request.getPhone())
-                .email(request.getEmail())
-                .address(request.getAddress())
+                .nickname(userDTO.getNickname())
+                .phone(userDTO.getPhone())
+                .email(userDTO.getEmail())
+                .address(userDTO.getAddress())
                 .role("ROLE_USER")
                 .build();
 
         userRepository.save(user);
+        return "회원가입이 성공적으로 완료되었습니다.";
+    } catch (Exception e) {
+        return "회원가입중 오류가 발생했습니다: " + e.getMessage();
+        }
     }
 }
