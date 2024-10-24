@@ -37,7 +37,7 @@ function Register() {
         phone:"",
         email:"",
         address:"",
-        imgURL:"imgtest"
+        imgURL:""
 
     })
 
@@ -48,9 +48,26 @@ function Register() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        const formData = new FormData();
+        formData.append("username", registerForm.username);
+        formData.append("password", registerForm.password);
+        formData.append("nickname", registerForm.nickname);
+        formData.append("phone", registerForm.phone);
+        formData.append("email", registerForm.email);
+        formData.append("address", registerForm.address);
+
+        // 이미지 파일이 있으면 FormData에 추가
+        if (images.length > 0) {
+            formData.append("imgURL", images[0]);
+        }
+
         try {
-            const response  = await axios.post("http://localhost:8090/register", registerForm);
-            console.log("회원가입성공",response.data)
+            const response  = await axios.post("http://localhost:8090/register", formData,{
+                headers: {
+                    "Content-Type": "multipart/form-data"
+                }
+            });
+            console.log("회원가입성공",response)
         }catch (error) {
             console.log(error);
         }
@@ -59,7 +76,7 @@ function Register() {
     return (
         <RegisterContainer>
             <h1>회원가입 페이지</h1>
-            <form onSubmit={handleSubmit} action={"/register"} method={"POST"}>
+            <form onSubmit={handleSubmit} action={"/register"} method={"POST"} encType={"multipart/form-data"}>
 
                 {images.length > 0 &&(
                     <div>

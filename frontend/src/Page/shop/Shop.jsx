@@ -11,7 +11,7 @@ function Shop(){
             try {
                 const response = await axios.get("http://localhost:8090/shop/list");
                 console.log(response)
-                setItems(response.data);
+                setItems(response);
             }catch (error) {
                 console.log(error)
             }
