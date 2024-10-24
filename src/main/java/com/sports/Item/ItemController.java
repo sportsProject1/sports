@@ -4,13 +4,15 @@ import com.sports.Category.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import com.sports.Item.ItemDTO;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
-@CrossOrigin
+@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("/shop")
 public class ItemController {
 
@@ -19,13 +21,21 @@ public class ItemController {
     private final CategoryService categoryService;
     private final S3Service s3Service;
 
+//    @GetMapping("/list")
+//    public List<ItemDTO> shopList() {
+//        List<Item> items = itemRepository.findAll();
+//        return items.stream()
+//                .map(item -> new ItemDTO(item.getId(), item.getTitle(), item.getPrice(), item.getDesc(), item.getImgurl(), item.getStock(), item.getCategory() != null ? item.getCategory().getId() : null))
+//                .collect(Collectors.toList());
+//    }
+
     @GetMapping("/list")
-    public String shopList(Model m){
-        List<Item> shopList = itemRepository.findAll();
+    String list(Model m){
+        List<Item> item = itemRepository.findAll();
 
-        m.addAttribute("items", shopList);
+        m.addAttribute("items", item);
 
-        return "shopList";
+        return "list";
     }
 
     @GetMapping("/presigned-url")
