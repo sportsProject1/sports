@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {useState} from "react";
 import axios from "axios";
 
@@ -25,6 +25,8 @@ function Login() {
         password:"",
     })
 
+    const navigate = useNavigate()
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setLoginForm({...loginForm, [name]: value});
@@ -34,6 +36,7 @@ function Login() {
         try {
             const response  = await axios.post("http://localhost:8090/login", loginForm);
             console.log("로그인 됨",response.data)
+            navigate("/",{replace:true});
         }catch (err){
             console.log(err);
         }

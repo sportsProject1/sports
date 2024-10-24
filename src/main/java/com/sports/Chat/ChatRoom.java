@@ -6,8 +6,8 @@ import lombok.Data;
 
 import java.util.Set;
 
-@Entity
 @Data
+@Entity
 public class ChatRoom {
 // 채팅 방에 관한 테이블
     @Id

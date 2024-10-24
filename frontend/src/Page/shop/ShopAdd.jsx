@@ -1,144 +1,100 @@
-import React, { useState, useEffect } from 'react';
+import {useState} from "react";
+import useImageUploader from "../../hooks/useImageUploader";
+import axios from "axios";
 
-const ShopAdd = () => {
-    const [title, setTitle] = useState('');
-    const [categoryId, setCategoryId] = useState('');
-    const [price, setPrice] = useState('');
-    const [desc, setDesc] = useState('');
-    const [stock, setStock] = useState('');
-    const [imgurl, setImgurl] = useState('');
-    const [categories, setCategories] = useState([]);
+function ShopAdd() {
 
-    const fetchCategories = async () => {
-        const response = await fetch('http://localhost:8090/shop/post');
-        const data = await response.json();
-        setCategories(data);
-    };
+    const [addItem,setAddItem] = useState({
+        title:"",
+        price:"",
+        desc:"",
+        file:"",
+        stock:"",
+        categoryId:""
+    })
 
-    useEffect(() => {
-        fetchCategories();
-    }, []);
-
-    const handleFileChange = async (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            const name = encodeURIComponent(file.name);
-            const response = await fetch(`http://localhost:8090/shop/presigned-url?filename=${name}`);
-
-            if (!response.ok) {
-                console.error("Failed to get presigned URL:", response.status, response.statusText);
-                return; // 함수 종료
-            }
-
-            const presignedUrl = await response.text();
-            console.log("Presigned URL:", presignedUrl); // URL 확인
-
-            const uploadResponse = await fetch(presignedUrl, {
-                method: 'PUT',
-                body: file,
-            });
-
-            if (uploadResponse.ok) {
-                const uploadedUrl = presignedUrl.split("?")[0];
-                setImgurl(uploadedUrl);
-            } else {
-                console.error("Failed to upload file:", uploadResponse.status, uploadResponse.statusText);
-            }
-        }
-    };
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setAddItem({...addItem, [name]: value});
+    }// 상품들 value값 수정 및 useState 변경
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        const addItemFormData = new FormData();
+        addItemFormData.append("title",addItem.title);
+        addItemFormData.append("price",addItem.price);
+        addItemFormData.append("desc",addItem.desc);
+        addItemFormData.append("file",addItem.imgurl);
+        addItemFormData.append("stock",addItem.stock);
+        addItemFormData.append("categoryId",addItem.categoryId);
 
-        const newItem = {
-            title,
-            categoryId,
-            price: parseInt(price),
-            desc,
-            stock: parseInt(stock),
-            imgurl,
-        };
+        if(images.length > 0) {
+            images.forEach((i)=>{
+                addItemFormData.append("file",images[i].file);
 
-        const response = await fetch('http://localhost:8090/shop/add', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(newItem),
-        });
-
-        if (response.ok) {
-            alert('아이템이 성공적으로 추가되었습니다.');
-            // 폼 초기화
-            setTitle('');
-            setCategoryId('');
-            setPrice('');
-            setDesc('');
-            setStock('');
-            setImgurl('');
-        } else {
-            console.error("Failed to add item:", response.statusText);
+            })
         }
-    };
 
-    return (
+        try{
+            const response = await axios.post("http://localhost:8090/shop/add", addItemFormData,{
+                headers: {
+                    "Content-Type": "multipart/form-data"
+                }
+            })
+
+        }catch(err){
+            console.log(err);
+        }
+    }
+
+    const {images,handleImageChange,handleRemoveImage} = useImageUploader(true)
+
+    console.log(images)
+
+    return(
         <div>
-            <h2>상품 추가</h2>
-            <form onSubmit={handleSubmit}>
-                <input
-                    type="text"
-                    placeholder="상품명"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                />
+            <h1>
+                상품 추가 페이지
+            </h1>
 
-                <select
-                    value={categoryId}
-                    onChange={(e) => setCategoryId(e.target.value)}
-                    defaultValue=""
-                >
-                    <option value="" disabled>카테고리를 선택하세요</option>
-                    {categories.map((category) => (
-                        <option key={category.id} value={category.id}>
-                            {category.name}
-                        </option>
+            <form>
+                <input onChange={handleChange} type={"text"} placeholder={"상품명"} name={"title"} value={addItem.title}/>
+                <input onChange={handleChange} type={"text"} placeholder={"가격"} name={"price"} value={addItem.price}/>
+                <input onChange={handleChange} type={"text"} placeholder={"상품소개"} name={"desc"} value={addItem.desc}/>
+                <input type="file" name={"file"} multiple accept="image/*" onChange={handleImageChange}/>
+                <input onChange={handleChange} type={"text"} placeholder={"수량"} name={"stock"} value={addItem.stock}/>
+                <input onChange={handleChange} type={"text"} placeholder={"카테고리"} name={"categoryId"}
+                       value={addItem.categoryId}/>
+
+                <div style={{display: 'flex', overflowX: 'auto'}}>
+                    {images.map((image, index) => (
+                        <div key={index} style={{position: 'relative', margin: '5px'}}>
+                            <img src={image.preview} alt={`preview ${index}`} style={{width: '100px', height: '100px'}}/>
+                            <button
+                                type={"button"}
+                                onClick={() => handleRemoveImage(index)}
+                                style={{
+                                    position: 'absolute',
+                                    top: '5px',
+                                    right: '5px',
+                                    background: 'red',
+                                    color: 'white',
+                                    border: 'none',
+                                    borderRadius: '50%',
+                                    cursor: 'pointer',
+                                }}
+                            >
+                                X
+                            </button>
+                        </div>
                     ))}
-                </select>
+                </div>
 
-                <input
-                    type="number"
-                    placeholder="가격"
-                    value={price}
-                    onChange={(e) => setPrice(e.target.value)}
-                />
-                <input
-                    type="text"
-                    placeholder="상품설명"
-                    value={desc}
-                    onChange={(e) => setDesc(e.target.value)}
-                />
-                <input
-                    type="number"
-                    placeholder="재고"
-                    value={stock}
-                    onChange={(e) => setStock(e.target.value)}
-                />
-                <input
-                    type="text"
-                    id="imgurl"
-                    value={imgurl}
-                    readOnly
-                />
-                <button type="submit">전송</button>
-                {imgurl && <img src={imgurl} alt="Uploaded" />}
-
-                <input
-                    type="file"
-                    onChange={handleFileChange}
-                />
             </form>
+
+
         </div>
-    );
-};
+    )
+}
 
 export default ShopAdd;
