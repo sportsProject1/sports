@@ -26,7 +26,9 @@ public class UserController {
 
     @PostMapping("/register")
     public ResponseEntity<Map<String, String>> signUp(@ModelAttribute UserDTO userDTO,
-                                                      @RequestParam("file") MultipartFile file) throws IOException {
+                                                      @RequestParam("imgURL") MultipartFile file) throws IOException {
+        String phone = userDTO.getPhone().replaceAll("[^0-9]", ""); // 숫자 이외의 문자를 제거
+        userDTO.setPhone(phone);
 
         String imgURL = s3Service.saveFile(file.getOriginalFilename(), file.getInputStream());
         userDTO.setImgURL(imgURL);
