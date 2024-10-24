@@ -8,4 +8,5 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @CrossOrigin(origins = "http://localhost:3000")
 public class CartController {
+    //아직 내용 추가 안함
 }
