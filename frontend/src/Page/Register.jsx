@@ -44,10 +44,11 @@ function Register() {
     const handleChange = (e) => {
         const { name, value } = e.target;
         setRegisterForm({...registerForm, [name]: value});
+        // name값이 일치한 input 데이터 수정
     }
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+        //submit 이벤트
         const formData = new FormData();
         formData.append("username", registerForm.username);
         formData.append("password", registerForm.password);
@@ -55,16 +56,18 @@ function Register() {
         formData.append("phone", registerForm.phone);
         formData.append("email", registerForm.email);
         formData.append("address", registerForm.address);
-
+        // 백엔드로 데이터 넘겨줄 때 formData에 추가해주기 위한 코드
         // 이미지 파일이 있으면 FormData에 추가
         if (images.length > 0) {
-            formData.append("imgURL", images[0]);
+            formData.append("imgURL", images[0].file);
         }
 
         try {
             const response  = await axios.post("http://localhost:8090/register", formData,{
+                // 기존에 registerForm을 보냈던 데이터 formData로 변경
                 headers: {
                     "Content-Type": "multipart/form-data"
+                    // content-Type 멀티파트 폼데이터로 변경
                 }
             });
             console.log("회원가입성공",response)
@@ -80,7 +83,7 @@ function Register() {
 
                 {images.length > 0 &&(
                     <div>
-                        <img src={images[0]} alt="#"/>
+                        <img src={images[0].preview} alt="#"/>
                         <button onClick={resetImages}>이미지 삭제</button>
                     </div>
                 )}
