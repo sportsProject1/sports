@@ -33,7 +33,7 @@
     <script>
         async function getURL(e){
             let name = encodeURIComponent(e.files[0].name)
-            let result = await fetch('/presigned-url?filename=' + name)
+            let result = await fetch('http://localhost:8090/shop/presigned-url?filename=' + name)
             result = await result.text()
 
             let result1 = await fetch(result, {
