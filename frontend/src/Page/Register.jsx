@@ -37,7 +37,7 @@ function Register() {
         phone:"",
         email:"",
         address:"",
-        imgURL:""
+        file:""
 
     })
 
@@ -59,7 +59,7 @@ function Register() {
         // 백엔드로 데이터 넘겨줄 때 formData에 추가해주기 위한 코드
         // 이미지 파일이 있으면 FormData에 추가
         if (images.length > 0) {
-            formData.append("imgURL", images[0].file);
+            formData.append("file", images[0].file);
         }
 
         try {
@@ -88,9 +88,9 @@ function Register() {
                     </div>
                 )}
 
-                <label id={"imgURL"}>
+                <label id={"file"}>
                     이미지 업로드
-                    <input onChange={handleImageChange} name={"imgURL"} type={"file"}/>
+                    <input onChange={handleImageChange} name={"file"} type={"file"}/>
                 </label>
                 <label>
                     아이디
