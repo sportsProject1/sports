@@ -45,7 +45,7 @@ function Login() {
     return(
         <LoginContainer>
             <h1>로그인 페이지</h1>
-            <form onSubmit={handleSubmit} action={"/member/login"} method={"POST"}>
+            <form onSubmit={handleSubmit} action={"/login"} method={"POST"}>
                 <label>
                     아이디
                     <input placeholder="아이디를 입력하세요."
