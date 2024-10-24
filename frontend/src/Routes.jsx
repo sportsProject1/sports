@@ -6,6 +6,8 @@ import Register from "./Page/Register";
 import React from "react";
 import Sports from "./Page/Sports";
 import SportsChild from "./Page/SportsChild";
+import Shop from "./Page/shop/Shop";
+import ShopAdd from "./Page/shop/ShopAdd";
 
 const Routes = createBrowserRouter([
     {
@@ -19,6 +21,8 @@ const Routes = createBrowserRouter([
                     path: '/sports/:sport', element: <SportsChild/>
                 }]
             },
+            { path: '/shop', element: <Shop/> },
+            { path: '/shop/add', element: <ShopAdd/>}
         ]
     }
 ]);
