@@ -8,7 +8,7 @@ import java.util.Set;
 
 @Data
 public class ChatRoom {
-
+// 채팅 방에 관한 테이블
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
