@@ -44,7 +44,7 @@ function Register() {
     })
     const navigate = useNavigate();
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         //submit 이벤트
         const formData = new FormData();

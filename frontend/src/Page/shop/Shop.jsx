@@ -21,6 +21,7 @@ function Shop() {
                 {items.map((item) => (
                     <div key={item.id}>
                         <img
+                            style={{width: '100px', height: '100px'}}
                             src={item.imgurl}
                             alt="Item Image"
                             onError={(e) => (e.target.src = 'https://placehold.co/300')}
