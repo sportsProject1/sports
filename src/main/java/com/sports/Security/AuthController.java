@@ -1,17 +1,9 @@
 package com.sports.Security;
 
-import com.nimbusds.jwt.JWTClaimsSet;
-import com.nimbusds.openid.connect.sdk.claims.UserInfo;
 import com.sports.Item.S3Service;
-import com.sports.Security.jwt.AuthResponse;
-import com.sports.Security.jwt.JwtTokenProvider;
-import com.sports.Security.jwt.LoginRequest;
-import com.sports.user.User;
 import com.sports.user.UserDTO;
 import com.sports.user.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.BeanUtils;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,15 +13,11 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
-import java.security.Principal;
-import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
 
-@CrossOrigin
 @RestController
 @RequiredArgsConstructor
 public class AuthController {
@@ -74,7 +62,6 @@ public class AuthController {
         return ResponseEntity.ok(new AuthResponse(token));
     }
 
-//  프론트단으로 사용자정보 넘겨주는 메서드
     @GetMapping("/userinfo")
     public ResponseEntity<UserDTO> getUserInfo(@AuthenticationPrincipal UserDetails userDetails) {
         String username = userDetails.getUsername();
