@@ -90,6 +90,8 @@ function ShopAdd() {
                     ))}
                 </div>
 
+                <input type={"submit"} value={"상품 등록"}/>
+
             </form>
 
 
