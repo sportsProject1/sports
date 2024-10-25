@@ -13,3 +13,15 @@ export const fetchData = async (url, setState) =>{
         console.log(error);
     }
 }
+
+export const postData = async (url,formData) => {
+    try {
+        const response = await axios.post(`http://localhost:8090/${url}`, formData,{
+            headers: {
+                "Content-Type": "multipart/form-data"
+            }
+        });
+    }catch (err){
+        console.log(err);
+    }
+}

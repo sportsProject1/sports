@@ -1,20 +1,15 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import {fetchData} from "../../Server/ApiService";
 
 function Shop() {
     const [items, setItems] = useState([]);
 
     useEffect(() => {
-        const getItems = async () => {
-            try {
-                const response = await axios.get("http://localhost:8090/shop/list");
-                setItems(response.data);
-            } catch (error) {
-                console.error("Error fetching items:", error);
-            }
-        };
-        getItems();
+        fetchData("shop/list",setItems)
+            .then((res) => console.log(res))
+            .catch((err) => console.log(err));
     }, []);
 
     return (

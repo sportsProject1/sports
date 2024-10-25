@@ -3,6 +3,8 @@ import styled from "styled-components";
 import {useState} from "react";
 import axios from "axios";
 import useImageUploader from "../../hooks/useImageUploader";
+import {postData} from "../../Server/ApiService";
+import {handleChange} from "../../Utils/handleChange";
 
 const RegisterContainer = styled.div`
     display: flex;
@@ -42,12 +44,7 @@ function Register() {
     })
     const navigate = useNavigate();
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setRegisterForm({...registerForm, [name]: value});
-        // name값이 일치한 input 데이터 수정
-    }
-    const handleSubmit = async (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
         //submit 이벤트
         const formData = new FormData();
@@ -63,19 +60,10 @@ function Register() {
             formData.append("file", images[0].file);
         }
 
-        try {
-            const response  = await axios.post("http://localhost:8090/register", formData,{
-                // 기존에 registerForm을 보냈던 데이터 formData로 변경
-                headers: {
-                    "Content-Type": "multipart/form-data"
-                    // content-Type 멀티파트 폼데이터로 변경
-                }
-            });
-            console.log("회원가입성공",response)
-            navigate('/',{replace:true});
-        }catch (error) {
-            console.log(error);
-        }
+        postData("register", formData)
+            .then(res=> navigate("/"))
+            .catch()
+
     }
     const {images,handleImageChange,resetImages} = useImageUploader(false)
     return (
@@ -97,7 +85,7 @@ function Register() {
                 <label>
                     아이디
                     <input placeholder="아이디를 입력하세요."
-                           onChange={handleChange}
+                           onChange={(e)=>handleChange(e,registerForm,setRegisterForm)}
                            name={"username"}
                            type={"text"}
                            value={registerForm.username}/>
@@ -106,7 +94,7 @@ function Register() {
                 <label>
                     비밀번호
                     <input placeholder="비밀번호를 입력하세요."
-                           onChange={handleChange}
+                           onChange={(e)=>handleChange(e,registerForm,setRegisterForm)}
                            name={"password"}
                            type={"password"}
                            value={registerForm.password}/>
@@ -115,7 +103,7 @@ function Register() {
                 <label>
                     이름
                     <input placeholder="이름을 입력하세요."
-                           onChange={handleChange}
+                           onChange={(e)=>handleChange(e,registerForm,setRegisterForm)}
                            type={"text"}
                            name={"nickname"}
                            value={registerForm.nickname}/>
@@ -124,7 +112,7 @@ function Register() {
                 <label>
                     전화번호
                     <input placeholder="010-xxxx-xxxx"
-                           onChange={handleChange}
+                           onChange={(e)=>handleChange(e,registerForm,setRegisterForm)}
                            type={"text"}
                            name={"phone"}
                            value={registerForm.phone}/>
@@ -133,7 +121,7 @@ function Register() {
                 <label>
                     이메일
                     <input placeholder="이메일을 입력하세요."
-                           onChange={handleChange}
+                           onChange={(e)=>handleChange(e,registerForm,setRegisterForm)}
                            name={"email"}
                            type={"email"}
                            value={registerForm.email}/>
@@ -142,7 +130,7 @@ function Register() {
                 <label>
                     주소
                     <input placeholder="주소를 입력하세요."
-                           onChange={handleChange}
+                           onChange={(e)=>handleChange(e,registerForm,setRegisterForm)}
                            type={"text"}
                            name={"address"}
                            value={registerForm.address}/>
