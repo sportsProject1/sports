@@ -1,42 +1,39 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {fetchData} from "../../Server/ApiService";
+import {ShopCard, ShopContainer, ShopList} from "../../styled/shopStyled";
 
 function Shop() {
     const [items, setItems] = useState([]);
+
+    const navigate= useNavigate()
 
     useEffect(() => {
         fetchData("shop/list",setItems)
             .then((res) => console.log(res))
             .catch((err) => console.log(err));
     }, []);
+    // const thumbnailUrl = item.imgurl.split(',')[0];
 
     return (
-        <div>
-            <h2>전체 상품 보기</h2>
-            <Link to="/shop/add">상품 추가</Link>
+        <ShopContainer>
+            <Link to={"/shop/add"}>상품 추가하기</Link>
 
-            <div className="card">
-                {items.map((item) => (
-                    <div key={item.id}>
-                        <img
-                            style={{width: '100px', height: '100px'}}
-                            src={item.imgurl}
-                            alt="Item Image"
-                            onError={(e) => (e.target.src = 'https://placehold.co/300')}
-                            className="item-image"
-                        />
-                        <div>
-                            <Link to={`/shop/detail/${item.id}`}>
-                                <h4>{item.title}</h4>
-                            </Link>
-                            <p>{item.price} 원</p>
-                        </div>
-                    </div>
-                ))}
-            </div>
-        </div>
+            <ShopList>
+                {items.map((item)=>{
+                    const thumbnailUrl = item.imgurl.split(',')[0];
+                    return(
+                        <ShopCard onClick={()=>navigate(`/shop/detail/${item.id}`)}>
+                            <img src={thumbnailUrl} alt={"#"}/>
+                            <p>{item.title}</p>
+                            <p>{item.price}</p>
+                        </ShopCard>
+                    )
+                })}
+            </ShopList>
+
+        </ShopContainer>
     );
 }
 

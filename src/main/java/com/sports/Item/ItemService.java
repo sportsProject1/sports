@@ -84,4 +84,9 @@ public class ItemService implements updatable<ItemDTO> {
     public void delete(Long id) {
         itemRepository.deleteById(id);
     }
+
+    public Item getItemEntity(Long id) {
+        return itemRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Item not found"));
+    }
 }
