@@ -21,7 +21,7 @@ public class Item {
     @Column(name = "item_desc")
     private String desc;
 
-    @Column(name = "item_imgurl")
+    @Column(name = "item_imgurl", length = 2048) // 충분한 길이 설정
     private String imgurl;
 
     @Column(name = "item_stock", nullable = false)

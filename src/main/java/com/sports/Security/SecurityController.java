@@ -1,4 +1,4 @@
-package com.sports.security;
+package com.sports.Security;
 
 import com.sports.Item.S3Service;
 import com.sports.user.User;
@@ -46,7 +46,8 @@ public class SecurityController {
         }
     }
 
-    @GetMapping("/user")
+//  프론트단으로 사용자정보 넘겨주는 메서드
+    @GetMapping("/userinfo")
     public ResponseEntity<UserDTO> getUserInfo(Principal principal) {
         User user = userService.findByUsername(principal.getName())
                 .orElseThrow(() -> new ResponseStatusException(
