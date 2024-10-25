@@ -3,7 +3,12 @@ package com.sports.Item;
 import com.sports.Category.Category;
 import com.sports.Category.CategoryService;
 import com.sports.Interface.updatable;
+import com.sports.user.User;
+import com.sports.user.UserRepository;
+import com.sports.user.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,6 +22,7 @@ public class ItemService implements updatable<ItemDTO> {
 
     private final ItemRepository itemRepository;
     private final CategoryService categoryService;
+    private final UserService userService;
     private final S3Service s3Service;
 
     public void addItem(ItemDTO itemDTO, List<MultipartFile> files) throws IOException {
@@ -33,7 +39,6 @@ public class ItemService implements updatable<ItemDTO> {
 
         Category category = categoryService.findById(itemDTO.getCategoryId())
                 .orElseThrow(() -> new RuntimeException("Category not found"));
-
         item.setCategory(category);
 
         itemRepository.save(item);

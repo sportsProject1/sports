@@ -3,9 +3,12 @@ package com.sports.Item;
 import com.sports.Category.Category;
 import com.sports.Category.CategoryDTO;
 import com.sports.Category.CategoryService;
+import com.sports.user.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,6 +27,9 @@ public class ItemController {
     private final ItemService itemService;
     private final CategoryService categoryService;
     private final S3Service s3Service;
+
+    @Autowired
+    private UserService userService;
 
     @GetMapping("/list")
     public List<ItemDTO> shopList() {

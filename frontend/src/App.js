@@ -1,11 +1,10 @@
 import './App.css';
-import React, {useEffect, useState} from "react";
-import axios from "axios";
+import React from "react";
 import {Provider} from "react-redux";
 import 'reset-css';
 import {RouterProvider} from "react-router-dom";
 import Routes from "./Routes";
-import {store} from './Store/store';
+import store from "./Store/store"
 
 function App() {
 
