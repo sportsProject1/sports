@@ -1,4 +1,4 @@
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import styled from "styled-components";
 import {useState} from "react";
 import axios from "axios";
@@ -40,6 +40,7 @@ function Register() {
         file:""
 
     })
+    const navigate = useNavigate();
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -71,6 +72,7 @@ function Register() {
                 }
             });
             console.log("회원가입성공",response)
+            navigate('/',{replace:true});
         }catch (error) {
             console.log(error);
         }

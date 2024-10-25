@@ -24,15 +24,11 @@ function ShopAdd() {
         addItemFormData.append("title",addItem.title);
         addItemFormData.append("price",addItem.price);
         addItemFormData.append("desc",addItem.desc);
-        addItemFormData.append("file",addItem.imgurl);
         addItemFormData.append("stock",addItem.stock);
         addItemFormData.append("categoryId",addItem.categoryId);
 
         if(images.length > 0) {
-            images.forEach((i)=>{
-                addItemFormData.append("file",images[i].file);
-
-            })
+                addItemFormData.append("file",images[0].file);
         }
 
         try{
@@ -41,7 +37,7 @@ function ShopAdd() {
                     "Content-Type": "multipart/form-data"
                 }
             })
-            console.log(response)
+            console.log(response,"성공")
 
         }catch(err){
             console.log(err);
@@ -62,7 +58,7 @@ function ShopAdd() {
                 <input onChange={handleChange} type={"text"} placeholder={"상품명"} name={"title"} value={addItem.title}/>
                 <input onChange={handleChange} type={"text"} placeholder={"가격"} name={"price"} value={addItem.price}/>
                 <input onChange={handleChange} type={"text"} placeholder={"상품소개"} name={"desc"} value={addItem.desc}/>
-                <input type="file" name={"file"} multiple accept="image/*" onChange={handleImageChange}/>
+                <input type="file" name={"file"} multiple onChange={handleImageChange}/>
                 <input onChange={handleChange} type={"text"} placeholder={"수량"} name={"stock"} value={addItem.stock}/>
                 <input onChange={handleChange} type={"text"} placeholder={"카테고리"} name={"categoryId"}
                        value={addItem.categoryId}/>
