@@ -3,7 +3,11 @@ package com.sports.Item;
 import com.sports.Category.Category;
 import com.sports.Category.CategoryService;
 import com.sports.Interface.updatable;
+import com.sports.user.User;
+import com.sports.user.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -14,6 +18,7 @@ public class ItemService implements updatable<ItemDTO> {
 
     private final ItemRepository itemRepository;
     private final CategoryService categoryService;
+    private UserRepository userRepository;
 
     public void addItem(ItemDTO itemDTO) {
         Item item = new Item();
@@ -26,11 +31,31 @@ public class ItemService implements updatable<ItemDTO> {
 
         Category category = categoryService.findById(itemDTO.getCategoryId())
                 .orElseThrow(() -> new RuntimeException("Category not found"));
-
         item.setCategory(category);
 
         itemRepository.save(item);
     }
+
+    // 사용자 정보 가져올 방법생기면 그때 위에꺼 대신 사용
+//    public void addItem(ItemDTO itemDTO, int userId) {
+//        Item item = new Item();
+//
+//        item.setTitle(itemDTO.getTitle());
+//        item.setPrice(itemDTO.getPrice());
+//        item.setDesc(itemDTO.getDesc());
+//        item.setImgurl(itemDTO.getImgurl());
+//        item.setStock(itemDTO.getStock());
+//
+//        Category category = categoryService.findById(itemDTO.getCategoryId())
+//                .orElseThrow(() -> new RuntimeException("Category not found"));
+//        item.setCategory(category);
+//
+//        User user = userRepository.findById(userId)
+//                .orElseThrow(() -> new RuntimeException("User not found"));
+//        item.setUser(user);
+//
+//        itemRepository.save(item);
+//    }
 
     public ItemDTO getItemDetail(Long id) {
         Optional<Item> optionalItem = itemRepository.findById(id);

@@ -6,6 +6,7 @@ import com.sports.Category.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -63,6 +64,23 @@ public class ItemController {
         ItemResponseDTO response = new ItemResponseDTO("아이템이 성공적으로 추가되었습니다.");
         return ResponseEntity.ok(response);
     }
+
+    // 사용자 정보 가져올 방법 생기면 위에꺼 대신 사용
+//    @PostMapping("/add")
+//    public ResponseEntity<ItemResponseDTO> postItem(@ModelAttribute ItemDTO itemDTO,
+//                                                    @RequestParam("file") MultipartFile file,
+//                                                    Authentication authentication) throws IOException {
+//        String imgURL = s3Service.saveFile(file.getOriginalFilename(), file.getInputStream());
+//        itemDTO.setImgurl(imgURL);
+//
+//        int userId = ((UserDetailsImpl) authentication.getPrincipal()).getId();
+//
+//        itemService.addItem(itemDTO, userId);
+//
+//        ItemResponseDTO response = new ItemResponseDTO("아이템이 성공적으로 추가되었습니다.");
+//        return ResponseEntity.ok(response);
+//    }
+
 
     @GetMapping("/detail/{id}")
     public ResponseEntity<ItemDTO> detailItem(@PathVariable Long id) {
