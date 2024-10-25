@@ -8,6 +8,7 @@ import Sports from "./Page/Sports";
 import SportsChild from "./Page/SportsChild";
 import Shop from "./Page/shop/Shop";
 import ShopAdd from "./Page/shop/ShopAdd";
+import ShopDetail from "./Page/shop/ShopDetail";
 
 const Routes = createBrowserRouter([
     {
@@ -22,6 +23,7 @@ const Routes = createBrowserRouter([
                 }]
             },
             { path: '/shop', element: <Shop/> },
+            { path: '/shop/detail/:id', element:<ShopDetail/>},
             { path: '/shop/add', element: <ShopAdd/>}
         ]
     }

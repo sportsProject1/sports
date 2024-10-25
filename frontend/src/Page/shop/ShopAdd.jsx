@@ -1,6 +1,5 @@
 import {useState} from "react";
 import useImageUploader from "../../hooks/useImageUploader";
-import axios from "axios";
 import {postData} from "../../Server/ApiService";
 import {useNavigate} from "react-router-dom";
 import {handleChange} from "../../Utils/handleChange";
@@ -38,7 +37,7 @@ function ShopAdd() {
         }
 
         postData("shop/add", addItemFormData)
-            .then(res=> console.log(res))
+            .then(res=> navigate("/shop",{replace:true}))
             .catch()
 
     }
