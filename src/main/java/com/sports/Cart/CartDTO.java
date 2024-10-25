@@ -26,4 +26,22 @@ public class CartDTO {
         this.orderTime = orderTime;
         this.paymentStatus = paymentStatus;
     }
+
+    public CartDTO(Cart cart) {
+        this.id = cart.getId();
+        this.userId = cart.getUserId();
+        this.username = cart.getUsername();
+        this.item = new ItemDTO(
+                cart.getItem().getId(),
+                cart.getItem().getTitle(),
+                cart.getItem().getPrice(),
+                cart.getItem().getDesc(),
+                cart.getItem().getImgurl(),
+                cart.getItem().getStock(),
+                cart.getItem().getCategory() != null ? cart.getItem().getCategory().getId() : null
+        );
+        this.count = cart.getCount();
+        this.orderTime = cart.getOrderTime();
+        this.paymentStatus = cart.isPaymentStatus();
+    }
 }
