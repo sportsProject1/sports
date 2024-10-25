@@ -1,6 +1,9 @@
 import {useState} from "react";
 import useImageUploader from "../../hooks/useImageUploader";
 import axios from "axios";
+import {postData} from "../../Server/ApiService";
+import {useNavigate} from "react-router-dom";
+import {handleChange} from "../../Utils/handleChange";
 
 function ShopAdd() {
 
@@ -13,12 +16,9 @@ function ShopAdd() {
         categoryId:""
     })
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setAddItem({...addItem, [name]: value});
-    }// 상품들 value값 수정 및 useState 변경
+    const navigate = useNavigate();
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
         const addItemFormData = new FormData();
         addItemFormData.append("title",addItem.title);
@@ -28,25 +28,19 @@ function ShopAdd() {
         addItemFormData.append("categoryId",addItem.categoryId);
 
         if(images.length > 0) {
-                addItemFormData.append("file",images[0].file);
-        }
-
-        try{
-            const response = await axios.post("http://localhost:8090/shop/add", addItemFormData,{
-                headers: {
-                    "Content-Type": "multipart/form-data"
-                }
+            images.forEach((image)=>{
+                addItemFormData.append("file",image.file);
             })
-            console.log(response,"성공")
 
-        }catch(err){
-            console.log(err);
         }
+
+        postData("shop/add", addItemFormData)
+            .then(res=> navigate("/shop"))
+            .catch()
+
     }
 
     const {images,handleImageChange,handleRemoveImage} = useImageUploader(true)
-
-    console.log(images)
 
     return(
         <div>
@@ -55,12 +49,22 @@ function ShopAdd() {
             </h1>
 
             <form onSubmit={handleSubmit} action={"/shop/add"} method={"POST"} encType={"multipart/form-data"}>
-                <input onChange={handleChange} type={"text"} placeholder={"상품명"} name={"title"} value={addItem.title}/>
-                <input onChange={handleChange} type={"text"} placeholder={"가격"} name={"price"} value={addItem.price}/>
-                <input onChange={handleChange} type={"text"} placeholder={"상품소개"} name={"desc"} value={addItem.desc}/>
+                <input
+                    onChange={(e)=>handleChange(e,addItem,setAddItem)}
+                    type={"text"} placeholder={"상품명"} name={"title"} value={addItem.title}/>
+                <input
+                    onChange={(e)=>handleChange(e,addItem,setAddItem)}
+                    type={"text"} placeholder={"가격"} name={"price"} value={addItem.price}/>
+                <input
+                    onChange={(e)=>handleChange(e,addItem,setAddItem)}
+                    type={"text"} placeholder={"상품소개"} name={"desc"} value={addItem.desc}/>
                 <input type="file" name={"file"} multiple onChange={handleImageChange}/>
-                <input onChange={handleChange} type={"text"} placeholder={"수량"} name={"stock"} value={addItem.stock}/>
-                <input onChange={handleChange} type={"text"} placeholder={"카테고리"} name={"categoryId"}
+                <input
+                    onChange={(e)=>handleChange(e,addItem,setAddItem)}
+                    type={"text"} placeholder={"수량"} name={"stock"} value={addItem.stock}/>
+                <input
+                    onChange={(e)=>handleChange(e,addItem,setAddItem)}
+                    type={"text"} placeholder={"카테고리"} name={"categoryId"}
                        value={addItem.categoryId}/>
 
                 <div style={{display: 'flex', overflowX: 'auto'}}>
