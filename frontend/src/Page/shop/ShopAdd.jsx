@@ -24,7 +24,6 @@ function ShopAdd() {
         addItemFormData.append("title",addItem.title);
         addItemFormData.append("price",addItem.price);
         addItemFormData.append("desc",addItem.desc);
-        addItemFormData.append("file",addItem.imgurl);
         addItemFormData.append("stock",addItem.stock);
         addItemFormData.append("categoryId",addItem.categoryId);
 

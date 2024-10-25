@@ -1,6 +1,6 @@
 package com.sports.Chat;
 
-import com.sports.user.User;
+import com.sports.User.User;
 
 import java.util.List;
 import java.util.Set;

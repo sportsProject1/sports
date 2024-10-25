@@ -1,4 +1,4 @@
-package com.sports.user;
+package com.sports.User;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;

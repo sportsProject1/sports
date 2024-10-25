@@ -1,9 +1,9 @@
-package com.sports.security;
+package com.sports.Security;
 
 import com.sports.Item.S3Service;
-import com.sports.user.User;
-import com.sports.user.UserDTO;
-import com.sports.user.UserService;
+import com.sports.User.User;
+import com.sports.User.UserDTO;
+import com.sports.User.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
@@ -46,7 +46,8 @@ public class SecurityController {
         }
     }
 
-    @GetMapping("/user")
+//  프론트단으로 사용자정보 넘겨주는 메서드
+    @GetMapping("/userinfo")
     public ResponseEntity<UserDTO> getUserInfo(Principal principal) {
         User user = userService.findByUsername(principal.getName())
                 .orElseThrow(() -> new ResponseStatusException(

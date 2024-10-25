@@ -1,7 +1,7 @@
-package com.sports.security;
+package com.sports.Security;
 
-import com.sports.user.User;
-import com.sports.user.UserRepository;
+import com.sports.User.User;
+import com.sports.User.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
