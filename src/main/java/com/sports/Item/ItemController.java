@@ -69,21 +69,6 @@ public class ItemController {
         return ResponseEntity.ok(response);
     }
 
-//    @PostMapping("/add")
-//    public ResponseEntity<ItemResponseDTO> postItem(@ModelAttribute ItemDTO itemDTO,
-//                                                    @RequestParam("file") MultipartFile file) throws IOException {
-//        String imgURL = s3Service.saveFile(file.getOriginalFilename(), file.getInputStream());
-//        itemDTO.setImgurl(imgURL);
-//
-//        int userId = userService.getCurrentUser().getId();
-//
-//        itemService.addItem(itemDTO, userId);
-//
-//        ItemResponseDTO response = new ItemResponseDTO("아이템이 성공적으로 추가되었습니다.");
-//        return ResponseEntity.ok(response);
-//    }
-
-
     @GetMapping("/detail/{id}")
     public ResponseEntity<ItemDTO> detailItem(@PathVariable Long id) {
         ItemDTO itemDTO = itemService.getItemDetail(id);

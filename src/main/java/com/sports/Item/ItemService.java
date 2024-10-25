@@ -23,7 +23,7 @@ public class ItemService implements updatable<ItemDTO> {
     private final ItemRepository itemRepository;
     private final CategoryService categoryService;
     private final UserService userService;
-    private final S3Service;
+    private final S3Service s3Service;
 
     public void addItem(ItemDTO itemDTO, List<MultipartFile> files) throws IOException {
         Item item = new Item();
@@ -43,25 +43,6 @@ public class ItemService implements updatable<ItemDTO> {
 
         itemRepository.save(item);
     }
-
-//    public void addItem(ItemDTO itemDTO, int userId) {
-//        Item item = new Item();
-//
-//        item.setTitle(itemDTO.getTitle());
-//        item.setPrice(itemDTO.getPrice());
-//        item.setDesc(itemDTO.getDesc());
-//        item.setImgurl(itemDTO.getImgurl());
-//        item.setStock(itemDTO.getStock());
-//
-//        Category category = categoryService.findById(itemDTO.getCategoryId())
-//                .orElseThrow(() -> new RuntimeException("Category not found"));
-//        item.setCategory(category);
-//
-//        User user = userService.getCurrentUser();
-//        item.setUser(user);
-//
-//        itemRepository.save(item);
-//    }
 
     public ItemDTO getItemDetail(Long id) {
         Optional<Item> optionalItem = itemRepository.findById(id);
