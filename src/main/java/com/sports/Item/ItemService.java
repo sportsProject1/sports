@@ -5,6 +5,7 @@ import com.sports.Category.CategoryService;
 import com.sports.Interface.updatable;
 import com.sports.user.User;
 import com.sports.user.UserRepository;
+import com.sports.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -18,7 +19,7 @@ public class ItemService implements updatable<ItemDTO> {
 
     private final ItemRepository itemRepository;
     private final CategoryService categoryService;
-    private UserRepository userRepository;
+    private final UserService userService;
 
     public void addItem(ItemDTO itemDTO) {
         Item item = new Item();
@@ -36,7 +37,6 @@ public class ItemService implements updatable<ItemDTO> {
         itemRepository.save(item);
     }
 
-    // 사용자 정보 가져올 방법생기면 그때 위에꺼 대신 사용
 //    public void addItem(ItemDTO itemDTO, int userId) {
 //        Item item = new Item();
 //
@@ -50,8 +50,7 @@ public class ItemService implements updatable<ItemDTO> {
 //                .orElseThrow(() -> new RuntimeException("Category not found"));
 //        item.setCategory(category);
 //
-//        User user = userRepository.findById(userId)
-//                .orElseThrow(() -> new RuntimeException("User not found"));
+//        User user = userService.getCurrentUser();
 //        item.setUser(user);
 //
 //        itemRepository.save(item);

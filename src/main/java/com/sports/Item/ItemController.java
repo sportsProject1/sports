@@ -3,7 +3,9 @@ package com.sports.Item;
 import com.sports.Category.Category;
 import com.sports.Category.CategoryDTO;
 import com.sports.Category.CategoryService;
+import com.sports.user.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 
 import org.springframework.security.core.Authentication;
@@ -24,6 +26,9 @@ public class ItemController {
     private final ItemService itemService;
     private final CategoryService categoryService;
     private final S3Service s3Service;
+
+    @Autowired
+    private UserService userService;
 
     @GetMapping("/list")
     public List<ItemDTO> shopList() {
@@ -65,15 +70,13 @@ public class ItemController {
         return ResponseEntity.ok(response);
     }
 
-    // 사용자 정보 가져올 방법 생기면 위에꺼 대신 사용
 //    @PostMapping("/add")
 //    public ResponseEntity<ItemResponseDTO> postItem(@ModelAttribute ItemDTO itemDTO,
-//                                                    @RequestParam("file") MultipartFile file,
-//                                                    Authentication authentication) throws IOException {
+//                                                    @RequestParam("file") MultipartFile file) throws IOException {
 //        String imgURL = s3Service.saveFile(file.getOriginalFilename(), file.getInputStream());
 //        itemDTO.setImgurl(imgURL);
 //
-//        int userId = ((UserDetailsImpl) authentication.getPrincipal()).getId();
+//        int userId = userService.getCurrentUser().getId();
 //
 //        itemService.addItem(itemDTO, userId);
 //
