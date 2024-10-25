@@ -1,5 +1,6 @@
-package com.sports.user;
+package com.sports.security;
 
+import com.sports.user.User;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
