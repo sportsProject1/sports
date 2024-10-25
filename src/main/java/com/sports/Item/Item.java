@@ -1,6 +1,7 @@
 package com.sports.Item;
 
 import com.sports.Category.Category;
+import com.sports.user.User;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -29,4 +30,8 @@ public class Item {
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 }

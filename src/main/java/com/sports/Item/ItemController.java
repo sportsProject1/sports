@@ -3,9 +3,12 @@ package com.sports.Item;
 import com.sports.Category.Category;
 import com.sports.Category.CategoryDTO;
 import com.sports.Category.CategoryService;
+import com.sports.user.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,6 +27,9 @@ public class ItemController {
     private final ItemService itemService;
     private final CategoryService categoryService;
     private final S3Service s3Service;
+
+    @Autowired
+    private UserService userService;
 
     @GetMapping("/list")
     public List<ItemDTO> shopList() {
@@ -62,6 +68,21 @@ public class ItemController {
         ItemResponseDTO response = new ItemResponseDTO("아이템이 성공적으로 추가되었습니다.");
         return ResponseEntity.ok(response);
     }
+
+//    @PostMapping("/add")
+//    public ResponseEntity<ItemResponseDTO> postItem(@ModelAttribute ItemDTO itemDTO,
+//                                                    @RequestParam("file") MultipartFile file) throws IOException {
+//        String imgURL = s3Service.saveFile(file.getOriginalFilename(), file.getInputStream());
+//        itemDTO.setImgurl(imgURL);
+//
+//        int userId = userService.getCurrentUser().getId();
+//
+//        itemService.addItem(itemDTO, userId);
+//
+//        ItemResponseDTO response = new ItemResponseDTO("아이템이 성공적으로 추가되었습니다.");
+//        return ResponseEntity.ok(response);
+//    }
+
 
     @GetMapping("/detail/{id}")
     public ResponseEntity<ItemDTO> detailItem(@PathVariable Long id) {
