@@ -1,6 +1,6 @@
 package com.sports.Chat;
 
-import com.sports.User.User;
+import com.sports.user.User;
 import jakarta.persistence.*;
 import lombok.Data;
 

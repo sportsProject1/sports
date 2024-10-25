@@ -1,9 +1,9 @@
 package com.sports.Security;
 
 import com.sports.Item.S3Service;
-import com.sports.User.User;
-import com.sports.User.UserDTO;
-import com.sports.User.UserService;
+import com.sports.user.User;
+import com.sports.user.UserDTO;
+import com.sports.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;

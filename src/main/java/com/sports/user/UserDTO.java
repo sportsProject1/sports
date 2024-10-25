@@ -1,4 +1,4 @@
-package com.sports.User;
+package com.sports.user;
 
 import lombok.Data;
 
