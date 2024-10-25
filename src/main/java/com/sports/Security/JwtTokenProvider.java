@@ -1,4 +1,4 @@
-package com.sports.Security.jwt;
+package com.sports.Security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
