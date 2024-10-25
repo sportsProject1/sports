@@ -41,6 +41,7 @@ function ShopAdd() {
                     "Content-Type": "multipart/form-data"
                 }
             })
+            console.log(response)
 
         }catch(err){
             console.log(err);
@@ -57,7 +58,7 @@ function ShopAdd() {
                 상품 추가 페이지
             </h1>
 
-            <form>
+            <form onSubmit={handleSubmit} action={"/shop/add"} method={"POST"} encType={"multipart/form-data"}>
                 <input onChange={handleChange} type={"text"} placeholder={"상품명"} name={"title"} value={addItem.title}/>
                 <input onChange={handleChange} type={"text"} placeholder={"가격"} name={"price"} value={addItem.price}/>
                 <input onChange={handleChange} type={"text"} placeholder={"상품소개"} name={"desc"} value={addItem.desc}/>
