@@ -5,6 +5,8 @@ import {useNavigate} from "react-router-dom";
 import {handleChange} from "../../Utils/handleChange";
 import {Container} from "../../styled/Container";
 import {Form} from "../../styled/Form";
+import {useSelector} from "react-redux";
+import {postTokenData} from "../../Server/ApiService";
 
 function ShopAdd() {
 
@@ -17,8 +19,10 @@ function ShopAdd() {
         categoryId:"1"
     })
 
+    const userData = useSelector((state)=>state.auth.user) // 리덕스 툴킷에 저장한 유저정보 가져오기
+    const token = useSelector((state)=> state.auth.token); // 리덕스 툴킷에 저자한 토큰값 가져오기
+
     const navigate = useNavigate();
-    console.log(addItem)
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -36,16 +40,28 @@ function ShopAdd() {
 
         }
 
-        postData("shop/add", addItemFormData)
-            .then(res=> navigate("/shop",{replace:true}))
-            .catch()
+        // postData("shop/add", addItemFormData)
+        //     .then(res=> navigate("/shop",{replace:true}))
+        //     .catch(); //여기는 토큰값 없이 아이템 작성 api 함수
+
+        postTokenData("shop/add",addItemFormData)
+            .then(res => navigate("/shop"))
+            .catch(); // 여기는 useHook으로 token 관리하는 token값 백엔드로 보내는 함수
+
+        // postTokenData("shop/add",addItemFormData,token)
+        //     .then(res => navigate("/shop"))
+        //     .catch(); // 여기는 token 해당페이지에서 받아와서 인자로 token값 보내는 함수
 
     }
 
     const {images,handleImageChange,handleRemoveImage} = useImageUploader(true)
 
+
+
     return(
         <Container>
+            <button onClick={() => console.log(userData)}>리덕스 유저값 확인버튼</button>
+            <button onClick={() => console.log(token)}>리덕스 토큰값 확인버튼</button>
             <h1>
                 상품 추가 페이지
             </h1>
@@ -65,7 +81,7 @@ function ShopAdd() {
                     onChange={(e) => handleChange(e, addItem, setAddItem)}
                     type={"text"} placeholder={"수량"} name={"stock"} value={addItem.stock}/>
 
-{/*                <input
+                {/*                <input
                     onChange={(e) => handleChange(e, addItem, setAddItem)}
                     type={"text"} placeholder={"수량"} name={"categoryId"} value={addItem.categoryId}/>*/}
 
