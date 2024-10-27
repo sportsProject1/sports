@@ -21,7 +21,9 @@ export const postData = async (url,formData) => {
                 "Content-Type": "multipart/form-data"
             }
         });
+        console.log(response)
+        return response.data
     }catch (err){
-        console.log(err);
+        console.log("요청실패",err);
     }
 }
