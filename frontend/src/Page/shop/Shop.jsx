@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import {Link, useNavigate} from "react-router-dom";
-import {fetchData} from "../../Server/ApiService";
+import {fetchData} from "../../Server/ApiServiceNoToken";
 import {ShopCard, ShopContainer, ShopList} from "../../styled/shopStyled";
 
 function Shop() {
@@ -24,7 +24,7 @@ function Shop() {
                 {items.map((item)=>{
                     const thumbnailUrl = item.imgurl.split(',')[0];
                     return(
-                        <ShopCard onClick={()=>navigate(`/shop/detail/${item.id}`)}>
+                        <ShopCard key={item.id} onClick={()=>navigate(`/shop/detail/${item.id}`)}>
                             <img src={thumbnailUrl} alt={"#"}/>
                             <p>{item.title}</p>
                             <p>{item.price}</p>

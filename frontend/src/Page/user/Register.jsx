@@ -1,10 +1,7 @@
-import {Link, useNavigate} from "react-router-dom";
-import styled from "styled-components";
+import {useNavigate} from "react-router-dom";
 import {useState} from "react";
-import axios from "axios";
 import useImageUploader from "../../hooks/useImageUploader";
-import {postData} from "../../Server/ApiService";
-import {handleChange} from "../../Utils/handleChange";
+import {postData} from "../../Server/ApiServiceNoToken";
 import RegisterForm from "./RegisterFrom";
 
 

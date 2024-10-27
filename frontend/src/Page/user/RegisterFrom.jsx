@@ -1,10 +1,9 @@
 // RegisterForm.jsx
 import React from 'react';
-import { useFormik } from 'formik';
+import {useFormik} from 'formik';
 import * as Yup from 'yup';
-import styled from "styled-components";
 import useImageUploader from "../../hooks/useImageUploader";
-import { postData } from "../../Server/ApiService";
+import {postData} from "../../Server/ApiServiceNoToken";
 import {RegisterFormWrap} from "../../styled/UserStyled";
 
 

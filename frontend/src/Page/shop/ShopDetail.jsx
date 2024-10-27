@@ -1,6 +1,6 @@
 import {useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
-import {fetchData} from "../../Server/ApiService";
+import {fetchData} from "../../Server/ApiServiceNoToken";
 import ErrorPage from "../ErrorPage";
 
 function ShopDetail(){
