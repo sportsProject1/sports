@@ -4,8 +4,10 @@ import com.sports.Item.S3Service;
 import com.sports.user.UserDTO;
 import com.sports.user.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -17,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -49,17 +52,34 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<Map<String, Object>> login(@ModelAttribute LoginRequest loginRequest) {
+        try {
         // 사용자 이름과 비밀번호를 이용해 인증을 시도
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword())
         );
 
         // JWT 토큰 생성
-        String token = jwtTokenProvider.createToken(authentication.getName(), authentication.getAuthorities().toString());
+        String token = jwtTokenProvider.createToken(authentication.getName(),
+                authentication.getAuthorities().stream()
+                        .map(GrantedAuthority::getAuthority)
+                        .collect(Collectors.toList()).toString());
+            // 응답 데이터 구성
+            Map<String, Object> response = new HashMap<>();
+            response.put("token", token);
+            response.put("message", "로그인 성공");
 
-        // 클라이언트에 JWT 전달
-        return ResponseEntity.ok(new AuthResponse(token));
+            return ResponseEntity.ok(response);
+        } catch (BadCredentialsException e) {
+            // 로그 추가
+            System.out.println("로그인 실패: 잘못된 사용자명 또는 비밀번호");
+
+            // 에러 응답 구성
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("error", "Invalid username or password");
+
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+        }
     }
 
     @GetMapping("/userinfo")

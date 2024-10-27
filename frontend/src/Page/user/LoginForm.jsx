@@ -30,7 +30,7 @@ function LoginForm() {
             try {
                 // const response  = await axios.post("http://localhost:8090/login", formData);
                 // console.log("로그인 됨",response.data)
-                const response = await postData("user/login",formData) // post요청 user/login (로그인 시 jwt토큰 넘어옴)
+                const response = await postData("login",formData) // post요청 user/login (로그인 시 jwt토큰 넘어옴)
                 const token = response.token;
                 setUserData(token)
 
@@ -45,7 +45,7 @@ function LoginForm() {
 
     return(
         <form onSubmit={formik.handleSubmit} action={"/login"} method={"POST"}>
-            <button onClick={()=>console.log(userData)}>
+            <button type="button" onClick={()=>console.log(userData)}>
                 임시 유저 JWT 데이터 받아와지는지 확인
             </button>
             <label>

@@ -42,9 +42,7 @@ public class SecurityConfig {
                         .requestMatchers("/clerk").hasRole("CLERK")
                         .anyRequest().authenticated())
                 .formLogin(formLogin -> formLogin
-                        .loginProcessingUrl("/login")
-                        .successForwardUrl("/")
-                        .failureUrl("/login?error=true"))
+                        .disable())
                 .logout((logout) -> logout
                         .logoutSuccessUrl("/login")
                         .invalidateHttpSession(true))
