@@ -1,6 +1,6 @@
 import {useState} from "react";
 import useImageUploader from "../../hooks/useImageUploader";
-import {postData} from "../../Server/ApiService";
+import {postData} from "../../Server/ApiServiceNoToken";
 import {useNavigate} from "react-router-dom";
 import {handleChange} from "../../Utils/handleChange";
 import {Container} from "../../styled/Container";

@@ -4,11 +4,13 @@ import * as Yup from "yup";
 import axios from "axios";
 import React, {useEffect, useState} from "react";
 import {fetchData, postData} from "../../Server/ApiService";
+import {useDispatch} from "react-redux";
+import {setCredentials} from "../../Store/authSlice";
 
 function LoginForm() {
     const navigate = useNavigate();
 
-    const [userData,setUserData] = useState();
+    const dispatch = useDispatch();
 
     const formik = useFormik({
         initialValues: {
@@ -28,26 +30,19 @@ function LoginForm() {
             formData.append("username", values.username);
             formData.append("password", values.password);
             try {
-                // const response  = await axios.post("http://localhost:8090/login", formData);
-                // console.log("로그인 됨",response.data)
-                const response = await postData("login",formData) // post요청 user/login (로그인 시 jwt토큰 넘어옴)
-                const token = response.token;
-                setUserData(token)
-
-                // await fetchData("userinfo",setUserData); // get요청 userinfo로 보냄 (일단 무시)
-                // navigate("/",{replace:true});
+                const response  = await axios.post("http://localhost:8090/login", formData);
+                // console.log("로그인 됨",response.data) // 토큰값 또는 data가 제대로 넘어오는지 콘솔로 확인
+                const { user, token } = response.data; // response axios post요청으로 login시 response.data 내에 user와 token 비구조할당으로 가져옴
+                dispatch(setCredentials({ user, token })); // 비구조할당으로 가져온 데이터 리덕스툴킷 스토어에 저장함 (리액트 모든 페이지에서 전역으로 사용가능)
+                navigate("/",{replace:true}); // 메인페이지로 이동 및 뒤로가기 잠금
             }catch (err){
                 console.log(err);
             }
         },
     });
-    console.log(userData)
 
     return(
         <form onSubmit={formik.handleSubmit} action={"/login"} method={"POST"}>
-            <button type="button" onClick={()=>console.log(userData)}>
-                임시 유저 JWT 데이터 받아와지는지 확인
-            </button>
             <label>
                 아이디
                 <input placeholder="아이디를 입력하세요."
