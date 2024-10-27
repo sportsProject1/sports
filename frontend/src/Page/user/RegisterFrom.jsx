@@ -25,16 +25,16 @@ function RegisterForm({ onSuccess }) {
             username: Yup.string().required('아이디를 입력하세요.'),
             password: Yup.string()
                 .required('비밀번호를 입력하세요.')
-                .min(6, '비밀번호는 최소 6자 이상이어야 합니다.'),
+                .min(3, '비밀번호는 최소 3자 이상이어야 합니다.'),
             nickname: Yup.string().required('이름을 입력하세요.'),
-            phone: Yup.string()
-                .required('전화번호를 입력하세요.')
-                .matches(/^[0-9]{3}-[0-9]{4}-[0-9]{4}$/, '전화번호 형식이 유효하지 않습니다.'),
+            // phone: Yup.string()
+            //     .required('전화번호를 입력하세요.')
+            //     .matches(/^[0-9]{3}-[0-9]{4}-[0-9]{4}$/, '전화번호 형식이 유효하지 않습니다.'),
             email: Yup.string().email('유효한 이메일을 입력하세요.').required('이메일을 입력하세요.'),
             address: Yup.string().required('주소를 입력하세요.'),
-            file: Yup.mixed().required('이미지를 업로드하세요.'),
         }),
         onSubmit: async (values) => {
+            console.log("123123")
             const formData = new FormData();
             formData.append("username", values.username);
             formData.append("password", values.password);
