@@ -31,7 +31,7 @@ function LoginForm() {
             formData.append("password", values.password);
             try {
                 const response  = await axios.post("http://localhost:8090/login", formData);
-                // console.log("로그인 됨",response.data) // 토큰값 또는 data가 제대로 넘어오는지 콘솔로 확인
+//                 console.log("로그인 됨",response.data) // 토큰값 또는 data가 제대로 넘어오는지 콘솔로 확인
                 const { user, token } = response.data; // response axios post요청으로 login시 response.data 내에 user와 token 비구조할당으로 가져옴
                 dispatch(setCredentials({ user, token })); // 비구조할당으로 가져온 데이터 리덕스툴킷 스토어에 저장함 (리액트 모든 페이지에서 전역으로 사용가능)
                 navigate("/",{replace:true}); // 메인페이지로 이동 및 뒤로가기 잠금
