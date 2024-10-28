@@ -1,6 +1,7 @@
 package com.sports.Security;
 
 import com.sports.Item.S3Service;
+import com.sports.user.User;
 import com.sports.user.UserDTO;
 import com.sports.user.UserService;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -54,25 +56,49 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<Map<String, Object>> login(@ModelAttribute LoginRequest loginRequest) {
         try {
-        // 사용자 이름과 비밀번호를 이용해 인증을 시도
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword())
-        );
+            // 사용자 이름과 비밀번호를 이용해 인증을 시도
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword())
+            );
 
-        // JWT 토큰 생성
-        String token = jwtTokenProvider.createToken(authentication.getName(),
-                authentication.getAuthorities().stream()
-                        .map(GrantedAuthority::getAuthority)
-                        .collect(Collectors.toList()).toString());
-            // 응답 데이터 구성
+            // JWT 토큰 생성
+            String token = jwtTokenProvider.createToken(authentication.getName(),
+                    authentication.getAuthorities().stream()
+                            .map(GrantedAuthority::getAuthority)
+                            .collect(Collectors.toList()).toString());
+
+            // 유저 정보 가져오기
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            Optional<User> optionalUser = userService.findByUsername(userDetails.getUsername());
+
+            // User 객체 가져오기
+            User user = optionalUser.orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+
+            // 유저 정보를 담는 Map 생성
+            Map<String, Object> userMap = new HashMap<>();
+            userMap.put("id", user.getId());
+            userMap.put("username", user.getUsername());
+            userMap.put("nickname", user.getNickname());
+            userMap.put("phone", user.getPhone());
+            userMap.put("email", user.getEmail());
+            userMap.put("role", user.getRole());
+            userMap.put("address", user.getAddress());
+            userMap.put("imgURL", user.getImgURL());
+            userMap.put("provider", user.getProvider());
+            userMap.put("providerId", user.getProviderId());
+            userMap.put("createDate", user.getCreateDate());
+
+            // 응답 Map 생성
             Map<String, Object> response = new HashMap<>();
+            response.put("user", userMap);
             response.put("token", token);
-            response.put("message", "로그인 성공");
 
+            System.out.println("응답: " + response);
             return ResponseEntity.ok(response);
+
         } catch (BadCredentialsException e) {
-            // 로그 추가
-            System.out.println("로그인 실패: 잘못된 사용자명 또는 비밀번호");
+            // 로그인 실패 시 로그 추가
+            System.out.println("로그인 실패: 잘못된 ID 또는 비밀번호 입니다.");
 
             // 에러 응답 구성
             Map<String, Object> errorResponse = new HashMap<>();
@@ -81,6 +107,8 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
         }
     }
+
+
 
     @GetMapping("/userinfo")
     public ResponseEntity<UserDTO> getUserInfo(@AuthenticationPrincipal UserDetails userDetails) {

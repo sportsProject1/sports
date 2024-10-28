@@ -6,6 +6,7 @@ import com.sports.Interface.updatable;
 import com.sports.user.User;
 import com.sports.user.UserRepository;
 import com.sports.user.UserService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -16,6 +17,9 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @Service
 @RequiredArgsConstructor
 public class ItemService implements updatable<ItemDTO> {
@@ -24,14 +28,19 @@ public class ItemService implements updatable<ItemDTO> {
     private final CategoryService categoryService;
     private final UserService userService;
     private final S3Service s3Service;
+    private static final Logger logger = LoggerFactory.getLogger(ItemService.class);
 
-    public void addItem(ItemDTO itemDTO, List<MultipartFile> files) throws IOException {
+    @Transactional
+    public void addItem(ItemDTO itemDTO, List<MultipartFile> files, User user) throws IOException {
         Item item = new Item();
 
         item.setTitle(itemDTO.getTitle());
         item.setPrice(itemDTO.getPrice());
         item.setDesc(itemDTO.getDesc());
         item.setStock(itemDTO.getStock());
+        item.setUser(user);
+
+        logger.info("Adding item: {}", item);
 
         // 이미지를 S3에 업로드 후 URL 리스트 생성
         List<String> imgUrls = s3Service.saveFiles(files);
