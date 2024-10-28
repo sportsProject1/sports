@@ -58,4 +58,13 @@ public class JwtTokenProvider {
             return false;
         }
     }
+
+    public String extractUserId(String token) {
+        Claims claims = Jwts.parser()
+                .setSigningKey(secretKey)
+                .parseClaimsJws(token)
+                .getBody();
+
+        return claims.getSubject(); // 사용자 ID가 일반적으로 'sub' 필드에 저장됨
+    }
 }
