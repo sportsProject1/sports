@@ -69,6 +69,8 @@ public class ItemController {
         User user = userService.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다: " + username));
 
+        System.out.println("user : " + user);
+
         itemService.addItem(itemDTO, file, user); // 파일을 함께 전달
         ItemResponseDTO response = new ItemResponseDTO("아이템이 성공적으로 추가되었습니다.");
         return ResponseEntity.ok(response);
