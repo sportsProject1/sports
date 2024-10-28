@@ -4,6 +4,7 @@ import com.sports.Item.S3Service;
 import com.sports.user.User;
 import com.sports.user.UserDTO;
 import com.sports.user.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -32,13 +34,29 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
 
+    // 회원가입
     @PostMapping("/register")
-    public ResponseEntity<Map<String, String>> signUp(@ModelAttribute UserDTO userDTO,
-                                                      @RequestParam("file") MultipartFile file) throws IOException {
+    public ResponseEntity<Map<String, String>> signUp(@Valid @ModelAttribute UserDTO userDTO,
+                                                      BindingResult bindingResult,
+                                                      @RequestParam(value = "file", required = false) MultipartFile file) throws IOException {
+        // 유효성 검사 결과 처리
+        if (bindingResult.hasErrors()) {
+            Map<String, String> errorResponse = new HashMap<>();
+            bindingResult.getFieldErrors().forEach(error ->
+                    errorResponse.put(error.getField(), error.getDefaultMessage()));
+            return ResponseEntity.badRequest().body(errorResponse);
+        }
+
         String phone = userDTO.getPhone().replaceAll("[^0-9]", ""); // 숫자 이외의 문자를 제거
         userDTO.setPhone(phone);
 
-        String imgURL = s3Service.saveFile(file.getOriginalFilename(), file.getInputStream());
+        String imgURL;
+        // 파일이 null일 경우 S3Service를 통해 기본 이미지 URL 가져오기
+        if (file != null && !file.isEmpty()) {
+            imgURL = s3Service.saveFile(file.getOriginalFilename(), file.getInputStream());
+        } else {
+            imgURL = s3Service.saveFile(null, null); // 기본 이미지 URL을 가져옴
+        }
         userDTO.setImgURL(imgURL);
 
         String resultMessage = userService.register(userDTO);
@@ -53,6 +71,7 @@ public class AuthController {
         }
     }
 
+    // 로그인
     @PostMapping("/login")
     public ResponseEntity<Map<String, Object>> login(@ModelAttribute LoginRequest loginRequest) {
         try {

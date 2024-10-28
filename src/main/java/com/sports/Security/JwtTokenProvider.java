@@ -61,6 +61,7 @@ public class JwtTokenProvider {
         }
     }
 
+    // 토큰에서 사용자 id값 추출
     public String extractUserId(String token) {
         Claims claims = Jwts.parser()
                 .setSigningKey(secretKey)
