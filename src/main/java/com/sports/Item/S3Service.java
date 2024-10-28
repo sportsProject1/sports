@@ -47,16 +47,24 @@ public class S3Service {
     }
 
     public String saveFile(String fileName, InputStream inputStream) throws IOException {
-        String filePath = "test/" + fileName;
 
-        PutObjectResponse response = s3Client.putObject(
-                PutObjectRequest.builder()
-                        .bucket(bucket)
-                        .key(filePath)
-                        .build(),
-                RequestBody.fromInputStream(inputStream, inputStream.available())
-        );
+        String basePath = "test/";
+        String filePath;
 
+        // fileName이 null일 경우 기본 파일 경로 설정
+        if (fileName == null || fileName.isEmpty()) {
+            filePath = basePath + "222.jfif"; // 기본으로 띄울 이미지 (나중에 기본이미지 정해서 변경)
+        } else {
+            filePath = basePath + fileName;
+
+            PutObjectResponse response = s3Client.putObject(
+                    PutObjectRequest.builder()
+                            .bucket(bucket)
+                            .key(filePath)
+                            .build(),
+                    RequestBody.fromInputStream(inputStream, inputStream.available())
+            );
+        }
         return "https://" + bucket + ".s3.amazonaws.com/" + filePath;
     }
 
