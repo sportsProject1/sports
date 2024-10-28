@@ -3,6 +3,7 @@ package com.sports.Item;
 import com.sports.Category.Category;
 import com.sports.Category.CategoryDTO;
 import com.sports.Category.CategoryService;
+import com.sports.Security.JwtTokenProvider;
 import com.sports.user.User;
 import com.sports.user.UserService;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,7 @@ public class ItemController {
     private final ItemService itemService;
     private final CategoryService categoryService;
     private final S3Service s3Service;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Autowired
     private UserService userService;
@@ -64,12 +66,11 @@ public class ItemController {
     @PostMapping("/add")
     public ResponseEntity<ItemResponseDTO> postItem(@ModelAttribute ItemDTO itemDTO,
                                                     @RequestParam("file") List<MultipartFile> file,
-                                                    Authentication authentication) throws IOException {
-        String username = authentication.getName();
-        User user = userService.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다: " + username));
+                                                    @RequestHeader("Authorization") String token) throws IOException {
+        String userId = jwtTokenProvider.extractUserId(token.replace("Bearer ", ""));
 
-        System.out.println("user : " + user);
+        User user = userService.findByUsername(userId)
+                        .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
         itemService.addItem(itemDTO, file, user); // 파일을 함께 전달
         ItemResponseDTO response = new ItemResponseDTO("아이템이 성공적으로 추가되었습니다.");
