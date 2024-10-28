@@ -25,13 +25,14 @@ public class ItemService implements updatable<ItemDTO> {
     private final UserService userService;
     private final S3Service s3Service;
 
-    public void addItem(ItemDTO itemDTO, List<MultipartFile> files) throws IOException {
+    public void addItem(ItemDTO itemDTO, List<MultipartFile> files, User user) throws IOException {
         Item item = new Item();
 
         item.setTitle(itemDTO.getTitle());
         item.setPrice(itemDTO.getPrice());
         item.setDesc(itemDTO.getDesc());
         item.setStock(itemDTO.getStock());
+        item.setUser(user);
 
         // 이미지를 S3에 업로드 후 URL 리스트 생성
         List<String> imgUrls = s3Service.saveFiles(files);

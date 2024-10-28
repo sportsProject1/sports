@@ -3,6 +3,7 @@ package com.sports.Item;
 import com.sports.Category.Category;
 import com.sports.Category.CategoryDTO;
 import com.sports.Category.CategoryService;
+import com.sports.user.User;
 import com.sports.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,9 +63,13 @@ public class ItemController {
 
     @PostMapping("/add")
     public ResponseEntity<ItemResponseDTO> postItem(@ModelAttribute ItemDTO itemDTO,
-                                                    @RequestParam("file") List<MultipartFile> file) throws IOException {
+                                                    @RequestParam("file") List<MultipartFile> file,
+                                                    Authentication authentication) throws IOException {
+        String username = authentication.getName();
+        User user = userService.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다: " + username));
 
-        itemService.addItem(itemDTO, file); // 파일을 함께 전달
+        itemService.addItem(itemDTO, file, user); // 파일을 함께 전달
         ItemResponseDTO response = new ItemResponseDTO("아이템이 성공적으로 추가되었습니다.");
         return ResponseEntity.ok(response);
     }
