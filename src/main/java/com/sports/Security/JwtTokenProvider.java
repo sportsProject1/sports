@@ -11,6 +11,8 @@ import org.springframework.stereotype.Component;
 import javax.crypto.SecretKey;
 import java.util.Date;
 
+import static javax.crypto.Cipher.SECRET_KEY;
+
 @Component
 public class JwtTokenProvider {
 

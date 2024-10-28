@@ -17,9 +17,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 @Service
 @RequiredArgsConstructor
 public class ItemService implements updatable<ItemDTO> {
@@ -28,7 +25,6 @@ public class ItemService implements updatable<ItemDTO> {
     private final CategoryService categoryService;
     private final UserService userService;
     private final S3Service s3Service;
-    private static final Logger logger = LoggerFactory.getLogger(ItemService.class);
 
     @Transactional
     public void addItem(ItemDTO itemDTO, List<MultipartFile> files, User user) throws IOException {
@@ -39,8 +35,6 @@ public class ItemService implements updatable<ItemDTO> {
         item.setDesc(itemDTO.getDesc());
         item.setStock(itemDTO.getStock());
         item.setUser(user);
-
-        logger.info("Adding item: {}", item);
 
         // 이미지를 S3에 업로드 후 URL 리스트 생성
         List<String> imgUrls = s3Service.saveFiles(files);

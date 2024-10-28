@@ -2,8 +2,11 @@ package com.sports.Cart;
 
 import com.sports.Item.ItemDTO;
 import com.sports.Item.ItemService;
+import com.sports.user.User;
+import com.sports.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -16,17 +19,22 @@ public class CartController {
     private final ItemService itemService;
     private final CartService cartService;
     private final CartRepository cartRepository;
+    private final UserService userService;
 
     @PostMapping("/cart/add/{id}")
-    public ResponseEntity<CartDTO> addItemToCart(@PathVariable Long id, @RequestParam Integer count) {
+    public ResponseEntity<CartDTO> addItemToCart(@PathVariable Long id,
+                                                 @RequestParam Integer count,
+                                                 Authentication authentication) {
+
+        String username = authentication.getName();
+        User user = userService.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다: " + username));
+
         ItemDTO itemDTO = itemService.getItemDetail(id);
 
         if (itemDTO != null) {
             Cart cart = new Cart();
 
-            // 유저 정보 가져오기
-//            cart.setUserId(로그인된 정보에서 가져오기);
-//            cart.setUsername(로그인된 정보에서 가져오기);
             cart.setItem(itemService.getItemEntity(id));
             cart.setCount(count);
 

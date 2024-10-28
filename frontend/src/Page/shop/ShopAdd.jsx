@@ -1,6 +1,5 @@
 import {useState} from "react";
 import useImageUploader from "../../hooks/useImageUploader";
-import {postData} from "../../Server/ApiServiceNoToken";
 import {useNavigate} from "react-router-dom";
 import {handleChange} from "../../Utils/handleChange";
 import {Container} from "../../styled/Container";
@@ -37,20 +36,10 @@ function ShopAdd() {
             images.forEach((image)=>{
                 addItemFormData.append("file",image.file);
             })
-
         }
-
-        // postData("shop/add", addItemFormData)
-        //     .then(res=> navigate("/shop",{replace:true}))
-        //     .catch(); //여기는 토큰값 없이 아이템 작성 api 함수
-
-        postTokenData("shop/add",addItemFormData)
+        postTokenData("shop/add",addItemFormData,token)
             .then(res => navigate("/shop"))
-            .catch(); // 여기는 useHook으로 token 관리하는 token값 백엔드로 보내는 함수
-
-        // postTokenData("shop/add",addItemFormData,token)
-        //     .then(res => navigate("/shop"))
-        //     .catch(); // 여기는 token 해당페이지에서 받아와서 인자로 token값 보내는 함수
+            .catch(); // 여기는 token 해당페이지에서 받아와서 인자로 token값 보내는 함수
 
     }
 
