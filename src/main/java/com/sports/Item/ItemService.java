@@ -4,12 +4,8 @@ import com.sports.Category.Category;
 import com.sports.Category.CategoryService;
 import com.sports.Interface.updatable;
 import com.sports.user.User;
-import com.sports.user.UserRepository;
-import com.sports.user.UserService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -23,7 +19,6 @@ public class ItemService implements updatable<ItemDTO> {
 
     private final ItemRepository itemRepository;
     private final CategoryService categoryService;
-    private final UserService userService;
     private final S3Service s3Service;
 
     @Transactional

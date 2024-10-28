@@ -30,8 +30,4 @@ public class Cart {
     private Timestamp orderTime;
 
     private boolean paymentStatus = false;
-
-    public User getUser() {
-        return user;
-    }
 }

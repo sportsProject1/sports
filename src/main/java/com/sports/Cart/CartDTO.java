@@ -9,5 +9,9 @@ import java.sql.Timestamp;
 @Data
 @RequiredArgsConstructor
 public class CartDTO {
-    //내용없음
+    private Long id;
+    private Integer count;
+    private Long itemId;
+    private Long userId;
+    private boolean paymentStatus;
 }
