@@ -30,40 +30,29 @@ class ItemServiceTest {
     private UserService userService;
 
     private User user;
+    private User adminUser;
     private Item item;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
         user = new User();
-        user.setId(1); // 예시로 설정
+        user.setId(1); // 일반 사용자 ID
+        user.setRole("ROLE_USER"); // 일반 사용자 역할
+
+        adminUser = new User();
+        adminUser.setId(2); // 관리자 사용자 ID
+        adminUser.setRole("ROLE_ADMIN"); // 관리자 역할
+
         item = new Item();
         item.setId(1L);
         item.setUser(user);
     }
 
     @Test
-    void testUpdateItem() {
-        ItemDTO itemDTO = new ItemDTO();
-        itemDTO.setTitle("Updated Title");
-        itemDTO.setPrice(150);
-        itemDTO.setDesc("Updated Description");
-        itemDTO.setStock(5);
-        itemDTO.setCategoryId(1L);
-
-        when(itemRepository.findById(1L)).thenReturn(Optional.of(item));
-        when(categoryService.findById(1L)).thenReturn(Optional.of(new Category()));
-
-        itemService.update(1L, itemDTO, user);
-
-        assertEquals("Updated Title", item.getTitle());
-        verify(itemRepository, times(1)).save(item);
-    }
-
-    @Test
     void testUpdateItemUnauthorized() {
         User anotherUser = new User();
-        anotherUser.setId(2); // 다른 사용자
+        anotherUser.setId(3); // 다른 사용자
 
         ItemDTO itemDTO = new ItemDTO();
         itemDTO.setTitle("Updated Title");
@@ -78,6 +67,24 @@ class ItemServiceTest {
     }
 
     @Test
+    void testUpdateItemAdmin() {
+        ItemDTO itemDTO = new ItemDTO();
+        itemDTO.setTitle("Updated Title");
+        itemDTO.setPrice(150);
+        itemDTO.setDesc("Updated Description");
+        itemDTO.setStock(5);
+        itemDTO.setCategoryId(1L);
+
+        when(itemRepository.findById(1L)).thenReturn(Optional.of(item));
+        when(categoryService.findById(1L)).thenReturn(Optional.of(new Category()));
+
+        itemService.update(1L, itemDTO, adminUser); // 관리자 사용자가 업데이트
+
+        assertEquals("Updated Title", item.getTitle());
+        verify(itemRepository, times(1)).save(item);
+    }
+
+    @Test
     void testDeleteItem() {
         when(itemRepository.findById(1L)).thenReturn(Optional.of(item));
 
@@ -89,7 +96,7 @@ class ItemServiceTest {
     @Test
     void testDeleteItemUnauthorized() {
         User anotherUser = new User();
-        anotherUser.setId(2); // 다른 사용자
+        anotherUser.setId(3); // 다른 사용자
 
         when(itemRepository.findById(1L)).thenReturn(Optional.of(item));
 
@@ -98,5 +105,14 @@ class ItemServiceTest {
         });
 
         assertEquals("권한이 없습니다.", thrown.getMessage());
+    }
+
+    @Test
+    void testDeleteItemAdmin() {
+        when(itemRepository.findById(1L)).thenReturn(Optional.of(item));
+
+        itemService.delete(1L, adminUser); // 관리자 사용자가 삭제
+
+        verify(itemRepository, times(1)).delete(item);
     }
 }
