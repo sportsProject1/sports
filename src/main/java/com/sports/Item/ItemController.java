@@ -89,15 +89,29 @@ public class ItemController {
     }
 
     @PostMapping("/update/{id}")
-    public ResponseEntity<Void> updateItem(@PathVariable Long id, @RequestBody ItemDTO itemDTO) {
-        itemService.update(id, itemDTO);
+    public ResponseEntity<Void> updateItem(
+            @PathVariable Long id,
+            @RequestBody ItemDTO itemDTO,
+            @RequestHeader("Authorization") String token) {
+
+        String userId = jwtTokenProvider.extractUserId(token.replace("Bearer ", ""));
+        User user = userService.findByUsername(userId)
+                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+
+        itemService.update(id, itemDTO, user);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Void> deleteItem(@PathVariable Long id) {
-        itemService.delete(id);
+    public ResponseEntity<Void> deleteItem(
+            @PathVariable Long id,
+            @RequestHeader("Authorization") String token) {
+
+        String userId = jwtTokenProvider.extractUserId(token.replace("Bearer ", ""));
+        User user = userService.findByUsername(userId)
+                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+
+        itemService.delete(id, user);
         return ResponseEntity.ok().build();
     }
-
 }
