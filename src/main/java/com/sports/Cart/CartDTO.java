@@ -1,15 +1,14 @@
 package com.sports.Cart;
 
-import com.fasterxml.jackson.core.JsonToken;
 import com.sports.Item.Item;
 import com.sports.user.User;
 import jakarta.validation.constraints.*;
+import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
-import java.sql.Timestamp;
-
 @Data
+@Builder
 @RequiredArgsConstructor
 public class CartDTO {
     private Long id;
