@@ -3,10 +3,14 @@ package com.sports.user;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
+@AllArgsConstructor
 public class UserDTO {
+    private Long id;
+
     @NotBlank
     @Size(min = 6, max = 20, message = "Id : 6자~20자 사이가 아님")
     private String username;
@@ -36,4 +40,5 @@ public class UserDTO {
 
     private String imgURL;
     private String role;
+
 }

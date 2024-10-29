@@ -37,18 +37,13 @@ public class SecurityConfig {
                 .httpBasic(httpBasic -> httpBasic.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests((authorize) -> authorize
-                        .requestMatchers("/", "/register", "/login", "/user", "/shop", "/shop/**").permitAll()
+                        .requestMatchers("/", "/register", "/login", "/logout", "/user", "/shop", "/shop/**").permitAll()
                         .requestMatchers("/admin").hasRole("ADMIN")
                         .requestMatchers("/manager").hasRole("MANAGER")
                         .requestMatchers("/clerk").hasRole("CLERK")
                         .anyRequest().authenticated())
-                .formLogin(formLogin -> formLogin
-                        .disable())
-                .logout(logout -> logout
-                        .logoutUrl("/logout")
-                        .logoutSuccessHandler((request, response, authentication) -> {
-                            response.setStatus(HttpServletResponse.SC_OK);
-                        }))
+                .formLogin(formLogin -> formLogin.disable())
+                .logout(logout -> logout.disable())         // 시큐리티의 기본 로그인,로그아웃 비활성화
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // JWT 필터
         return http.build();
     }
