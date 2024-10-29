@@ -33,11 +33,19 @@ function LoginForm() {
                 const response  = await axios.post("http://localhost:8090/login", formData);
 //                 console.log("로그인 됨",response.data) // 토큰값 또는 data가 제대로 넘어오는지 콘솔로 확인
 //                 const { user, token } = response.data; // response axios post요청으로 login시 response.data 내에 user와 token 비구조할당으로 가져옴
-                const token = response.data.token; // 토큰 빼오기
-                const user = token? jwtDecode(token) :null // 로그인시 리덕스에 디코드된 토큰값 저장
+                console.log(response,"로긴")
+                const token = response.data.accessToken; // 토큰 빼오기
+                const refreshToken = response.data.refreshToken;
+                const user = {
+                    nickname : response.data.nickname,
+                    role: response.data.role,
+                    username:response.data.username,
+                }
                 dispatch(setCredentials({ user,token })); // 비구조할당으로 가져온 데이터 리덕스툴킷 스토어에 저장함 (리액트 모든 페이지에서 전역으로 사용가능)
 
                 localStorage.setItem("token", token); // 토큰값 로컬스토리지로 관리
+                localStorage.setItem("refreshToken",refreshToken);
+                localStorage.setItem("user", JSON.stringify(user));
 
                 navigate("/",{replace:true}); // 메인페이지로 이동 및 뒤로가기 잠금
             }catch (err){

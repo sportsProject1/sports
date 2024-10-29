@@ -9,8 +9,9 @@ import {logout} from "../Store/authSlice";
 const NavContainer = styled.nav`
     width:100%;
     height: 100px;
-    background-color: green;
     display: flex;
+    border-bottom: 1px solid #ccc;
+    box-shadow: 0 2px 4px 0 rgba(0,0,0,.2);
     > ul{
         display: flex;
         align-items: center;
@@ -19,8 +20,11 @@ const NavContainer = styled.nav`
         list-style: none;
         margin:15px;
         padding:15px;
-        background-color: #61dafb;
         cursor: pointer;
+    }
+    > ul li:hover{
+        border-bottom: 1px solid #ccc;
+        box-shadow: 0 2px  0 rgba(0,0,0,.2);
     }
 `
 
