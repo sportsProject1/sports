@@ -37,7 +37,7 @@ public class SecurityConfig {
                 .httpBasic(httpBasic -> httpBasic.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests((authorize) -> authorize
-                        .requestMatchers("/", "/register", "/login", "/logout", "/user", "/shop", "/shop/**").permitAll()
+                        .requestMatchers("/", "/register", "/login", "/logout", "/refresh", "/user", "/shop", "/shop/**").permitAll()
                         .requestMatchers("/admin").hasRole("ADMIN")
                         .requestMatchers("/manager").hasRole("MANAGER")
                         .requestMatchers("/clerk").hasRole("CLERK")
