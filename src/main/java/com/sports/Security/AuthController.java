@@ -128,6 +128,30 @@ public class AuthController {
         return ResponseEntity.ok("로그아웃 되었습니다.");
     }
 
+    @PostMapping("/refresh")
+    public ResponseEntity<?> refreshAccessToken(@RequestBody Map<String, String> request) {
+        String refreshToken = request.get("refreshToken");
+
+        // 리프레시 토큰이 유효한지 확인
+        if (jwtTokenProvider.validateToken(refreshToken)) {
+            String username = jwtTokenProvider.getUsername(refreshToken);
+            User user = userService.findByUsername(username)
+                    .orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다."));
+
+            // DB에서 저장된 리프레시 토큰과 일치하는지 확인
+            UserRefreshToken userRefreshToken = userRefreshTokenRepository.findById(user.getId())
+                    .orElseThrow(() -> new RuntimeException("리프레시 토큰이 유효하지 않습니다."));
+
+            if (userRefreshToken.validateRefreshToken(refreshToken)) {
+                // 새로운 액세스 토큰 생성 및 반환
+                String newAccessToken = jwtTokenProvider.createToken(username, user.getRole());
+                return ResponseEntity.ok(Map.of("accessToken", newAccessToken));
+            }
+        }
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid refresh token");
+    }
+
 
 
 
