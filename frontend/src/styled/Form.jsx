@@ -10,3 +10,8 @@ export const Form = styled.form`
         margin:15px 0;
     }
 `
+
+export const DetailForm = styled.form`
+    width: 100%;
+    
+`
