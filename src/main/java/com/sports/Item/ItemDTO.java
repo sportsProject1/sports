@@ -1,9 +1,6 @@
 package com.sports.Item;
 
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
