@@ -18,7 +18,7 @@ public class CartController {
 
     @GetMapping("")
     public ResponseEntity<List<CartDTO>> getCartItems(@RequestHeader("Authorization") String token) {
-        String userId = jwtTokenProvider.extractUserId(token.replace("Bearer ", ""));
+        Long userId = Long.valueOf(jwtTokenProvider.extractUserId(token.replace("Bearer ", "")));
         List<CartDTO> cartItems = cartService.getCartItemsByUserId(userId);
         return ResponseEntity.ok(cartItems);
     }

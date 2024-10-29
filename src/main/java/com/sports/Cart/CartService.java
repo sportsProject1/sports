@@ -18,7 +18,7 @@ public class CartService {
     private final UserService userService;
     private final ItemService itemService;
 
-    public List<CartDTO> getCartItemsByUserId(String userId) {
+    public List<CartDTO> getCartItemsByUserId(Long userId) {
         List<Cart> cartItems = cartRepository.findByUserId(userId);
 
         return cartItems.stream()
