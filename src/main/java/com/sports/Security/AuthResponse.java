@@ -1,12 +1,19 @@
 package com.sports.Security;
 
+import com.sports.user.UserDTO;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class AuthResponse {
-    private String token;
-
-    public AuthResponse(String token) {
-        this.token = token;
-    }
+    private String username;
+    private String nickname;
+    private String role;
+    private String accessToken;
+    private String refreshToken;
 }
