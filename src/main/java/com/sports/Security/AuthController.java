@@ -16,6 +16,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -114,6 +115,19 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
     }
+
+    // 로그아웃
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        userService.findByUsername(username).ifPresent(user -> {
+            userRefreshTokenRepository.deleteById(user.getId());  // DB에서 리프레시 토큰 삭제
+        });
+
+        return ResponseEntity.ok("로그아웃 되었습니다.");
+    }
+
 
 
 
