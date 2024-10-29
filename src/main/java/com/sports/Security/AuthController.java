@@ -87,13 +87,13 @@ public class AuthController {
             // 권한 정보 가져오기
             String role = authentication.getAuthorities().iterator().next().getAuthority();
 
-            // 액세스 토큰과 리프레시 토큰 생성
-            String accessToken = jwtTokenProvider.createToken(authentication.getName(), role);
-            String refreshToken = jwtTokenProvider.createRefreshToken();
-
             // 사용자 정보 추출
             User user = userService.findByUsername(authentication.getName())
                     .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+
+            // 액세스 토큰과 리프레시 토큰 생성 (userId 포함)
+            String accessToken = jwtTokenProvider.createToken(user.getId(), user.getUsername(), role);
+            String refreshToken = jwtTokenProvider.createRefreshToken();
 
             // 리프레시 토큰 저장 및 업데이트
             UserRefreshToken userRefreshToken = userRefreshTokenRepository.findById(user.getId())
@@ -115,6 +115,7 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
     }
+
 
     // 로그아웃
     @PostMapping("/logout")
@@ -144,13 +145,15 @@ public class AuthController {
 
             if (userRefreshToken.validateRefreshToken(refreshToken)) {
                 // 새로운 액세스 토큰 생성 및 반환
-                String newAccessToken = jwtTokenProvider.createToken(username, user.getRole());
+                String newAccessToken = jwtTokenProvider.createToken(user.getId(), user.getUsername(), user.getRole());
                 return ResponseEntity.ok(Map.of("accessToken", newAccessToken));
             }
         }
 
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid refresh token");
     }
+
+
 
 
 
