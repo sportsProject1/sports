@@ -43,8 +43,8 @@ public class UserService {
         return userRepository.findByUsername(username);
     }
 
-    public User findById(Long userId) {
-        return userRepository.findById(userId)
+    public User findById(String userId) {
+        return userRepository.findById(Long.valueOf(userId))
                 .orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다.")); // 예외 처리
     }
 
