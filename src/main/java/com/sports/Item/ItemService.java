@@ -98,7 +98,7 @@ public class ItemService implements updatable<ItemDTO> {
         // 1차 권한 확인: 현재 로그인한 사용자의 ID와 아이템의 소유자 ID를 비교
         if (item.getUser().getId() != user.getId()) {
             // 2차 권한 확인: 로그인한 사용자가 관리자(role이 ADMIN)인지 확인
-            if (!"ROLE_ADMIN".equals(user.getRole())) {
+            if (!"ROLE_MANAGER".equals(user.getRole())) {
                 throw new RuntimeException("권한이 없습니다.");
             }
         }
