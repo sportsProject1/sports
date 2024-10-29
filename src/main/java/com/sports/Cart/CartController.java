@@ -11,12 +11,30 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/mypage/cart")
 @CrossOrigin(origins = "http://localhost:3000")
 public class CartController {
-    //내용없음
+
+//    @PostMapping("/add")
+//    public ResponseEntity<CartResponseDTO> addToCart(@RequestBody CartDTO cartDTO,
+//                                                     @RequestHeader("Authorization") String token) {
+//        // 내용추가필요
+//    }
+//
+//    @DeleteMapping("/delete/{id}")
+//    public ResponseEntity<Void> deleteFromCart(@PathVariable Long id,
+//                                               @RequestHeader("Authorization") String token) {
+//        // 내용추가필요
+//    }
+//
+//    @GetMapping("/")
+//    public ResponseEntity<List<CartDTO>> getCartItems(@RequestHeader("Authorization") String token) {
+//        // 내용추가필요
+//    }
 
 }
 

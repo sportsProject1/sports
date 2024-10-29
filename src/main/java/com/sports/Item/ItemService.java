@@ -43,26 +43,25 @@ public class ItemService implements updatable<ItemDTO> {
     }
 
     public ItemDTO getItemDetail(Long id) {
-        Optional<Item> optionalItem = itemRepository.findById(id);
-        if (optionalItem.isPresent()) {
-            Item item = optionalItem.get();
-            return new ItemDTO(
-                    item.getId(),
-                    item.getTitle(),
-                    item.getPrice(),
-                    item.getDesc(),
-                    item.getImgurl(),
-                    item.getStock(),
-                    item.getCategory() != null ? item.getCategory().getId() : null
-            );
-        } else {
-            return null;
-        }
+        Item item = getItemEntity(id);
+        return convertToDTO(item);
     }
 
     public Item getItemEntity(Long id) {
         return itemRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("해당 상품을 찾을 수 없습니다."));
+    }
+
+    private ItemDTO convertToDTO(Item item) {
+        return new ItemDTO(
+                item.getId(),
+                item.getTitle(),
+                item.getPrice(),
+                item.getDesc(),
+                item.getImgurl(),
+                item.getStock(),
+                item.getCategory() != null ? item.getCategory().getId() : null
+        );
     }
 
     @Override

@@ -95,12 +95,11 @@ public class ItemController {
     }
 
     @GetMapping("/detail/{id}")
-    public ResponseEntity<ItemDTO> detailItem(@PathVariable Long id) {
-        ItemDTO itemDTO = itemService.getItemDetail(id);
-
-        if (itemDTO != null) {
+    public ResponseEntity<ItemDTO> detailItem(@PathVariable(name = "id") Long id) {
+        try {
+            ItemDTO itemDTO = itemService.getItemDetail(id);
             return ResponseEntity.ok(itemDTO);
-        } else {
+        } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }
     }
