@@ -6,8 +6,10 @@ import com.sports.Category.CategoryService;
 import com.sports.Security.JwtTokenProvider;
 import com.sports.user.User;
 import com.sports.user.UserService;
+import io.jsonwebtoken.MalformedJwtException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import org.springframework.web.bind.annotation.*;
@@ -64,15 +66,32 @@ public class ItemController {
     @PostMapping("/add")
     public ResponseEntity<ItemResponseDTO> postItem(@ModelAttribute ItemDTO itemDTO,
                                                     @RequestParam("file") List<MultipartFile> file,
-                                                    @RequestHeader("Authorization") String token) throws IOException {
-        String userId = jwtTokenProvider.extractUserId(token.replace("Bearer ", ""));
+                                                    @RequestHeader("Authorization") String token) {
+        try {
+            String userId = jwtTokenProvider.extractUserId(token.replace("Bearer ", ""));
+            User user = userService.findByUsername(userId)
+                    .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
-        User user = userService.findByUsername(userId)
-                        .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
-
-        itemService.addItem(itemDTO, file, user); // 파일을 함께 전달
-        ItemResponseDTO response = new ItemResponseDTO("아이템이 성공적으로 추가되었습니다.");
-        return ResponseEntity.ok(response);
+            itemService.addItem(itemDTO, file, user); // 파일을 함께 전달
+            ItemResponseDTO response = new ItemResponseDTO("상품이 성공적으로 추가되었습니다.");
+            return ResponseEntity.ok(response);
+        } catch (MalformedJwtException e) {
+            // JWT가 잘못된 형식인 경우
+            ItemResponseDTO response = new ItemResponseDTO("잘못된 JWT 형식입니다.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        } catch (IOException e) {
+            // 파일 처리 중 오류 발생
+            ItemResponseDTO response = new ItemResponseDTO("상품 추가 중 파일 처리에 실패했습니다.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        } catch (RuntimeException e) {
+            // 사용자 찾기 실패 등 일반 예외 처리
+            ItemResponseDTO response = new ItemResponseDTO(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        } catch (Exception e) {
+            // 그 외의 예외 처리
+            ItemResponseDTO response = new ItemResponseDTO("상품 추가에 실패했습니다.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
     }
 
     @GetMapping("/detail/{id}")
@@ -87,29 +106,52 @@ public class ItemController {
     }
 
     @PostMapping("/update/{id}")
-    public ResponseEntity<Void> updateItem(
+    public ResponseEntity<ItemResponseDTO> updateItem(
             @PathVariable Long id,
             @RequestBody ItemDTO itemDTO,
             @RequestHeader("Authorization") String token) {
+        try {
+            String userId = jwtTokenProvider.extractUserId(token.replace("Bearer ", ""));
+            User user = userService.findByUsername(userId)
+                    .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
-        String userId = jwtTokenProvider.extractUserId(token.replace("Bearer ", ""));
-        User user = userService.findByUsername(userId)
-                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
-
-        itemService.update(id, itemDTO, user);
-        return ResponseEntity.ok().build();
+            itemService.update(id, itemDTO, user);
+            ItemResponseDTO response = new ItemResponseDTO("상품이 성공적으로 업데이트되었습니다.");
+            return ResponseEntity.ok(response);
+        } catch (MalformedJwtException e) {
+            ItemResponseDTO response = new ItemResponseDTO("잘못된 JWT 형식입니다.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        } catch (RuntimeException e) {
+            ItemResponseDTO response = new ItemResponseDTO(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        } catch (Exception e) {
+            ItemResponseDTO response = new ItemResponseDTO("상품 업데이트에 실패했습니다.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Void> deleteItem(
+    public ResponseEntity<ItemResponseDTO> deleteItem(
             @PathVariable Long id,
             @RequestHeader("Authorization") String token) {
+        try {
+            String userId = jwtTokenProvider.extractUserId(token.replace("Bearer ", ""));
+            User user = userService.findByUsername(userId)
+                    .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
-        String userId = jwtTokenProvider.extractUserId(token.replace("Bearer ", ""));
-        User user = userService.findByUsername(userId)
-                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
-
-        itemService.delete(id, user);
-        return ResponseEntity.ok().build();
+            itemService.delete(id, user);
+            ItemResponseDTO response = new ItemResponseDTO("상품이 성공적으로 삭제되었습니다.");
+            return ResponseEntity.ok(response);
+        } catch (MalformedJwtException e) {
+            ItemResponseDTO response = new ItemResponseDTO("잘못된 JWT 형식입니다.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        } catch (RuntimeException e) {
+            ItemResponseDTO response = new ItemResponseDTO(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        } catch (Exception e) {
+            ItemResponseDTO response = new ItemResponseDTO("상품 삭제에 실패했습니다.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
     }
+
 }
