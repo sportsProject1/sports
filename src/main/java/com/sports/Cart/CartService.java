@@ -26,7 +26,7 @@ public class CartService {
                 .collect(Collectors.toList());
     }
 
-    public CartDTO addCartItem(CartDTO cartDTO, String userId) {
+    public CartDTO addCartItem(CartDTO cartDTO, Long userId) {
         User user = userService.findById(userId);
         Item item = itemService.findById(cartDTO.getItem().getId());
 

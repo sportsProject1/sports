@@ -3,12 +3,11 @@ package com.sports.Cart;
 import com.sports.Item.Item;
 import com.sports.user.User;
 import jakarta.validation.constraints.*;
-import lombok.Builder;
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
 @Data
-@RequiredArgsConstructor
+@NoArgsConstructor
+@AllArgsConstructor
 public class CartDTO {
     private Long id;
 
@@ -19,12 +18,4 @@ public class CartDTO {
     private User user;
 
     private boolean paymentStatus;
-
-    public CartDTO(Long id, Integer count, Item item, User user, boolean paymentStatus) {
-        this.id = id;
-        this.count = count;
-        this.item = item;
-        this.user = user;
-        this.paymentStatus = paymentStatus;
-    }
 }
