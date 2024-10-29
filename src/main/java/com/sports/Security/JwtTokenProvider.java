@@ -19,9 +19,6 @@ import java.util.Date;
 @Component
 public class JwtTokenProvider {
 
-    @Value("${jwt.validity}")
-    private long validityInMilliseconds;
-
     private SecretKey secretKey; // 비밀 키 객체
     private final long expirationMinutes; // 발급 만료 시간 (분)
     private final long refreshExpirationHours; // 리프레시 토큰 만료 시간 (시간)
@@ -38,7 +35,7 @@ public class JwtTokenProvider {
         this.issuer = issuer;
     }
 
-    // 비밀 키 생성을 위한 PostConstruct 초기화
+    // secretKey 생성을 위한 PostConstruct 초기화
     @PostConstruct
     public void init() {
         // HS256에 맞는 안전한 비밀 키 생성
@@ -52,12 +49,12 @@ public class JwtTokenProvider {
         claims.put("role", role);
 
         Date now = new Date();
-        Date validity = new Date(now.getTime() + validityInMilliseconds);
+        Date expiration = Date.from(Instant.now().plus(expirationMinutes, ChronoUnit.MINUTES));
 
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(now)
-                .setExpiration(validity)
+                .setExpiration(expiration)
                 .signWith(secretKey)
                 .compact();
     }

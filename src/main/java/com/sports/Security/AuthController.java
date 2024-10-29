@@ -1,23 +1,16 @@
 package com.sports.Security;
 
-import com.nimbusds.openid.connect.sdk.claims.UserInfo;
 import com.sports.Item.S3Service;
 import com.sports.user.*;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,8 +18,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -126,9 +117,13 @@ public class AuthController {
             userRefreshTokenRepository.deleteById(user.getId());  // DB에서 리프레시 토큰 삭제
         });
 
+        // SecurityContext를 비워 세션에서 인증 정보 삭제
+        SecurityContextHolder.clearContext();
+
         return ResponseEntity.ok("로그아웃 되었습니다.");
     }
 
+    // 리프레시 토큰을 받아 액세스토큰을 재발급 해주기
     @PostMapping("/refresh")
     public ResponseEntity<?> refreshAccessToken(@RequestBody Map<String, String> request) {
         String refreshToken = request.get("refreshToken");
@@ -149,7 +144,7 @@ public class AuthController {
                 return ResponseEntity.ok(Map.of("accessToken", newAccessToken));
             }
         }
-
+        // 401 응답
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid refresh token");
     }
 
