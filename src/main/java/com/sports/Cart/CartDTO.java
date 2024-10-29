@@ -8,7 +8,6 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
 @Data
-@Builder
 @RequiredArgsConstructor
 public class CartDTO {
     private Long id;
@@ -20,4 +19,12 @@ public class CartDTO {
     private User user;
 
     private boolean paymentStatus;
+
+    public CartDTO(Long id, Integer count, Item item, User user, boolean paymentStatus) {
+        this.id = id;
+        this.count = count;
+        this.item = item;
+        this.user = user;
+        this.paymentStatus = paymentStatus;
+    }
 }

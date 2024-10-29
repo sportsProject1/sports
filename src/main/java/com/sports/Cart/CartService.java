@@ -41,12 +41,13 @@ public class CartService {
     }
 
     private CartDTO convertToDto(Cart cart) {
-        return CartDTO.builder()
-                .id(cart.getId())
-                .item(cart.getItem())
-                .count(cart.getCount())
-                .user(cart.getUser())
-                .build();
+        return new CartDTO(
+                cart.getId(),
+                cart.getCount(),
+                cart.getItem(),
+                cart.getUser(),
+                cart.isPaymentStatus()
+        );
     }
 }
 
