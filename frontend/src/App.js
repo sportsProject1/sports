@@ -19,11 +19,9 @@ function App() {
     useEffect(() => {
 
         const token = localStorage.getItem("token"); // 로컬스토리지에 token 가져오기
-        const user = token ? jwtDecode(token) : null; // 토큰이 있으면 토큰값 디코딩해서 변수 user에 담기
-        if(token && user){
-            dispatch(setCredentials({token,user})) // 토큰값 유저값 리덕스에 담기
-            // app에서 리덕스 관리하는 이유는 모든페이지가 App으로 관리되기 때문
-        }
+        const user = JSON.parse(localStorage.getItem("user"));
+
+        dispatch(setCredentials({user,token}));
 
     }, [dispatch]);
 
