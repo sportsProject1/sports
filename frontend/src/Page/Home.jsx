@@ -1,9 +1,7 @@
 import styled from "styled-components";
-import {useEffect, useState} from "react";
-import axios from "axios";
 import useImageUploader from "../hooks/useImageUploader";
 import {useSelector} from "react-redux";
-import authSlice from "../Store/authSlice";
+import {jwtDecode} from "jwt-decode";
 
 const PostContainer = styled.div`
     width: 1200px;
@@ -38,10 +36,13 @@ function Home() {
     const userData = useSelector((state)=>state.auth.user) // 리덕스 툴킷에 저장한 유저정보 가져오기
     const token = useSelector((state)=> state.auth.token); // 리덕스 툴킷에 저자한 토큰값 가져오기
 
+    const decoded = token ? jwtDecode(token) : null;
+
     return (
         <div>
             <button onClick={() => console.log(userData)}>리덕스 유저값 확인버튼</button>
             <button onClick={() => console.log(token)}>리덕스 토큰값 확인버튼</button>
+            <button onClick={() => console.log(decoded)}>디코딩 확인버튼</button>
             <h1>메인</h1>
             <PostContainer>
                 <form>

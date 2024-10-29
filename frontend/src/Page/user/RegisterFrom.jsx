@@ -33,7 +33,6 @@ function RegisterForm({ onSuccess }) {
             address: Yup.string().required('주소를 입력하세요.'),
         }),
         onSubmit: async (values) => {
-            console.log("123123")
             const formData = new FormData();
             formData.append("username", values.username);
             formData.append("password", values.password);

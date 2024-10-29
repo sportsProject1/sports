@@ -25,3 +25,13 @@ export const ShopCard = styled.div`
         width: 100%;
     }
 `
+
+export const ItemInfo = styled.div`
+    width: 80%;
+    display: flex;
+    box-sizing: border-box;
+    margin: auto;
+    >div{
+        width:50%;
+    }
+`
