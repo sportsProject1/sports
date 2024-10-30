@@ -40,7 +40,6 @@ function ShopAdd() {
         postTokenData("shop/add",addItemFormData,token)
             .then(res => navigate("/shop"))
             .catch(); // 여기는 token 해당페이지에서 받아와서 인자로 token값 보내는 함수
-
     }
 
     const {images,handleImageChange,handleRemoveImage} = useImageUploader(true)

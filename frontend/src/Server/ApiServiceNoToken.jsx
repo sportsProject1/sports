@@ -28,3 +28,11 @@ export const postData = async (url,formData) => {
         console.log("토큰값 없이 데이터 보내기 실패했음",err);
     }
 }
+
+export const postJsonData = async (url,formData) => {
+    try{
+        const response = await axios.post(`http://localhost:8090/${url}`, formData)
+    }catch (error) {
+        console.log(error)
+    }
+}
