@@ -1,15 +1,13 @@
 package com.sports.Security;
 
 import com.sports.user.UserDTO;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 public class AuthResponse {
     private String username;
     private String nickname;
