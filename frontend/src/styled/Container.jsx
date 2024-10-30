@@ -7,3 +7,7 @@ export const Container = styled.div`
 export const DetailContainer = styled.div`
     width: 100%;
 `
+
+export const MyPageContainer = styled.div`
+    width: 100%;
+`

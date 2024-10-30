@@ -4,6 +4,7 @@ import * as Yup from "yup";
 import useImageUploader from "../../../hooks/useImageUploader";
 import {postTokenData} from "../../../Server/ApiService";
 import {useSelector} from "react-redux";
+import {UserForm} from "../../../styled/user/UserStyled";
 
 function UserUpdateForm({user}){
 
@@ -52,7 +53,7 @@ function UserUpdateForm({user}){
     })
 
     return (
-        <form>
+        <UserForm>
             {images.length > 0 ? (
                 <div>
                     <img src={images[0].preview} alt="#"/>
@@ -77,7 +78,7 @@ function UserUpdateForm({user}){
             <input onChange={formik.handleChange} name={"address"} value={formik.values.address}/>
             <input onChange={formik.handleChange} name={"email"} value={formik.values.email}/>
 
-        </form>
+        </UserForm>
     )
 }
 

@@ -4,7 +4,7 @@ import {postData} from "../../Server/ApiServiceNoToken";
 import {logout} from "../../Store/authSlice";
 import styled from "styled-components";
 import axios from "axios";
-import {postTokenData} from "../../Server/ApiService";
+import {postTokenData, postTokenJsonData} from "../../Server/ApiService";
 
 const MenuUl = styled.ul`
         display: flex;
@@ -32,7 +32,7 @@ function Menu (){
     const handleLogout = async () => {
         try {
             // 로그아웃 요청 보내기
-            await postTokenData("logout",null,token);
+            await postTokenJsonData("logout",null,token);
 
             // 로컬스토리지 초기화
             localStorage.clear();
