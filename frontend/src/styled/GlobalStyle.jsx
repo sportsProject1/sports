@@ -7,6 +7,7 @@ const GlobalStyle = createGlobalStyle`
         margin: 0;
         font-family: Arial, Helvetica, sans-serif;
         box-sizing: border-box;
+        height: 1000vh;
         a {
             text-decoration: none;
         }

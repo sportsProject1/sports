@@ -10,6 +10,7 @@ import Shop from "./Page/shop/Shop";
 import ShopAdd from "./Page/shop/ShopAdd";
 import ShopDetail from "./Page/shop/ShopDetail";
 import MyPage from "./Page/user/MyPage";
+import ShopCart from "./Page/shop/ShopCart";
 
 const Routes = createBrowserRouter([
     {
@@ -26,6 +27,8 @@ const Routes = createBrowserRouter([
             { path: '/shop', element: <Shop/> },
             { path: '/shop/detail/:id', element:<ShopDetail/>},
             { path: '/shop/add', element: <ShopAdd/>},
+            { path: '/shop/cart', element: <ShopCart/>},
+
             { path: '/mypage', element: <MyPage/>}
         ]
     }
