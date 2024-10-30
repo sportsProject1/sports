@@ -66,5 +66,15 @@ export const postTokenData = async (url,formData,token) => {
             console.log("토큰값으로 데이터 보내기 실패햇음",err);
         }
     }
+}
 
+export const postTokenJsonData = async (url,formData,token) => {
+    try {
+        const response = await axios.post(`http://localhost:8090/${url}`, formData,{
+            Authorization: `Bearer ${token}`
+        })
+        return response.data;
+    }catch (err){
+        console.log(err)
+    }
 }
