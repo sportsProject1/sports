@@ -71,7 +71,9 @@ export const postTokenData = async (url,formData,token) => {
 export const postTokenJsonData = async (url,formData,token) => {
     try {
         const response = await axios.post(`http://localhost:8090/${url}`, formData,{
-            Authorization: `Bearer ${token}`
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
         })
         return response.data;
     }catch (err){

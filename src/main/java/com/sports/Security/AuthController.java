@@ -2,6 +2,7 @@ package com.sports.Security;
 
 import com.sports.Item.S3Service;
 import com.sports.user.*;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -11,6 +12,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -108,35 +111,39 @@ public class AuthController {
     }
 
 
-    // 로그아웃
     @PostMapping("/logout")
-    public ResponseEntity<?> logout() {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+    @Transactional
+    public ResponseEntity<?> logout(HttpServletRequest request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("사용자가 인증되지 않았습니다.");
+        }
 
+        String username = authentication.getName();
         userService.findByUsername(username).ifPresent(user -> {
-            userRefreshTokenRepository.deleteById(user.getId());  // DB에서 리프레시 토큰 삭제
+            userRefreshTokenRepository.deleteByUserId(user.getId());
         });
 
-        // SecurityContext를 비워 세션에서 인증 정보 삭제
         SecurityContextHolder.clearContext();
-
         return ResponseEntity.ok("로그아웃 되었습니다.");
     }
 
-    // 리프레시 토큰을 받아 액세스토큰을 재발급 해주기
+
+
+    // 리프레시 토큰으로 검증하여 새로운 액세스 토큰 생성
     @PostMapping("/refresh")
     public ResponseEntity<?> refreshAccessToken(@RequestBody Map<String, String> request) {
         String refreshToken = request.get("refreshToken");
 
-        // 리프레시 토큰이 유효한지 확인
+        // 리프레시 토큰 유효성 확인
         if (jwtTokenProvider.validateToken(refreshToken)) {
-            String username = jwtTokenProvider.getUsername(refreshToken);
-            User user = userService.findByUsername(username)
-                    .orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다."));
+            // userId 추출 및 사용자 조회
+            Long userId = Long.parseLong(jwtTokenProvider.extractUserId(refreshToken));
+            User user = userService.findByIdOrThrow(userId);
 
-            // DB에서 저장된 리프레시 토큰과 일치하는지 확인
+            // 리프레시 토큰 확인
             UserRefreshToken userRefreshToken = userRefreshTokenRepository.findById(user.getId())
-                    .orElseThrow(() -> new RuntimeException("리프레시 토큰이 유효하지 않습니다."));
+                    .orElseThrow(() -> new RuntimeException("유효하지 않은 리프레시 토큰입니다."));
 
             if (userRefreshToken.validateRefreshToken(refreshToken)) {
                 // 새로운 액세스 토큰 생성 및 반환
@@ -144,9 +151,12 @@ public class AuthController {
                 return ResponseEntity.ok(Map.of("accessToken", newAccessToken));
             }
         }
-        // 401 응답
+
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid refresh token");
     }
+
+
+
 
 
 
