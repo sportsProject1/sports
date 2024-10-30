@@ -72,11 +72,26 @@ function UserUpdateForm({user}){
             </button>
             <label id={"profileImg"}>프로필 사진 변경
                 <input style={{display: "none"}} name={"profileImg"} type={"file"}/></label>
+            <label>
+                아이디
             <input onChange={formik.handleChange} name={"username"} value={formik.values.username}/>
+            </label>
+            <label>
+                이름
             <input onChange={formik.handleChange} name={"nickname"} value={formik.values.nickname}/>
+            </label>
+            <label>
+                핸드폰 번호
             <input onChange={formik.handleChange} name={"phone"} value={formik.values.phone}/>
+            </label>
+            <label>
+                주소
             <input onChange={formik.handleChange} name={"address"} value={formik.values.address}/>
+            </label>
+            <label>
+                이메일
             <input onChange={formik.handleChange} name={"email"} value={formik.values.email}/>
+            </label>
 
         </UserForm>
     )

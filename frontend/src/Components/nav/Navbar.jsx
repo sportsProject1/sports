@@ -6,7 +6,9 @@ const NavContainer = styled.nav`
     width:100%;
     height: 130px;
 `
-const NavBox = styled.nav`
+const NavBox = styled.nav.withConfig({
+    shouldForwardProp: (prop) => prop !== "showNavbar"
+})`
         width:100%;
         height: 100px;
         position: fixed;
