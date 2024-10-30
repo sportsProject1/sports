@@ -48,6 +48,8 @@ public class JwtTokenProvider {
         claims.put("username", username); // username을 claims에 추가
         claims.put("role", role);
 
+        System.out.println("토큰에 포함된 권한 정보 확인: " + claims); // 토큰에 포함된 권한 정보 확인
+
         Date now = new Date();
         Date expiration = Date.from(Instant.now().plus(expirationMinutes, ChronoUnit.MINUTES));
 
