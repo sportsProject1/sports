@@ -43,17 +43,17 @@ public class UserService {
         return userRepository.findByUsername(username);
     }
 
-//    // String 타입으로 userId를 받아 조회
-//    public User findById(String userId) {
-//        return userRepository.findById(Long.valueOf(userId))
-//                .orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다.")); // 예외 처리
-//    }
-//
-//    // Long 타입으로 userId를 받아 조회
-//    public User findById(Long userId) {
-//        return userRepository.findById(userId)
-//                .orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다.")); // 예외 처리
-//    }
+    // String 타입으로 userId를 받아 조회
+    public User findById(String userId) {
+        return userRepository.findById(Long.valueOf(userId))
+                .orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다.")); // 예외 처리
+    }
+
+    // Long 타입으로 userId를 받아 조회
+    public User findById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다.")); // 예외 처리
+    }
 
     // 예외 처리 포함, userId를 받아 조회
     public User findByIdOrThrow(Long userId) {
