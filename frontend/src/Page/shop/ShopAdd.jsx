@@ -32,6 +32,8 @@ function ShopAdd() {
         addItemFormData.append("stock",addItem.stock);
         addItemFormData.append("categoryId",addItem.categoryId);
 
+        console.log(token)
+
         if(images.length > 0) {
             images.forEach((image)=>{
                 addItemFormData.append("file",image.file);
