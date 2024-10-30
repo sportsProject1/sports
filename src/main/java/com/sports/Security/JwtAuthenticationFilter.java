@@ -33,10 +33,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         // Authorization 헤더에서 토큰 추출
         String token = resolveToken(request);
 
+        System.out.println("토큰 값 확인: " + token); // 토큰 값 확인
+
         // 토큰이 존재하고 유효한 경우에만 사용자 정보 로드 및 인증 설정
         if (token != null && jwtTokenProvider.validateToken(token)) {
+
             String username = jwtTokenProvider.getUsername(token);
+            System.out.println("사용자 이름 확인: " + username); // 사용자 이름 확인
+
             PrincipalDetails userDetails = (PrincipalDetails) principalDetailsService.loadUserByUsername(username);
+            System.out.println("권한 정보 확인: " + userDetails.getAuthorities()); // 권한 정보 확인
 
             // 인증 객체 생성 및 SecurityContextHolder에 설정
             UsernamePasswordAuthenticationToken authentication =
@@ -44,9 +50,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
+            System.out.println("인증 객체 확인: " + SecurityContextHolder.getContext().getAuthentication()); // 인증 객체 확인
+
         } else if (token != null) {
             // 토큰이 유효하지 않은 경우 401 응답 반환
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid or expired token.");
+            System.out.println("토큰 검증 실패 Token validation failed or token was not found."); // 토큰 검증 실패 확인
+
             return; // 필터 체인 진행을 중단하고 401 응답 전송
         }
 
