@@ -4,7 +4,7 @@ import * as Yup from "yup";
 import useImageUploader from "../../../hooks/useImageUploader";
 import {postTokenData} from "../../../Server/ApiService";
 import {useSelector} from "react-redux";
-import {UserForm} from "../../../styled/user/UserStyled";
+import {FormWrap, UserForm} from "../../../styled/Form";
 
 function UserUpdateForm({user}){
 
@@ -53,47 +53,57 @@ function UserUpdateForm({user}){
     })
 
     return (
+        <FormWrap>
         <UserForm>
-            {images.length > 0 ? (
-                <div>
+            <div>
+                {images.length > 0 ? (
                     <img src={images[0].preview} alt="#"/>
 
-                </div>
-            ) : isImageDeleted ? (
-                <img src="https://mystudy5350.s3.amazonaws.com/test/222.jfif" alt="삭제된 이미지"/>
-            ) : (
-                <img src={user.imgURL} alt="기존 프로필 이미지"/>
-            )}
-            <button type="button" onClick={() => {
-                resetImages(); // 이미지 삭제
-                setIsImageDeleted(true); // 이미지 삭제 상태 업데이트
-            }}>
-                이미지 삭제
-            </button>
-            <label id={"profileImg"}>프로필 사진 변경
-                <input style={{display: "none"}} name={"profileImg"} type={"file"}/></label>
-            <label>
-                아이디
-            <input onChange={formik.handleChange} name={"username"} value={formik.values.username}/>
-            </label>
-            <label>
-                이름
-            <input onChange={formik.handleChange} name={"nickname"} value={formik.values.nickname}/>
-            </label>
-            <label>
-                핸드폰 번호
-            <input onChange={formik.handleChange} name={"phone"} value={formik.values.phone}/>
-            </label>
-            <label>
-                주소
-            <input onChange={formik.handleChange} name={"address"} value={formik.values.address}/>
-            </label>
-            <label>
-                이메일
-            <input onChange={formik.handleChange} name={"email"} value={formik.values.email}/>
-            </label>
+                ) : isImageDeleted ? (
+                    <img src="https://mystudy5350.s3.amazonaws.com/test/222.jfif" alt="삭제된 이미지"/>
+                ) : (
+                    <img src={user.imgURL} alt="기존 프로필 이미지"/>
+                )}
 
+                <label id={"profileImg"}>프로필 사진 변경
+                    <input style={{display: "none"}} name={"profileImg"} type={"file"}/>
+                </label>
+
+                <button type="button" onClick={() => {
+                    resetImages(); // 이미지 삭제
+                    setIsImageDeleted(true); // 이미지 삭제 상태 업데이트
+                }}>
+                    이미지 삭제
+                </button>
+            </div>
+
+
+            <div>
+                <label>
+                    아이디
+                    <input onChange={formik.handleChange} name={"username"} value={formik.values.username}/>
+                </label>
+                <label>
+                    이름
+                <input onChange={formik.handleChange} name={"nickname"} value={formik.values.nickname}/>
+                </label>
+                <label>
+                    핸드폰 번호
+                <input onChange={formik.handleChange} name={"phone"} value={formik.values.phone}/>
+                </label>
+                <label>
+                주소
+                <input onChange={formik.handleChange} name={"address"} value={formik.values.address}/>
+                </label>
+                <label>
+                이메일
+                <input onChange={formik.handleChange} name={"email"} value={formik.values.email}/>
+                </label>
+
+                <input type={"submit"} value={"프로필 수정"}/>
+            </div>
         </UserForm>
+        </FormWrap>
     )
 }
 

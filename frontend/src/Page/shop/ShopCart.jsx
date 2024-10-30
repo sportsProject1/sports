@@ -1,4 +1,16 @@
+import {useEffect, useState} from "react";
+import {fetchTokenData} from "../../Server/ApiService";
+import {useSelector} from "react-redux";
+
 function ShopCart(){
+    const [userCart,setUserCart] = useState([])
+    const token = useSelector((state) => state.auth.token)
+    useEffect(() => {
+        fetchTokenData("mypage/cart",setUserCart,token)
+            .then((res) => console.log(res))
+            .catch((err) => console.log(err));
+    }, []);
+
     return(
         <div>
 
@@ -22,27 +34,6 @@ function ShopCart(){
                     <td>(713) 123-8965</td>
                     <td><a href="mailto:jmatman@stewart.com">jmatman@stewart.com</a></td>
                     <td>01/13/1979</td>
-                </tr>
-                <tr>
-                    <td>Johnny</td>
-                    <td>Smith</td>
-                    <td>(713) 584-9614</td>
-                    <td><a href="mailto:jsmith@stewart.com">jsmith@stewart.com</a></td>
-                    <td>06/09/1971</td>
-                </tr>
-                <tr>
-                    <td>Susan</td>
-                    <td>Johnson</td>
-                    <td>(713) 847-1124</td>
-                    <td><a href="mailto:sjohnson@stewart.com">sjohnson@stewart.com</a></td>
-                    <td>08/25/1965</td>
-                </tr>
-                <tr>
-                    <td>Tracy</td>
-                    <td>Richardson</td>
-                    <td>(713) 245-4821</td>
-                    <td><a href="mailto:trichard@stewart.com">trichard@stewart.com</a></td>
-                    <td>03/13/1980</td>
                 </tr>
                 </tbody>
             </table>
