@@ -69,26 +69,24 @@ public class ItemController {
                                                     @RequestHeader("Authorization") String token) {
         try {
             String userId = jwtTokenProvider.extractUserId(token.replace("Bearer ", ""));
-            User user = userService.findByUsername(userId)
-                    .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+
+            System.out.println("userId : " + userId);
+
+            User user = userService.findById(userId); // 사용자 ID로 User 객체를 찾음
 
             itemService.addItem(itemDTO, file, user); // 파일을 함께 전달
             ItemResponseDTO response = new ItemResponseDTO("상품이 성공적으로 추가되었습니다.");
             return ResponseEntity.ok(response);
         } catch (MalformedJwtException e) {
-            // JWT가 잘못된 형식인 경우
             ItemResponseDTO response = new ItemResponseDTO("잘못된 JWT 형식입니다.");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         } catch (IOException e) {
-            // 파일 처리 중 오류 발생
             ItemResponseDTO response = new ItemResponseDTO("상품 추가 중 파일 처리에 실패했습니다.");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         } catch (RuntimeException e) {
-            // 사용자 찾기 실패 등 일반 예외 처리
             ItemResponseDTO response = new ItemResponseDTO(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         } catch (Exception e) {
-            // 그 외의 예외 처리
             ItemResponseDTO response = new ItemResponseDTO("상품 추가에 실패했습니다.");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
@@ -111,8 +109,7 @@ public class ItemController {
             @RequestHeader("Authorization") String token) {
         try {
             String userId = jwtTokenProvider.extractUserId(token.replace("Bearer ", ""));
-            User user = userService.findByUsername(userId)
-                    .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+            User user = userService.findById(userId);
 
             itemService.update(id, itemDTO, user);
             ItemResponseDTO response = new ItemResponseDTO("상품이 성공적으로 업데이트되었습니다.");
@@ -135,8 +132,7 @@ public class ItemController {
             @RequestHeader("Authorization") String token) {
         try {
             String userId = jwtTokenProvider.extractUserId(token.replace("Bearer ", ""));
-            User user = userService.findByUsername(userId)
-                    .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+            User user = userService.findById(userId);
 
             itemService.delete(id, user);
             ItemResponseDTO response = new ItemResponseDTO("상품이 성공적으로 삭제되었습니다.");
@@ -152,5 +148,4 @@ public class ItemController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
-
 }
