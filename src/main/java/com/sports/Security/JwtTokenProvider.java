@@ -44,8 +44,8 @@ public class JwtTokenProvider {
 
     // JWT 토큰 생성
     public String createToken(Long userId, String username, String role) {
-        Claims claims = Jwts.claims().setSubject(username);
-        claims.put("userId", userId);
+        Claims claims = Jwts.claims().setSubject(String.valueOf(userId)); // userId를 sub에 저장
+        claims.put("username", username); // username을 claims에 추가
         claims.put("role", role);
 
         Date now = new Date();
@@ -59,12 +59,21 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    // 토큰에서 사용자 이름 추출
-    public String getUsername(String token) {
+    // 토큰에서 userId (sub) 추출
+    public String extractUserId(String token) {
         return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
     }
 
-    // 토큰에서 권한 추출
+    // 토큰에서 username 추출
+    public String getUsername(String token) {
+        return (String) Jwts.parser()
+                .setSigningKey(secretKey)
+                .parseClaimsJws(token)
+                .getBody()
+                .get("username"); // username을 claims에서 추출
+    }
+
+    // 토큰에서 role 추출
     public String getRole(String token) {
         return (String) Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().get("role");
     }
@@ -79,16 +88,7 @@ public class JwtTokenProvider {
         }
     }
 
-    // 토큰에서 사용자 id값 추출
-    public String extractUserId(String token) {
-        Claims claims = Jwts.parser()
-                .setSigningKey(secretKey)
-                .parseClaimsJws(token)
-                .getBody();
-
-        return claims.getSubject(); // 사용자 ID가 일반적으로 'sub' 필드에 저장됨
-    }
-
+    // 리프레시 토큰 생성
     public String createRefreshToken() {
         return Jwts.builder()
                 .setIssuer(issuer)

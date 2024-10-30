@@ -8,6 +8,7 @@ import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -22,11 +23,13 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Autowired
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final PrincipalDetailsService principalDetailsService;
 
-    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
+    @Autowired
+    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter, PrincipalDetailsService principalDetailsService) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        this.principalDetailsService = principalDetailsService;
     }
 
     @Bean
@@ -37,38 +40,33 @@ public class SecurityConfig {
                 .httpBasic(httpBasic -> httpBasic.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests((authorize) -> authorize
-                        .requestMatchers("/", "/register", "/login", "/logout", "/refresh", "/user", "/shop", "/shop/**").permitAll()
+                        .requestMatchers("/", "/register", "/login", "/refresh", "/user", "/shop", "/shop/**").permitAll()
                         .requestMatchers("/admin").hasRole("ADMIN")
                         .requestMatchers("/manager").hasRole("MANAGER")
                         .requestMatchers("/clerk").hasRole("CLERK")
                         .anyRequest().authenticated())
                 .formLogin(formLogin -> formLogin.disable())
                 .logout(logout -> logout.disable())         // 시큐리티의 기본 로그인,로그아웃 비활성화
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // JWT 필터
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // 주입받은 JWT 필터 사용
         return http.build();
     }
 
     @Bean
-    public AuthenticationManager authManager(HttpSecurity http) throws Exception {
-        AuthenticationManagerBuilder authenticationManagerBuilder =
-                http.getSharedObject(AuthenticationManagerBuilder.class);
-        // 사용자 인증을 위한 설정 (예: in-memory, JDBC 등)
-        return authenticationManagerBuilder.build();
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
     }
 
-    @Bean
-    public RoleHierarchy roleHierarchy() {
-
-        return RoleHierarchyImpl.withDefaultRolePrefix()
-                .role("ADMIN").implies("MANAGER")
-                .role("MANAGER").implies("CLERK")
-                .role("CLERK").implies("USER")
-                .build();
-    }
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public RoleHierarchy roleHierarchy() {
+        RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
+        roleHierarchy.setHierarchy("ROLE_ADMIN > ROLE_MANAGER > ROLE_CLERK > ROLE_USER");
+        return roleHierarchy;
     }
 
     @Bean
