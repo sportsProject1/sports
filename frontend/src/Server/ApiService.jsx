@@ -28,6 +28,7 @@ export const fetchTokenData = async (url, setState,token) =>{
 
 export const postTokenData = async (url,formData,token) => {
         try {
+            console.log(token)
             const response = await axios.post(`http://localhost:8090/${url}`, formData,{
                 headers: {
                     "Content-Type": "multipart/form-data",
@@ -37,6 +38,7 @@ export const postTokenData = async (url,formData,token) => {
             console.log("토큰값으로 데이터 보내기 성공했음");
             return response.data
         }catch (err){
+            console.log(token)
             console.log("토큰값으로 데이터 보내기 실패햇음",err);
             if(err.response.status === 401){ //에러 상태가 401일때
                 const refreshToken = localStorage.getItem("refreshToken");

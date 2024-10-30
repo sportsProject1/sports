@@ -103,6 +103,7 @@ public class AuthController {
                     accessToken,
                     refreshToken
             );
+            System.out.println(authResponse);
             return ResponseEntity.ok(authResponse);
 
         } catch (BadCredentialsException e) {
@@ -139,7 +140,7 @@ public class AuthController {
         if (jwtTokenProvider.validateToken(refreshToken)) {
             // userId 추출 및 사용자 조회
             Long userId = Long.parseLong(jwtTokenProvider.extractUserId(refreshToken));
-            User user = userService.findByIdOrThrow(userId);
+            User user = userService.findById(userId);
 
             // 리프레시 토큰 확인
             UserRefreshToken userRefreshToken = userRefreshTokenRepository.findById(user.getId())
