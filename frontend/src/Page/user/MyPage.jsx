@@ -1,11 +1,12 @@
 import {useSelector} from "react-redux";
 import UserUpdateForm from "./userComponents/UserUpdateForm";
+import {MyPageContainer} from "../../styled/Container";
 
 function MyPage(){
     const user = useSelector((state) => state.auth.user);
     if(user){
         return (
-            <div>
+            <MyPageContainer>
                 <button onClick={()=>console.log(user)}></button>
                 <h1>마이페이지</h1>
 
@@ -14,7 +15,7 @@ function MyPage(){
                 <button onClick={() => console.log(user)}>
                     수정하기
                 </button>
-            </div>
+            </MyPageContainer>
         )
     } else {
         return (
