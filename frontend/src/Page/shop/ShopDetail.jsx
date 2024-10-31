@@ -1,4 +1,4 @@
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 import {fetchData} from "../../Server/ApiServiceNoToken";
 import ErrorPage from "../ErrorPage";
@@ -12,6 +12,7 @@ function ShopDetail(){
 
     const [fetchItem,setFetchItem]=useState();
     const [itemCount,setItemCount] = useState(1);
+    const navigate = useNavigate()
     const {id}= useParams();
 
     const token = useSelector((state)=>state.auth.token);
@@ -39,6 +40,22 @@ function ShopDetail(){
         setItemCount((prevCount) => (prevCount > 1 ? prevCount - 1 : 1)); // 최소 수량을 1로 설정
     };
 
+    const onDelete = async() =>{
+        const formdata = new FormData;
+        formdata.append("itemId", id);
+        try{
+            postTokenData("mypage/cart/delete",token)
+                .then((res)=>console.log(res))
+                .catch((err) => console.log(err));
+        }catch(err){
+            console.log(err)
+        }
+    }
+
+    const onUpdate = () =>{
+        navigate(`/shop/update/${id}`)
+    }
+
     if(fetchItem){
         const imageData = fetchItem.imgurl;
         const imageUrlArray = imageData.split(',');
@@ -61,6 +78,10 @@ function ShopDetail(){
                             <input type="number" value={itemCount} readOnly/> {/* readOnly 속성으로 직접 입력 불가 */}
                             <button type={"button"} onClick={increaseCount}>+</button>
                             <input type={"submit"} value={"장바구니 담기"}/>
+                            <div>
+                                <button onClick={onDelete} type={"button"}>삭제하기</button>
+                                <button onClick={onUpdate}>수정하기</button>
+                            </div>
                         </DetailForm>
                     </div>
                 </ItemInfo>
