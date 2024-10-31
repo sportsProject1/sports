@@ -30,4 +30,6 @@ public class Cart {
     private Timestamp orderTime;
 
     private boolean paymentStatus = false;
+
+    private boolean isChecked = false;
 }

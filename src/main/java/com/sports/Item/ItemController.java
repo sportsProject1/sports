@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -65,16 +67,16 @@ public class ItemController {
 
     @PostMapping("/add")
     public ResponseEntity<ItemResponseDTO> postItem(@ModelAttribute ItemDTO itemDTO,
-                                                    @RequestParam("file") List<MultipartFile> file,
-                                                    @RequestHeader("Authorization") String token) {
+                                                    @RequestParam("file") List<MultipartFile> file) {
         try {
-            String userId = jwtTokenProvider.extractUserId(token.replace("Bearer ", ""));
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String username = authentication.getName();
 
-            System.out.println("userId : " + userId);
+            User user = userService.findByUsername(username)
+                    .orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다."));
 
-            User user = userService.findById(userId); // 사용자 ID로 User 객체를 찾음
-
-            itemService.addItem(itemDTO, file, user); // 파일을 함께 전달
+            itemService.addItem(itemDTO, file,
+                    user); // 파일을 함께 전달
             ItemResponseDTO response = new ItemResponseDTO("상품이 성공적으로 추가되었습니다.");
             return ResponseEntity.ok(response);
         } catch (MalformedJwtException e) {
@@ -105,11 +107,13 @@ public class ItemController {
     @PostMapping("/update/{id}")
     public ResponseEntity<ItemResponseDTO> updateItem(
             @PathVariable Long id,
-            @RequestBody ItemDTO itemDTO,
-            @RequestHeader("Authorization") String token) {
+            @RequestBody ItemDTO itemDTO) {
         try {
-            String userId = jwtTokenProvider.extractUserId(token.replace("Bearer ", ""));
-            User user = userService.findById(userId);
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String username = authentication.getName();
+
+            User user = userService.findByUsername(username)
+                    .orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다."));
 
             itemService.update(id, itemDTO, user);
             ItemResponseDTO response = new ItemResponseDTO("상품이 성공적으로 업데이트되었습니다.");
@@ -128,11 +132,13 @@ public class ItemController {
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<ItemResponseDTO> deleteItem(
-            @PathVariable Long id,
-            @RequestHeader("Authorization") String token) {
+            @PathVariable Long id) {
         try {
-            String userId = jwtTokenProvider.extractUserId(token.replace("Bearer ", ""));
-            User user = userService.findById(userId);
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String username = authentication.getName();
+
+            User user = userService.findByUsername(username)
+                    .orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다."));
 
             itemService.delete(id, user);
             ItemResponseDTO response = new ItemResponseDTO("상품이 성공적으로 삭제되었습니다.");

@@ -7,6 +7,8 @@ import com.sports.user.User;
 import com.sports.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,23 +26,27 @@ public class CartController {
     private final UserService userService;
 
     @GetMapping("")
-    public ResponseEntity<List<CartDTO>> getCartItems(@RequestHeader("Authorization") String token) {
-        String userIdString = jwtTokenProvider.extractUserId(token.replace("Bearer ", ""));
-        Long userId = Long.valueOf(userIdString);
-        List<CartDTO> cartItems = cartService.getCartItemsByUserId(String.valueOf(userId));
+    public ResponseEntity<List<CartDTO>> getCartItems() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        User user = userService.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다."));
+
+        List<CartDTO> cartItems = cartService.getCartItemsByUserId(String.valueOf(user.getId()));
         return ResponseEntity.ok(cartItems);
     }
 
     @PostMapping("/add")
     public ResponseEntity<CartDTO> addToCart(
             @RequestParam("cartCount") Integer count,
-            @RequestParam("itemId") Long itemId,
-            @RequestHeader("Authorization") String token) {
+            @RequestParam("itemId") Long itemId) {
 
-        String userId = jwtTokenProvider.extractUserId(token.replace("Bearer ", ""));
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
 
-        // 사용자 ID로 User 객체를 찾고, User가 없으면 예외 발생
-        User user = userService.findById(userId);
+        User user = userService.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다."));
 
         CartDTO cartDTO = new CartDTO();
         cartDTO.setCount(count);
@@ -48,7 +54,7 @@ public class CartController {
         cartDTO.setItem(item);
         cartDTO.setUser(user);
 
-        CartDTO addedCartItem = cartService.addCartItem(cartDTO, userId);
+        CartDTO addedCartItem = cartService.addCartItem(cartDTO, String.valueOf(user.getId()));
         return ResponseEntity.ok(addedCartItem);
     }
 

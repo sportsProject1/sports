@@ -18,4 +18,6 @@ public class CartDTO {
     private User user;
 
     private boolean paymentStatus;
+
+    private boolean isChecked;
 }
