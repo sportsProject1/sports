@@ -93,5 +93,17 @@ public class CartController {
         cartService.deleteCheckedItems(user);
         return ResponseEntity.ok("선택한 항목이 삭제되었습니다.");
     }
+
+    @GetMapping("/checkout")
+    public ResponseEntity<List<CartDTO>> getCheckedItemsForCheckout() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        User user = userService.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다."));
+
+        List<CartDTO> checkedItems = cartService.getCheckedCartItems(user);
+        return ResponseEntity.ok(checkedItems);
+    }
 }
 

@@ -83,4 +83,18 @@ public class CartService{
                 cart.isChecked()
         );
     }
+
+    public List<CartDTO> getCheckedCartItems(User user) {
+        List<Cart> checkedItems = cartRepository.findByUserAndIsChecked(user, true);
+        return checkedItems.stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+    }
+
+    public List<CartDTO> getAvailableCartItems(User user) {
+        List<Cart> availableItems = cartRepository.findByUserAndIsCheckedAndPaymentStatus(user, true, false);
+        return availableItems.stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+    }
 }

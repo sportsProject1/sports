@@ -9,4 +9,6 @@ public interface CartRepository extends JpaRepository<Cart, Long> {
     List<Cart> findByUserId(Long userId);
 
     List<Cart> findByUserAndIsChecked(User user, boolean isChecked);
+
+    List<Cart> findByUserAndIsCheckedAndPaymentStatus(User user, boolean isChecked, boolean paymentStatus);
 }
