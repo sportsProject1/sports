@@ -7,7 +7,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -24,12 +23,12 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    private final PrincipalDetailsService principalDetailsService;
+    private final PrincipalUserDetailsService principalUserDetailsService;
 
     @Autowired
-    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter, PrincipalDetailsService principalDetailsService) {
+    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter, PrincipalUserDetailsService principalUserDetailsService) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
-        this.principalDetailsService = principalDetailsService;
+        this.principalUserDetailsService = principalUserDetailsService;
     }
 
     @Bean
