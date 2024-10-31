@@ -104,7 +104,7 @@ public class ItemController {
         }
     }
 
-    @PostMapping("/update/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<ItemResponseDTO> updateItem(
             @PathVariable Long id,
             @RequestBody ItemDTO itemDTO) {
