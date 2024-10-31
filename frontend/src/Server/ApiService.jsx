@@ -43,7 +43,12 @@ export const postTokenData = async (url,formData,token) => {
             if(err.response.status === 401){ //에러 상태가 401일때
                 const refreshToken = localStorage.getItem("refreshToken");
                 try{
-                    const accessToken = await axios.post(`http://localhost:8090/refresh`, refreshToken)
+                    const accessToken = await axios.post(`http://localhost:8090/refresh`, refreshToken,{
+                        headers:{
+                            "Content-Type": "application/json",
+                            Authorization: `Bearer ${accessToken}`
+                        }
+                    })
                     console.log(accessToken)
                     localStorage.setItem("token",accessToken.data);
                 }catch (error){
@@ -57,6 +62,7 @@ export const postTokenJsonData = async (url,formData,token) => {
     try {
         const response = await axios.post(`http://localhost:8090/${url}`, formData,{
             headers: {
+                "Content-Type": "application/json",
                 Authorization: `Bearer ${token}`
             }
         })
