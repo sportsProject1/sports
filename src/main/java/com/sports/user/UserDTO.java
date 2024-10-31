@@ -42,4 +42,7 @@ public class UserDTO {
     private String imgURL;
     private String role;
 
+    // 마이페이지 유저 정보 보내기용 생성자
+    public UserDTO(Long id, String username, String nickname, String phone, String email, String address, String imgURL, String role) {
+    }
 }
