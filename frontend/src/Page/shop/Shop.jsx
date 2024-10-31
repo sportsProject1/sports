@@ -10,7 +10,7 @@ function Shop() {
     const navigate= useNavigate()
 
     useEffect(() => {
-        fetchData("shop/list",setItems)
+        fetchData("/shop/list",setItems)
             .then((res) => console.log(res))
             .catch((err) => console.log(err));
     }, []);

@@ -15,10 +15,8 @@ function ShopDetail(){
     const navigate = useNavigate()
     const {id}= useParams();
 
-    const token = useSelector((state)=>state.auth.token);
-
     useEffect(() => {
-        fetchData(`shop/detail/${id}`,setFetchItem)
+        fetchData(`/shop/detail/${id}`,setFetchItem)
             .then((res) => console.log(res))
             .catch((err) => console.log(err));
     }, [id]);
@@ -28,7 +26,7 @@ function ShopDetail(){
         const formData = new FormData();
         formData.append("cartCount", itemCount);
         formData.append("itemId",id)
-        await postTokenData("mypage/cart/add",formData,token)
+        await postTokenData("/mypage/cart/add",formData)
     }
 
     const increaseCount = () => {
@@ -44,7 +42,7 @@ function ShopDetail(){
         const formdata = new FormData;
         formdata.append("itemId", id);
         try{
-            postTokenData("mypage/cart/delete",token)
+            postTokenData("/mypage/cart/delete")
                 .then((res)=>console.log(res))
                 .catch((err) => console.log(err));
         }catch(err){

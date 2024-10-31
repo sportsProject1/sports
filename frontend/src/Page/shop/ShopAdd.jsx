@@ -5,7 +5,7 @@ import { handleChange } from "../../Utils/handleChange";
 import { Container } from "../../styled/Container";
 import { Form } from "../../styled/Form";
 import { useSelector } from "react-redux";
-import { postTokenData } from "../../Server/ApiService";
+import {postTokenData, putTokenData} from "../../Server/ApiService";
 import {fetchData} from "../../Server/ApiServiceNoToken";
 
 function ShopAdd() {
@@ -27,7 +27,7 @@ function ShopAdd() {
     useEffect(() => {
         if (id) {
             // 상품 ID가 있는 경우 해당 상품의 상세 정보를 불러옴
-            fetchData(`shop/detail/${id}`,setAddItem)
+            fetchData(`/shop/detail/${id}`,setAddItem)
                 .then((res) => {console.log(res)})
                 .catch((err) => console.log(err));
         }
@@ -51,10 +51,10 @@ function ShopAdd() {
         try {
             if (id) {
                 // 수정 요청 (PUT)
-                await postTokenData(`shop/update/${id}`, addItemFormData, token);
+                await putTokenData(`/shop/update/${id}`, addItemFormData);
             } else {
                 // 추가 요청 (POST)
-                await postTokenData("shop/add", addItemFormData, token);
+                await postTokenData("/shop/add", addItemFormData);
             }
             navigate("/shop");
         } catch (error) {
