@@ -9,11 +9,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.*;
 
 @Data
-public class PrincipalDetails implements UserDetails {
+public class PrincipalUserDetails implements UserDetails {
 
     private final User user;
 
-    public PrincipalDetails(User user) {
+    public PrincipalUserDetails(User user) {
         this.user = user;
     }
 

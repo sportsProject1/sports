@@ -4,26 +4,23 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.List;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider jwtTokenProvider;
-    private final PrincipalDetailsService principalDetailsService;
+    private final PrincipalUserDetailsService principalUserDetailsService;
 
-    public JwtAuthenticationFilter(JwtTokenProvider jwtTokenProvider, PrincipalDetailsService principalDetailsService) {
+    public JwtAuthenticationFilter(JwtTokenProvider jwtTokenProvider, PrincipalUserDetailsService principalUserDetailsService) {
         this.jwtTokenProvider = jwtTokenProvider;
-        this.principalDetailsService = principalDetailsService;
+        this.principalUserDetailsService = principalUserDetailsService;
     }
 
     @Override
@@ -43,7 +40,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 String username = jwtTokenProvider.getUsername(token);
                 System.out.println("사용자 이름 확인: " + username); // 사용자 이름 확인
 
-                PrincipalDetails userDetails = (PrincipalDetails) principalDetailsService.loadUserByUsername(username);
+                PrincipalUserDetails userDetails = (PrincipalUserDetails) principalUserDetailsService.loadUserByUsername(username);
                 System.out.println("권한 정보 확인: " + userDetails.getAuthorities()); // 권한 정보 확인
 
                 // 인증 객체 생성 및 SecurityContextHolder에 설정
