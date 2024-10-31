@@ -149,6 +149,7 @@ public class AuthController {
             User user = userRefreshToken.getUser();
             // 새로운 액세스 토큰 생성 및 반환
             String newAccessToken = jwtTokenProvider.createToken(user.getId(), user.getUsername(), user.getRole());
+            System.out.println("리프레시완료 새 액세스토큰 : " + newAccessToken);
             return ResponseEntity.ok(Map.of("accessToken", newAccessToken));
         }
 

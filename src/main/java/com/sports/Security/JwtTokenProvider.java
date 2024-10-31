@@ -11,16 +11,14 @@ import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
-import java.sql.Timestamp;
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
 @Component
 public class JwtTokenProvider {
 
-    private SecretKey secretKey; // 비밀 키 객체
+    private final SecretKey secretKey; // 비밀 키 객체
     private final long expirationMinutes; // 발급 만료 시간 (분)
     private final long refreshExpirationHours; // 리프레시 토큰 만료 시간 (시간)
     private final String issuer; // 발급자
@@ -29,18 +27,13 @@ public class JwtTokenProvider {
     public JwtTokenProvider(
             @Value("${jwt.expiration-minutes}") long expirationMinutes,
             @Value("${jwt.refresh-expiration-hours}") long refreshExpirationHours,
-            @Value("${jwt.issuer}") String issuer
+            @Value("${jwt.issuer}") String issuer,
+            @Value("${jwt.secret.key}") String secretKeyString
     ) {
         this.expirationMinutes = expirationMinutes;
         this.refreshExpirationHours = refreshExpirationHours;
         this.issuer = issuer;
-    }
-
-    // secretKey 생성을 위한 PostConstruct 초기화
-    @PostConstruct
-    public void init() {
-        // HS256에 맞는 안전한 비밀 키 생성
-        this.secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+        this.secretKey = Keys.hmacShaKeyFor(secretKeyString.getBytes());
     }
 
     // JWT 토큰 생성
