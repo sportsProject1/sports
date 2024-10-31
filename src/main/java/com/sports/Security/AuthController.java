@@ -37,7 +37,7 @@ public class AuthController {
     public ResponseEntity<Map<String, String>> signUp(@Valid @ModelAttribute UserDTO userDTO,
                                                       BindingResult bindingResult,
                                                       @RequestParam(value = "file", required = false) MultipartFile file) throws IOException {
-        // 유효성 검사 결과 처리
+        // UserDTO의 필드에 대해 유효성 검사
         if (bindingResult.hasErrors()) {
             Map<String, String> errorResponse = new HashMap<>();
             bindingResult.getFieldErrors().forEach(error ->
@@ -73,29 +73,29 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@ModelAttribute LoginRequest loginRequest) {
         try {
-            // 사용자 인증
+            // loginRequest로 받은 아이디,비번을 AuthenticationManager에게 전달하여 인증 처리
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword())
             );
 
-            // 권한 정보 가져오기
+            // 인증된 사용자의 (첫번째) 권한 정보를 String으로 추출
             String role = authentication.getAuthorities().iterator().next().getAuthority();
 
-            // 사용자 정보 추출
+            // 인증된 사용자 이름으로 찾아서 User 엔티티 객체 생성
             User user = userService.findByUsername(authentication.getName())
                     .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
-            // 액세스 토큰과 리프레시 토큰 생성 (userId 포함)
+            // userId, username, role 전달해 액세스토큰 생성, 리프레시도 생성
             String accessToken = jwtTokenProvider.createToken(user.getId(), user.getUsername(), role);
             String refreshToken = jwtTokenProvider.createRefreshToken();
 
-            // 리프레시 토큰 저장 및 업데이트
+            // 리프레시 토큰 갱신 및 저장
             UserRefreshToken userRefreshToken = userRefreshTokenRepository.findById(user.getId())
-                    .orElse(new UserRefreshToken(user, refreshToken));
-            userRefreshToken.updateRefreshToken(refreshToken); // 기존 토큰이 있다면 업데이트
-            userRefreshTokenRepository.save(userRefreshToken); // 새로 생성하거나 업데이트한 리프레시 토큰 저장
+                    .orElse(new UserRefreshToken(user, refreshToken)); // userId로 찾아서 기존토큰이 없다면 생성
+            userRefreshToken.updateRefreshToken(refreshToken); // 기존토큰이 있으면 갱신
+            userRefreshTokenRepository.save(userRefreshToken); // 새로 생성하거나 갱신한 리프레시 토큰 저장
 
-            // AuthResponse에 필요한 정보만 포함해 반환
+            // AuthResponse에 필요한 정보만 포함해 클라이언트에 반환
             AuthResponse authResponse = new AuthResponse(
                     user.getUsername(),
                     user.getNickname(),
@@ -103,56 +103,58 @@ public class AuthController {
                     accessToken,
                     refreshToken
             );
-            System.out.println(authResponse);
             return ResponseEntity.ok(authResponse);
 
         } catch (BadCredentialsException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new AuthResponse("인증 실패:Id 또는 비밀번호 입력 오류"));
         }
     }
 
     // 로그아웃
     @PostMapping("/logout")
     @Transactional
-    public ResponseEntity<?> logout(HttpServletRequest request) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("사용자가 인증되지 않았습니다.");
-        }
+    public ResponseEntity<String> logout(HttpServletRequest request) {
 
-        String username = authentication.getName();
+        // SecurityContextHolder에서 현재 사용자 이름을 가져옴
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        // 사용자 이름을 기반으로 리프레시 토큰 삭제 -> 세션을 만료
         userService.findByUsername(username).ifPresent(user -> {
             userRefreshTokenRepository.deleteByUserId(user.getId());
         });
 
+        // SecurityContext 초기화
         SecurityContextHolder.clearContext();
+
         return ResponseEntity.ok("로그아웃 되었습니다.");
     }
-
-
 
     // 리프레시 토큰으로 검증하여 새로운 액세스 토큰 생성
     @PostMapping("/refresh")
     public ResponseEntity<?> refreshAccessToken(@RequestBody Map<String, String> request) {
+        // 클라이언트가 요청으로 보낸 리프레시 토큰을 가져옴
         String refreshToken = request.get("refreshToken");
 
+        // 리프레시 토큰이 없거나 빈 문자열인 경우 400 반환
         if (refreshToken == null || refreshToken.trim().isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid request: refresh token is missing");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid request: 리프레시토큰 없음");
         }
 
         // 리프레시 토큰 유효성 확인
         if (jwtTokenProvider.validateToken(refreshToken.trim())) {
-            // 리프레시 토큰에 연결된 UserRefreshToken 검색
+            // 받은 리프레시 토큰이 UserRefreshToken 테이블에 있는지 확인
             UserRefreshToken userRefreshToken = userRefreshTokenRepository.findByRefreshToken(refreshToken)
                     .orElseThrow(() -> new RuntimeException("유효하지 않은 리프레시 토큰입니다."));
-            // User 정보 가져오기
+            // 리프레시 토큰에 연결된 User 를 가져옴
             User user = userRefreshToken.getUser();
             // 새로운 액세스 토큰 생성 및 반환
             String newAccessToken = jwtTokenProvider.createToken(user.getId(), user.getUsername(), user.getRole());
+            System.out.println("리프레시완료 새 액세스토큰 : " + newAccessToken);
             return ResponseEntity.ok(Map.of("accessToken", newAccessToken));
         }
 
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid refresh token");
+        // 리프레시토큰 유효성 검사 실패시 401 반환
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("리프레시토큰 유효성 검사 실패");
     }
 
 
