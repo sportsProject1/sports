@@ -1,6 +1,7 @@
 package com.sports.Security;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -85,7 +86,11 @@ public class JwtTokenProvider {
         try {
             Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
             return true;
+        } catch (ExpiredJwtException e) {
+            System.out.println("만료된 토큰입니다: " + e.getMessage());
+            return false;
         } catch (JwtException | IllegalArgumentException e) {
+            System.out.println("유효하지 않은 토큰입니다: " + e.getMessage());
             return false;
         }
     }

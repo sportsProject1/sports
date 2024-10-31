@@ -40,11 +40,16 @@ public class SecurityConfig {
                 .httpBasic(httpBasic -> httpBasic.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests((authorize) -> authorize
-                        .requestMatchers("/", "/register", "/login", "/refresh", "/user", "/shop", "/shop/**").permitAll()
                         .requestMatchers("/admin").hasRole("ADMIN")
                         .requestMatchers("/manager").hasRole("MANAGER")
                         .requestMatchers("/clerk").hasRole("CLERK")
+                        .requestMatchers("/shop/add").authenticated()
+                        .requestMatchers("/", "/register", "/login", "/refresh", "/user", "/shop", "/shop/**").permitAll()
                         .anyRequest().authenticated())
+                .exceptionHandling(exceptionHandling -> exceptionHandling
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+                }))
                 .formLogin(formLogin -> formLogin.disable())
                 .logout(logout -> logout.disable())         // 시큐리티의 기본 로그인,로그아웃 비활성화
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // 주입받은 JWT 필터 사용

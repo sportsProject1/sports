@@ -47,7 +47,8 @@ public class CartService {
                 cart.getCount(),
                 cart.getItem(),
                 cart.getUser(),
-                cart.isPaymentStatus()
+                cart.isPaymentStatus(),
+                cart.isChecked()
         );
     }
 }
