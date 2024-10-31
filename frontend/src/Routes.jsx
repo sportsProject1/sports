@@ -26,6 +26,7 @@ const Routes = createBrowserRouter([
             },
             { path: '/shop', element: <Shop/> },
             { path: '/shop/detail/:id', element:<ShopDetail/>},
+            { path: '/shop/update/:id', element:<ShopAdd/>},
             { path: '/shop/add', element: <ShopAdd/>},
             { path: '/shop/cart', element: <ShopCart/>},
 
