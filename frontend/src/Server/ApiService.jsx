@@ -42,12 +42,19 @@ export const postTokenData = async (url,formData,token) => {
             console.log("토큰값으로 데이터 보내기 실패햇음",err);
             if(err.response.status === 401){ //에러 상태가 401일때
                 const refreshToken = localStorage.getItem("refreshToken");
-                try{
-                    const accessToken = await axios.post(`http://localhost:8090/refresh`, refreshToken)
-                    console.log(accessToken)
-                    localStorage.setItem("token",accessToken.data);
-                }catch (error){
-                    console.log("리프레시 실패")
+                try {
+                    const refreshResponse = await axios.post(
+                        `http://localhost:8090/refresh`,
+                        { refreshToken }, // JSON 형식으로 전송
+                        { headers: {
+                                "Content-Type": "application/json" }
+                        }
+                    );
+                    const newAccessToken = refreshResponse.data.accessToken;
+                    console.log("새로운 액세스 토큰:", newAccessToken);
+                    localStorage.setItem("token", newAccessToken);
+                } catch (error) {
+                    console.log("리프레시 실패", error);
                 }
             }
         }

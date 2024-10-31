@@ -136,33 +136,24 @@ public class AuthController {
     public ResponseEntity<?> refreshAccessToken(@RequestBody Map<String, String> request) {
         String refreshToken = request.get("refreshToken");
 
+        if (refreshToken == null || refreshToken.trim().isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid request: refresh token is missing");
+        }
+
         // 리프레시 토큰 유효성 확인
-        if (jwtTokenProvider.validateToken(refreshToken)) {
-            // userId 추출 및 사용자 조회
-            Long userId = Long.parseLong(jwtTokenProvider.extractUserId(refreshToken));
-            User user = userService.findById(userId);
-
-            // 리프레시 토큰 확인
-            UserRefreshToken userRefreshToken = userRefreshTokenRepository.findById(user.getId())
+        if (jwtTokenProvider.validateToken(refreshToken.trim())) {
+            // 리프레시 토큰에 연결된 UserRefreshToken 검색
+            UserRefreshToken userRefreshToken = userRefreshTokenRepository.findByRefreshToken(refreshToken)
                     .orElseThrow(() -> new RuntimeException("유효하지 않은 리프레시 토큰입니다."));
-
-            if (userRefreshToken.validateRefreshToken(refreshToken)) {
-                // 새로운 액세스 토큰 생성 및 반환
-                String newAccessToken = jwtTokenProvider.createToken(user.getId(), user.getUsername(), user.getRole());
-                return ResponseEntity.ok(Map.of("accessToken", newAccessToken));
-            }
+            // User 정보 가져오기
+            User user = userRefreshToken.getUser();
+            // 새로운 액세스 토큰 생성 및 반환
+            String newAccessToken = jwtTokenProvider.createToken(user.getId(), user.getUsername(), user.getRole());
+            return ResponseEntity.ok(Map.of("accessToken", newAccessToken));
         }
 
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid refresh token");
     }
-
-
-
-
-
-
-
-
 
 
 
