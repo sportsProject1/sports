@@ -51,7 +51,6 @@ export const postTokenData = async (url,formData,token) => {
                         }
                     );
                     const newAccessToken = refreshResponse.data.accessToken;
-                    console.log("새로운 액세스 토큰:", newAccessToken);
                     localStorage.setItem("token", newAccessToken);
                 } catch (error) {
                     console.log("리프레시 실패", error);

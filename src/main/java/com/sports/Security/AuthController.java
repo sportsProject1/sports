@@ -111,7 +111,7 @@ public class AuthController {
         }
     }
 
-
+    // 로그아웃
     @PostMapping("/logout")
     @Transactional
     public ResponseEntity<?> logout(HttpServletRequest request) {
