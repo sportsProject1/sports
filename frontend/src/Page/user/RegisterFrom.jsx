@@ -45,7 +45,7 @@ function RegisterForm({ onSuccess }) {
             }
 
             try {
-                await postData("register", formData);
+                await postData("/register", formData);
                 onSuccess(); // 성공 시 호출
             } catch (error) {
                 console.error("회원가입 실패:", error);

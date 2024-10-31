@@ -6,7 +6,7 @@ function ShopCart(){
     const [userCart,setUserCart] = useState([])
     const token = useSelector((state) => state.auth.token)
     useEffect(() => {
-        fetchTokenData("mypage/cart",setUserCart,token)
+        fetchTokenData("/mypage/cart",setUserCart)
             .then((res) => console.log(res))
             .catch((err) => console.log(err));
     }, []);
