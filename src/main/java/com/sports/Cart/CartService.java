@@ -1,5 +1,6 @@
 package com.sports.Cart;
 
+import com.sports.Interface.updatable;
 import com.sports.Item.Item;
 import com.sports.Item.ItemService;
 import com.sports.user.User;
@@ -12,7 +13,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class CartService {
+public class CartService{
 
     private final CartRepository cartRepository;
     private final UserService userService;
@@ -41,6 +42,37 @@ public class CartService {
         return convertToDto(savedCart);
     }
 
+    public void update(Long id, CartDTO dto, User user) {
+        Cart cart = cartRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("장바구니 항목을 찾을 수 없습니다."));
+
+        if (!cart.getUser().getId().equals(user.getId())) {
+            throw new RuntimeException("권한이 없습니다.");
+        }
+
+        // 수량 업데이트
+        if (dto.getCount() != null) {
+            cart.setCount(dto.getCount());
+        }
+
+        // 체크 상태 업데이트
+        cart.setChecked(dto.isChecked());
+
+        cartRepository.save(cart);
+    }
+
+    public void deleteCheckedItems(User user) {
+        List<Cart> checkedItems = cartRepository.findByUserAndIsChecked(user, true);
+
+        for (Cart cart : checkedItems) {
+            if (!cart.getUser().getId().equals(user.getId())) {
+                throw new RuntimeException("권한이 없습니다.");
+            }
+        }
+
+        cartRepository.deleteAll(checkedItems);
+    }
+
     private CartDTO convertToDto(Cart cart) {
         return new CartDTO(
                 cart.getId(),
@@ -52,5 +84,3 @@ public class CartService {
         );
     }
 }
-
-

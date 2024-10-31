@@ -58,6 +58,40 @@ public class CartController {
         return ResponseEntity.ok(addedCartItem);
     }
 
+    @PutMapping("/update/{id}")
+    public ResponseEntity<String> updateCartItem(
+            @PathVariable Long id,
+            @RequestParam(required = false) Integer count,
+            @RequestParam(required = false) Boolean isChecked) {
 
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        User user = userService.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다."));
+
+        CartDTO cartDTO = new CartDTO();
+        if (count != null) {
+            cartDTO.setCount(count);
+        }
+        if (isChecked != null) {
+            cartDTO.setChecked(isChecked);
+        }
+
+        cartService.update(id, cartDTO, user);
+        return ResponseEntity.ok("장바구니 항목이 업데이트되었습니다.");
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<String> deleteCheckedItems() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        User user = userService.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다."));
+
+        cartService.deleteCheckedItems(user);
+        return ResponseEntity.ok("선택한 항목이 삭제되었습니다.");
+    }
 }
 

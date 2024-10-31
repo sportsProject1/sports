@@ -1,6 +1,5 @@
 package com.sports.Interface;
 
-import com.sports.Item.ItemDTO;
 import com.sports.user.User;
 
 public interface updatable<T> {
