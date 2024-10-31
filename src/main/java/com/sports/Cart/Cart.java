@@ -1,6 +1,7 @@
 package com.sports.Cart;
 
 import com.sports.Item.Item;
+import com.sports.Payment.Payment;
 import com.sports.user.User;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -32,4 +33,8 @@ public class Cart {
     private boolean paymentStatus = false;
 
     private boolean isChecked = false;
+
+    @ManyToOne
+    @JoinColumn(name = "payment_id")
+    private Payment payment;
 }
