@@ -57,4 +57,9 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다."));
     }
 
+    // 유저정보 저장하고 유저객체 반환
+    public User saveUser(User user) {
+        return userRepository.save(user);
+    }
+
 }
