@@ -16,7 +16,7 @@ export const fetchData = async (url, setState) =>{
 
 export const postData = async (url,formData) => {
     try {
-        const response = await apiNoToken.post(`url`, formData,{
+        const response = await apiNoToken.post(url, formData,{
             headers: {
                 "Content-Type": "multipart/form-data"
             }

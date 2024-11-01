@@ -6,9 +6,11 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class UserDTO {
     private Long id;
 
@@ -45,4 +47,5 @@ public class UserDTO {
     // 마이페이지 유저 정보 보내기용 생성자
     public UserDTO(Long id, String username, String nickname, String phone, String email, String address, String imgURL, String role) {
     }
+
 }
