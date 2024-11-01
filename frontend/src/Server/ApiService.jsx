@@ -43,19 +43,6 @@ export const putTokenData = async (url,formData)=>{
     }
 }
 
-export const postTokenJsonData = async (url,formData)=>{
-    try{
-        const response = await api.post(url, formData,{
-            headers:{
-                "Content-Type": "application/json",
-            }
-        })
-        console.log(response.data);
-    }catch(error){
-        console.log(error)
-    }
-}
-
 export const putTokenJsonData = async (url,formData)=>{
     try{
         const response = await api.put(url,formData,{
