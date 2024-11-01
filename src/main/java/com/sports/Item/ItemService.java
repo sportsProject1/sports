@@ -6,16 +6,17 @@ import com.sports.Interface.updatable;
 import com.sports.user.User;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class ItemService implements updatable<ItemDTO> {
+public class ItemService {
 
     private final ItemRepository itemRepository;
     private final CategoryService categoryService;
@@ -64,18 +65,10 @@ public class ItemService implements updatable<ItemDTO> {
         );
     }
 
-    @Override
-    public void update(Long id, ItemDTO dto, User user) {
+    @PreAuthorize("hasRole('ROLE_MANAGER') or @userService.findByUsername(authentication.name).id == #user.id")
+    public void update(Long id, ItemDTO dto, List<MultipartFile> files, User user) throws IOException {
         Item item = itemRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("해당 상품을 찾을 수 없습니다."));
-
-        // 1차 권한 확인: 현재 로그인한 사용자의 ID와 아이템의 소유자 ID를 비교
-        if (!item.getUser().getId().equals(user.getId())) {
-            // 2차 권한 확인: 로그인한 사용자가 관리자(role이 MANAGER)인지 확인
-            if (!"ROLE_MANAGER".equals(user.getRole())) {
-                throw new RuntimeException("권한이 없습니다.");
-            }
-        }
 
         item.setTitle(dto.getTitle());
         item.setPrice(dto.getPrice());
@@ -86,21 +79,26 @@ public class ItemService implements updatable<ItemDTO> {
                 .orElseThrow(() -> new RuntimeException("카테고리를 찾을 수 없습니다."));
         item.setCategory(category);
 
+        // 기존 이미지 URL 가져오기
+        List<String> existingImgUrls = Arrays.asList(item.getImgurl().split(","));
+
+        // 파일 처리 로직 추가
+        if (dto.getFiles() != null && !dto.getFiles().isEmpty()) {
+            List<String> imgUrls = s3Service.saveFiles(dto.getFiles());
+            item.setImgurl(String.join(",", imgUrls)); // 이미지 URL 저장
+        }
+
+        // 업데이트된 이미지 URL 설정
+        item.setImgurl(String.join(",", existingImgUrls));
+
         itemRepository.save(item);
     }
 
-    @Override
+
+    @PreAuthorize("hasRole('ROLE_MANAGER') or @userService.findByUsername(authentication.name).id == #user.id")
     public void delete(Long id, User user) {
         Item item = itemRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("해당 상품을 찾을 수 없습니다."));
-
-        // 1차 권한 확인: 현재 로그인한 사용자의 ID와 아이템의 소유자 ID를 비교
-        if (!item.getUser().getId().equals(user.getId())) {
-            // 2차 권한 확인: 로그인한 사용자가 관리자(role이 MANAGER)인지 확인
-            if (!"ROLE_MANAGER".equals(user.getRole())) {
-                throw new RuntimeException("권한이 없습니다.");
-            }
-        }
 
         itemRepository.delete(item);
     }
