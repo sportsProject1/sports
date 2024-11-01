@@ -37,6 +37,7 @@ function LoginForm() {
                 console.log(response,"로긴")
                 const token = response.data.accessToken; // 토큰 빼오기
                 const refreshToken = response.data.refreshToken;
+                const loginTime = new Date().getTime(); // 로그인 한 시점 시간 저장
                 const user = {
                     nickname : response.data.nickname,
                     role: response.data.role,
@@ -47,6 +48,7 @@ function LoginForm() {
                 localStorage.setItem("token", token); // 토큰값 로컬스토리지로 관리
                 localStorage.setItem("refreshToken",refreshToken);
                 localStorage.setItem("user", JSON.stringify(user));
+                localStorage.setItem("loginTime",loginTime);
 
                 navigate("/",{replace:true}); // 메인페이지로 이동 및 뒤로가기 잠금
             }catch (err){
