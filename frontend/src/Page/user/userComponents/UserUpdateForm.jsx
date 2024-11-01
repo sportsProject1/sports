@@ -2,27 +2,24 @@ import React, {useState} from "react";
 import {useFormik} from "formik";
 import * as Yup from "yup";
 import useImageUploader from "../../../hooks/useImageUploader";
-import {postTokenData} from "../../../Server/ApiService";
+import {postTokenData, putTokenData} from "../../../Server/ApiService";
 import {useSelector} from "react-redux";
 import {FormWrap, UserForm} from "../../../styled/Form";
 
-function UserUpdateForm({user}){
+function UserUpdateForm({userData}){
 
     const {images,handleImageChange,resetImages} = useImageUploader(false);
 
     const [isImageDeleted, setIsImageDeleted] = useState(false); // 이미지 삭제 여부를 추적하는 상태 변수
 
-
-    const token = useSelector((state) => state.auth.token);
-
     const formik = useFormik({
         initialValues: {
-            imgURL:user.imgURL,
-            username:user.username,
-            nickname:user.nickname,
-            phone:user.phone,
-            address:user.address,
-            email:user.email,
+            imgURL:userData.imgURL,
+            username:userData.username,
+            nickname:userData.nickname,
+            phone:userData.phone,
+            address:userData.address,
+            email:userData.email,
             file:'',
         },
         validationSchema:Yup.object({
@@ -44,7 +41,7 @@ function UserUpdateForm({user}){
                 formData.append("file", null); // 기존 이미지가 삭제된 경우
             }
             try{
-                await postTokenData("user/update",formData,token);
+                await putTokenData("/user/update",formData);
             }catch(error){
                 console.error(error)
             }
@@ -62,7 +59,7 @@ function UserUpdateForm({user}){
                 ) : isImageDeleted ? (
                     <img src="https://mystudy5350.s3.amazonaws.com/test/222.jfif" alt="삭제된 이미지"/>
                 ) : (
-                    <img src={user.imgURL} alt="기존 프로필 이미지"/>
+                    <img src={userData.imgURL} alt="기존 프로필 이미지"/>
                 )}
 
                 <label id={"profileImg"}>프로필 사진 변경
