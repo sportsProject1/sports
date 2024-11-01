@@ -4,7 +4,7 @@ import {useFormik} from 'formik';
 import * as Yup from 'yup';
 import useImageUploader from "../../hooks/useImageUploader";
 import {postData} from "../../Server/ApiServiceNoToken";
-import {RegisterFormWrap} from "../../styled/UserStyled";
+import {ProfileImageWrapper, RegisterFormWrap} from "../../styled/UserStyled";
 
 
 function RegisterForm({ onSuccess }) {
@@ -55,16 +55,15 @@ function RegisterForm({ onSuccess }) {
 
     return (
             <RegisterFormWrap onSubmit={formik.handleSubmit} encType="multipart/form-data">
-                {images.length > 0 && (
-                    <div>
-                        <img src={images[0].preview} alt="#" />
-                        <button type="button" onClick={resetImages}>이미지 삭제</button>
-                    </div>
-                )}
-                <label htmlFor="file">
-                    이미지 업로드
-                    <input onChange={handleImageChange} name="file" type="file" />
-                </label>
+                <ProfileImageWrapper>
+                    {images.length > 0 ? (
+                        <img src={images[0].preview} alt="프로필 이미지 미리보기" />
+                    ) : (
+                        <span>프로필 이미지를 선택하세요</span>
+                    )}
+                    <input type="file" name="file" onChange={handleImageChange} />
+                    {images.length > 0 && <button type="button" onClick={resetImages}>삭제</button>}
+                </ProfileImageWrapper>
                 <label>
                     아이디
                     <input
