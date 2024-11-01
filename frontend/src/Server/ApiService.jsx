@@ -4,6 +4,7 @@ export const fetchTokenData = async (url)=>{
     try{
         const response = api.get(url)
         console.log(response.data);
+        console.log(response);
     }catch(error){
         console.log(error)
     }
