@@ -27,10 +27,20 @@ public class PaymentController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
-        User user = userService.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다."));
+        User user = userService.findByUsername(username);
 
         List<CartDTO> availableCartItems = cartService.getAvailableCartItems(user);
         return ResponseEntity.ok(availableCartItems);
+    }
+
+    @GetMapping("/paid")
+    public ResponseEntity<List<CartDTO>> getPaidPayments() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        User user = userService.findByUsername(username);
+
+        List<CartDTO> completedPayments = paymentService.getCompletedPaymentsForUser(user.getId());
+        return ResponseEntity.ok(completedPayments);
     }
 }

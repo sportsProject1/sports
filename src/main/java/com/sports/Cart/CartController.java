@@ -30,8 +30,7 @@ public class CartController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
-        User user = userService.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다."));
+        User user = userService.findByUsername(username);
 
         List<CartDTO> cartItems = cartService.getCartItemsByUserId(String.valueOf(user.getId()));
         return ResponseEntity.ok(cartItems);
@@ -45,8 +44,7 @@ public class CartController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
-        User user = userService.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다."));
+        User user = userService.findByUsername(username);
 
         CartDTO cartDTO = new CartDTO();
         cartDTO.setCount(count);
@@ -67,8 +65,7 @@ public class CartController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
-        User user = userService.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다."));
+        User user = userService.findByUsername(username);
 
         CartDTO cartDTO = new CartDTO();
         if (count != null) {
@@ -87,8 +84,7 @@ public class CartController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
-        User user = userService.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다."));
+        User user = userService.findByUsername(username);
 
         cartService.deleteCheckedItems(user);
         return ResponseEntity.ok("선택한 항목이 삭제되었습니다.");
@@ -99,8 +95,7 @@ public class CartController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
-        User user = userService.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다."));
+        User user = userService.findByUsername(username);
 
         List<CartDTO> checkedItems = cartService.getCheckedCartItems(user);
         return ResponseEntity.ok(checkedItems);

@@ -71,8 +71,7 @@ public class ItemController {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String username = authentication.getName();
 
-            User user = userService.findByUsername(username)
-                    .orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다."));
+            User user = userService.findByUsername(username);
 
             itemService.addItem(itemDTO, file,
                     user); // 파일을 함께 전달
@@ -111,8 +110,7 @@ public class ItemController {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String username = authentication.getName();
 
-            User user = userService.findByUsername(username)
-                    .orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다."));
+            User user = userService.findByUsername(username);
 
             itemService.update(id, itemDTO, user);
             ItemResponseDTO response = new ItemResponseDTO("상품이 성공적으로 업데이트되었습니다.");
@@ -136,8 +134,7 @@ public class ItemController {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String username = authentication.getName();
 
-            User user = userService.findByUsername(username)
-                    .orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다."));
+            User user = userService.findByUsername(username);
 
             itemService.delete(id, user);
             ItemResponseDTO response = new ItemResponseDTO("상품이 성공적으로 삭제되었습니다.");
