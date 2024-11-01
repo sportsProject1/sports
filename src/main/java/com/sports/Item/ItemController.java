@@ -105,14 +105,15 @@ public class ItemController {
     @PutMapping("/update/{id}")
     public ResponseEntity<ItemResponseDTO> updateItem(
             @PathVariable Long id,
-            @RequestBody ItemDTO itemDTO) {
+            @ModelAttribute ItemDTO itemDTO,
+            @RequestParam("file") List<MultipartFile> file) {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String username = authentication.getName();
 
             User user = userService.findByUsername(username);
 
-            itemService.update(id, itemDTO, user);
+            itemService.update(id, itemDTO, file, user);
             ItemResponseDTO response = new ItemResponseDTO("상품이 성공적으로 업데이트되었습니다.");
             return ResponseEntity.ok(response);
         } catch (MalformedJwtException e) {
