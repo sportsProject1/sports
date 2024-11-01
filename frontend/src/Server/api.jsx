@@ -38,7 +38,6 @@ api.interceptors.response.use(
                     { refreshToken : refreshToken },
                     { headers: { 'Content-Type': 'application/json' } }
                 );
-                console.log("보낸다",refreshToken)
 
                 // 새 토큰을 로컬 스토리지에 저장
                 const newToken = response.data.accessToken;

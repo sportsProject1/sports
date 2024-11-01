@@ -17,8 +17,6 @@ function ShopDetail(){
 
     useEffect(() => {
         fetchData(`/shop/detail/${id}`,setFetchItem)
-            .then((res) => console.log(res))
-            .catch((err) => console.log(err));
     }, [id]);
 
     const cartItemSubmit = async (e) =>{

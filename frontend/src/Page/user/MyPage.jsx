@@ -9,9 +9,7 @@ function MyPage(){
     const [userData,setUserData] = useState([]);
 
     useEffect(() => {
-        fetchTokenData("/user/mypage")
-            .then((res) => console.log(res))
-            .catch((err) => console.log(err));
+        fetchTokenData("/user/mypage",setUserData)
 
     }, []);
     if(userData){
