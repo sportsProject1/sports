@@ -10,9 +10,7 @@ function Shop() {
     const navigate= useNavigate()
 
     useEffect(() => {
-        fetchData("/shop/list",setItems)
-            .then((res) => console.log(res))
-            .catch((err) => console.log(err));
+        fetchData("/shop/list",setItems);
     }, []);
     // const thumbnailUrl = item.imgurl.split(',')[0];
 
