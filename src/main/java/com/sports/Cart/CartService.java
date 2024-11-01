@@ -97,4 +97,8 @@ public class CartService{
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
     }
+
+    public List<Cart> getAvailableCartEntities(User user) {
+        return cartRepository.findByUserAndIsCheckedAndPaymentStatus(user, true, false);
+    }
 }

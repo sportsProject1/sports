@@ -7,6 +7,7 @@ import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -21,7 +22,7 @@ public class Payment {
     private boolean paymentWhether = false;
 
     @CreationTimestamp
-    private Timestamp paymentTime;
+    private LocalDateTime paymentTime;
 
     @OneToMany(mappedBy = "payment", cascade = CascadeType.ALL)
     private List<Cart> carts;
