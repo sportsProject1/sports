@@ -82,8 +82,7 @@ public class AuthController {
             String role = authentication.getAuthorities().iterator().next().getAuthority();
 
             // 인증된 사용자 이름으로 찾아서 User 엔티티 객체 생성
-            User user = userService.findByUsername(authentication.getName())
-                    .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+            User user = userService.findByUsername(authentication.getName());
 
             // userId, username, role 전달해 액세스토큰 생성, 리프레시도 생성
             String accessToken = jwtTokenProvider.createToken(user.getId(), user.getUsername(), role);
@@ -118,10 +117,10 @@ public class AuthController {
         // SecurityContextHolder에서 현재 사용자 이름을 가져옴
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
+
         // 사용자 이름을 기반으로 리프레시 토큰 삭제 -> 세션을 만료
-        userService.findByUsername(username).ifPresent(user -> {
-            userRefreshTokenRepository.deleteByUserId(user.getId());
-        });
+        User user = userService.findByUsername(username);
+        userRefreshTokenRepository.deleteByUserId(user.getId());
 
         // SecurityContext 초기화
         SecurityContextHolder.clearContext();
