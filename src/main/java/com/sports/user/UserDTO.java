@@ -29,7 +29,6 @@ public class UserDTO {
     private String nickname;
     //닉네임말고 이름
 
-
     @NotBlank
     @Size(min = 10, max = 13, message = "전화번호 : 10자~13자 사이가 아님")
     private String phone;
@@ -46,6 +45,14 @@ public class UserDTO {
 
     // 마이페이지 유저 정보 보내기용 생성자
     public UserDTO(Long id, String username, String nickname, String phone, String email, String address, String imgURL, String role) {
+        this.id = id;
+        this.username = username;
+        this.nickname = nickname;
+        this.phone = phone;
+        this.email = email;
+        this.address = address;
+        this.imgURL = imgURL;
+        this.role = role;
     }
 
 }
