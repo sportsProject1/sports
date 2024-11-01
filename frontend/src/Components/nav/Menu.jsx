@@ -25,8 +25,6 @@ function Menu (){
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const token = useSelector((state)=>state.auth.token);
-
     const handleLogout = async () => {
         try {
             // 로그아웃 요청 보내기

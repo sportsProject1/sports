@@ -5,7 +5,8 @@ import axios from "axios";
 import React from "react";
 import {useDispatch} from "react-redux";
 import {setCredentials} from "../../Store/authSlice";
-import {jwtDecode} from "jwt-decode";
+import {ErrorText, InputGroup, Label, LoginFormWrap} from "../../styled/Form";
+import {Button, Input} from "../../styled/Common";
 
 function LoginForm() {
     const navigate = useNavigate();
@@ -55,10 +56,11 @@ function LoginForm() {
     });
 
     return(
-        <form onSubmit={formik.handleSubmit} action={"/login"} method={"POST"}>
-            <label>
+        <LoginFormWrap onSubmit={formik.handleSubmit} action={"/login"} method={"POST"}>
+            <InputGroup>
+            <Label>
                 아이디
-                <input placeholder="아이디를 입력하세요."
+                <Input placeholder="아이디를 입력하세요."
                        name={"username"}
                        onChange={formik.handleChange}
                        value={formik.values.username}
@@ -66,28 +68,31 @@ function LoginForm() {
                        type={"text"}/>
 
                 {formik.touched.username && formik.errors.username ? (
-                    <div>{formik.errors.username}</div>
+                    <ErrorText>{formik.errors.username}</ErrorText>
                 ) : null}
-            </label>
+            </Label>
+            </InputGroup>
 
-            <label>
+            <InputGroup>
+            <Label>
                 비밀번호
-                <input placeholder="비밀번호를 입력하세요."
+                <Input placeholder="비밀번호를 입력하세요."
                        name={"password"}
                        onChange={formik.handleChange}
                        value={formik.values.password}
                        onBlur={formik.handleBlur}
                        type={"password"}/>
 
-                {formik.touched.username && formik.errors.username ? (
-                    <div>{formik.errors.username}</div>
+                {formik.touched.password && formik.errors.password ? (
+                    <ErrorText>{formik.errors.password}</ErrorText>
                 ) : null}
-            </label>
+            </Label>
+            </InputGroup>
 
             <Link to={"/register"}>회원가입</Link>
-            <input type="submit" value="로그인"/>
+            <Button type="submit">로그인</Button>
 
-        </form>
+        </LoginFormWrap>
     )
 }
 
