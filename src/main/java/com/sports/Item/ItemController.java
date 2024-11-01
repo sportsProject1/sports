@@ -31,7 +31,6 @@ public class ItemController {
     private final ItemService itemService;
     private final CategoryService categoryService;
     private final S3Service s3Service;
-    private final JwtTokenProvider jwtTokenProvider;
 
     @Autowired
     private UserService userService;
