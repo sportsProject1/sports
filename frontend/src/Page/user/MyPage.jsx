@@ -19,7 +19,7 @@ function MyPage(){
                 <h1>마이페이지</h1>
 
                 <UserUpdateForm userData={userData}/>
-                
+
                 <button onClick={() => console.log(userData)}>
                     수정하기
                 </button>

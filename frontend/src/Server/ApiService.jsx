@@ -1,9 +1,9 @@
 import {api} from "./api";
 
-export const fetchTokenData = async (url,setState)=>{
+export const fetchTokenData = async (url)=>{
     try{
         const response = api.get(url)
-        setState(response.data);
+        console.log(response.data);
     }catch(error){
         console.log(error)
     }
