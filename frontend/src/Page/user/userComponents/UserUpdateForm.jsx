@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useFormik} from "formik";
 import * as Yup from "yup";
 import useImageUploader from "../../../hooks/useImageUploader";
@@ -12,14 +12,28 @@ function UserUpdateForm({userData}){
 
     const [isImageDeleted, setIsImageDeleted] = useState(false); // 이미지 삭제 여부를 추적하는 상태 변수
 
+    useEffect(() => {
+        if (userData) {
+            formik.setValues({
+                imgURL: userData.imgURL || '',
+                username: userData.username || '',
+                nickname: userData.nickname || '',
+                phone: userData.phone || '',
+                address: userData.address || '',
+                email: userData.email || '',
+                file: '',
+            });
+        }
+    }, [userData]);
+
     const formik = useFormik({
         initialValues: {
-            imgURL:userData.imgURL,
-            username:userData.username,
-            nickname:userData.nickname,
-            phone:userData.phone,
-            address:userData.address,
-            email:userData.email,
+            imgURL:'',
+            username:'',
+            nickname:'',
+            phone:'',
+            address:'',
+            email:'',
             file:'',
         },
         validationSchema:Yup.object({
@@ -48,6 +62,8 @@ function UserUpdateForm({userData}){
 
         }
     })
+    console.log(userData)
+    console.log(formik.values);
 
     return (
         <FormWrap>
