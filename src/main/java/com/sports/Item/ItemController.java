@@ -106,7 +106,7 @@ public class ItemController {
     public ResponseEntity<ItemResponseDTO> updateItem(
             @PathVariable Long id,
             @ModelAttribute ItemDTO itemDTO,
-            @RequestParam("file") List<MultipartFile> file) {
+            @RequestParam(value = "file", required = false) List<MultipartFile> file) {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String username = authentication.getName();
