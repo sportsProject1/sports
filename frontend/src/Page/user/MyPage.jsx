@@ -3,6 +3,7 @@ import {useEffect, useState} from "react";
 import {fetchTokenData} from "../../Server/ApiService";
 import {Title} from "../../styled/Common";
 import UserInfo from "./userComponents/Mypage/UserInfo";
+import getData from "lodash-es/_getData";
 
 function MyPage(){
 
@@ -20,7 +21,7 @@ function MyPage(){
             setUserData(data.data)
         }
         getData();
-    }, []);
+    }, [getData]);
     if(userData){
         return (
             <div>
