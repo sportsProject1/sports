@@ -37,52 +37,41 @@ public class UserController {
     }
 
     // 마이페이지 수정
-//    @PutMapping("/update")
-//    public ResponseEntity<UserDTO> updateUser(@Validated(ValidationGroups.Update.class) @ModelAttribute UserDTO userDTO,
-//                                              Authentication authentication,
-//                                              @RequestParam(value = "file", required = false) MultipartFile file) throws IOException, IllegalAccessException {
-//
-//        // 현재 사용자의 정보를 가져와 수정 권한 확인
-//        User existingUser = userService.findByUsername(authentication.getName());
-//
-//        // UserDTO에서 필드들을 가져와 기존 User 객체와 비교하여 다를 경우에만 업데이트
-//        for (Field field : UserDTO.class.getDeclaredFields()) {
-//            field.setAccessible(true);
-//            Object newValue = field.get(userDTO); // userDTO의 필드 값
-//            Object oldValue = ReflectionUtils.getField(field, existingUser); // 기존 User 객체의 필드 값
-//
-//            // 새로운 값이 기존 값과 다를 경우에만 업데이트
-//            if (newValue != null && !newValue.equals(oldValue)) {
-//                ReflectionUtils.setField(field, existingUser, newValue);
-//            }
-//        }
-//
-//        // imgURL 처리 로직
-//        String imgURL;
-//        if (file == null) {
-//            // 파일이 null이면 기본 이미지 URL을 가져옴
-//            imgURL = s3Service.saveFile(null, null);
-//        } else {
-//            // 파일이 null이 아니면 파일을 업로드하여 새로운 URL을 설정
-//            imgURL = s3Service.saveFile(file.getOriginalFilename(), file.getInputStream());
-//        }
-//        existingUser.setImgURL(imgURL); // 최종 결정된 imgURL로 업데이트
-//
-//        // 변경된 사용자 정보를 저장
-//        userService.saveUser(existingUser);
-//
-//        // UserDTO로 변환하여 응답
-//        UserDTO userDTO = new UserDTO();
-//        userDTO.setUsername(existingUser.getUsername());
-//        userDTO.setNickname(existingUser.getNickname());
-//        userDTO.setPhone(existingUser.getPhone());
-//        userDTO.setEmail(existingUser.getEmail());
-//        userDTO.setAddress(existingUser.getAddress());
-//        userDTO.setImgURL(existingUser.getImgURL());
-//        userDTO.setRole(existingUser.getRole());
-//
-//        return ResponseEntity.ok(userDTO); // 업데이트된 유저 정보를 DTO로 반환
-//    }
+    @PutMapping("/update")
+    public ResponseEntity<UserDTO> updateUser(@Validated(ValidationGroups.Update.class) @ModelAttribute UserDTO userDTO,
+                                              Authentication authentication,
+                                              @RequestParam(value = "file", required = false) MultipartFile file) throws IOException {
+
+        // 현재 사용자의 정보를 가져옴
+        User existingUser = userService.findByUsername(authentication.getName());
+
+        // userDTO의 값으로 기존 user 엔티티 업데이트
+        existingUser.setNickname(userDTO.getNickname());
+        existingUser.setPhone(userDTO.getPhone());
+        existingUser.setEmail(userDTO.getEmail());
+        existingUser.setAddress(userDTO.getAddress());
+
+        // 이미지 파일 처리 로직
+        if (file != null && !file.isEmpty()) {
+            // 새로운 파일이 업로드된 경우 - 기존 URL과 비교
+            String newImgURL = s3Service.saveFile(file.getOriginalFilename(), file.getInputStream());
+
+            // 기존 이미지 URL과 다를 때만 업데이트
+            if (!newImgURL.equals(existingUser.getImgURL())) {
+                existingUser.setImgURL(newImgURL);
+            }
+        }
+        // 파일이 null일 경우 이미지를 업데이트하지 않음
+
+        // 변경된 사용자 정보를 저장
+        userService.saveUser(existingUser);
+
+        // 변경된 엔티티를 DTO로 변환 후 반환
+        UserDTO updatedUserDTO = new UserDTO();
+        BeanUtils.copyProperties(existingUser, updatedUserDTO);
+
+        return ResponseEntity.ok(updatedUserDTO); // 업데이트된 유저 정보를 DTO로 반환
+    }
 
 
 }

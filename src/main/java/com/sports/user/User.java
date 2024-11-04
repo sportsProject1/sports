@@ -21,7 +21,7 @@ public class User {
     private String nickname;
     private String phone;
     private String email;
-    private String role;    // ROLE_USER, ROLE_ADMIN
+    private String role;    // ROLE_USER, ROLE_ADMIN 등
     private String address;
     private String imgURL;
 
