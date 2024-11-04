@@ -70,27 +70,26 @@ public class ItemService {
         Item item = itemRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("해당 상품을 찾을 수 없습니다."));
 
+        // 상품 정보 업데이트
         item.setTitle(dto.getTitle());
         item.setPrice(dto.getPrice());
         item.setDesc(dto.getDesc());
         item.setStock(dto.getStock());
 
+        // 카테고리 업데이트
         Category category = categoryService.findById(dto.getCategoryId())
                 .orElseThrow(() -> new RuntimeException("카테고리를 찾을 수 없습니다."));
         item.setCategory(category);
 
-        // 기존 이미지 URL 가져오기
-        List<String> existingImgUrls = Arrays.asList(item.getImgurl().split(","));
-
-        // 파일 처리 로직 추가
-        if (dto.getFiles() != null && !dto.getFiles().isEmpty()) {
-            List<String> imgUrls = s3Service.saveFiles(dto.getFiles());
-            item.setImgurl(String.join(",", imgUrls)); // 이미지 URL 저장
+        // 이미지 파일 처리
+        if (files != null && !files.isEmpty()) {
+            // 새 이미지가 있으면 업로드 후 URL 업데이트
+            List<String> imgUrls = s3Service.saveFiles(files);
+            item.setImgurl(String.join(",", imgUrls));
         }
+        // 새 이미지가 없으면 기존 이미지 URL을 그대로 유지
 
-        // 업데이트된 이미지 URL 설정
-        item.setImgurl(String.join(",", existingImgUrls));
-
+        // 아이템 저장
         itemRepository.save(item);
     }
 

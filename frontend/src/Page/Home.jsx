@@ -2,6 +2,9 @@ import styled from "styled-components";
 import useImageUploader from "../hooks/useImageUploader";
 import {useSelector} from "react-redux";
 import {jwtDecode} from "jwt-decode";
+import {Banner, MainContainer, SectionTitle} from "../styled/main/MainPageStyled";
+import * as PropTypes from "prop-types";
+import {Card, PostList} from "../styled/Common";
 
 const PostContainer = styled.div`
     width: 1200px;
@@ -26,9 +29,6 @@ const PostContainer = styled.div`
     
 
 `
-
-
-
 function Home() {
 
     const {images,handleImageChange,handleRemoveImage} = useImageUploader(true)
@@ -39,49 +39,29 @@ function Home() {
     const decoded = token ? jwtDecode(token) : null;
 
     return (
-        <div>
-            <button onClick={() => console.log(userData)}>리덕스 유저값 확인버튼</button>
-            <button onClick={() => console.log(token)}>리덕스 토큰값 확인버튼</button>
-            <button onClick={() => console.log(decoded)}>디코딩 확인버튼</button>
-            <h1>메인</h1>
-            <PostContainer>
-                <form>
-                    <select>
-                        <option name={"soccer"} value={"soccer"}>축구</option>
-                        <option name={"basketball"} value={"basketball"}>농구</option>
-                        <option name={"pingpong"} value={"pingpong"}>탁구</option>
-                    </select>
-                    <input id={"title"} name={"title"}/>
+        <MainContainer>
+            <Banner/>
 
-                    <textarea/>
-                    <div style={{display: 'flex', overflowX: 'auto'}}>
-                        {images.map((image, index) => (
-                            <div key={index} style={{position: 'relative', margin: '5px'}}>
-                                <img src={image} alt={`preview ${index}`} style={{width: '100px', height: '100px'}}/>
-                                <button
-                                    type={"button"}
-                                    onClick={() => handleRemoveImage(index)}
-                                    style={{
-                                        position: 'absolute',
-                                        top: '5px',
-                                        right: '5px',
-                                        background: 'red',
-                                        color: 'white',
-                                        border: 'none',
-                                        borderRadius: '50%',
-                                        cursor: 'pointer',
-                                    }}
-                                >
-                                    X
-                                </button>
-                            </div>
-                        ))}
-                    </div>
-                    <input type="file" multiple accept="image/*" onChange={handleImageChange}/>
-                    <input type={"submit"} id={"content"} name={"content"}/>
-                </form>
-            </PostContainer>
-        </div>
+            <SectionTitle>최신 게시글</SectionTitle>
+            <PostList>
+                <Card>게시글 1</Card>
+                <Card>게시글 2</Card>
+                <Card>게시글 3</Card>
+            </PostList>
+            <SectionTitle>인기 게시글</SectionTitle>
+            <SectionTitle>최신 게시글</SectionTitle>
+            <PostList>
+                <Card>게시글 1</Card>
+                <Card>게시글 2</Card>
+                <Card>게시글 3</Card>
+            </PostList>
+            <SectionTitle>최신 게시글</SectionTitle>
+            <PostList>
+                <Card>게시글 1</Card>
+                <Card>게시글 2</Card>
+                <Card>게시글 3</Card>
+            </PostList>
+        </MainContainer>
     )
 }
 
