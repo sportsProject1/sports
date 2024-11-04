@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const RegisterFormWrap = styled.form`
+export const FormWrap = styled.form`
     display: flex;
     max-width: 900px;
     margin: auto;
