@@ -1,15 +1,20 @@
-import {useSelector} from "react-redux";
-import UserUpdateForm from "./userComponents/UserUpdateForm";
-import {MyPageContainer} from "../../styled/Container";
+import UserUpdateForm from "./userComponents/Mypage/UserUpdateForm";
 import {useEffect, useState} from "react";
 import {fetchTokenData} from "../../Server/ApiService";
+import {Title} from "../../styled/Common";
+import UserInfo from "./userComponents/Mypage/UserInfo";
 
 function MyPage(){
 
     const [userData,setUserData] = useState([]);
 
-    useEffect(() => {
+    const [userUpdate,setUserUpdate] = useState(false);
 
+    const onUpdate = () =>{
+        setUserUpdate(!userUpdate);
+    }
+
+    useEffect(() => {
         const getData = async () =>{
             const data = await fetchTokenData("/user/mypage")
             setUserData(data.data)
@@ -18,16 +23,13 @@ function MyPage(){
     }, []);
     if(userData){
         return (
-            <MyPageContainer>
-                <button onClick={()=>console.log(userData)}></button>
-                <h1>마이페이지</h1>
-
-                <UserUpdateForm userData={userData}/>
-
-                <button onClick={() => console.log(userData)}>
-                    수정하기
-                </button>
-            </MyPageContainer>
+            <div>
+                <Title>마이페이지</Title>
+                {userUpdate === false ?
+                    <UserInfo userData={userData} onUpdate={onUpdate}/> :
+                    <UserUpdateForm userData={userData} onUpdate={onUpdate}/>
+                }
+            </div>
         )
     } else {
         return (

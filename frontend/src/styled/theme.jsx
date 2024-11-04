@@ -28,6 +28,7 @@ export const lightTheme = {
         border: '#E0E0E0',
         accent: '#FFB74D', // accent for highlights
         error: '#D32F2F',
+        card: "#fff",
     },
 }
 
@@ -42,5 +43,6 @@ export const darkTheme = {
         border: '#333333',
         accent: '#FF4081',
         error: '#FF5252',
+        card: '#2a2a2a',
     },
 }

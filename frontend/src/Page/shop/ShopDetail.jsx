@@ -5,7 +5,7 @@ import ErrorPage from "../ErrorPage";
 import {DetailContainer} from "../../styled/Container";
 import {ItemInfo} from "../../styled/shopStyled";
 import {DetailForm} from "../../styled/Form";
-import {postTokenData} from "../../Server/ApiService";
+import {deleteTokenData, postTokenData} from "../../Server/ApiService";
 import {useSelector} from "react-redux";
 
 function ShopDetail(){
@@ -40,7 +40,7 @@ function ShopDetail(){
         const formdata = new FormData;
         formdata.append("itemId", id);
         try{
-            postTokenData("/mypage/cart/delete")
+            deleteTokenData(`/shop/delete/${id}`)
                 .then((res)=>console.log(res))
                 .catch((err) => console.log(err));
         }catch(err){
