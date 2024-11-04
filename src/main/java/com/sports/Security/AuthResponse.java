@@ -1,5 +1,6 @@
 package com.sports.Security;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.sports.user.UserDTO;
 import lombok.*;
 
@@ -8,6 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
+//@JsonInclude(JsonInclude.Include.NON_NULL)
 public class AuthResponse {
     private String username;
     private String nickname;
