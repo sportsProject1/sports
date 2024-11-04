@@ -81,22 +81,3 @@ public class AuthController {
         }
     }
 }
-
-
-
-//    @GetMapping("/userinfo")
-//    public ResponseEntity<UserDTO> getUserInfo(@AuthenticationPrincipal UserDetails userDetails) {
-//        String username = userDetails.getUsername();
-//        String role = userDetails.getAuthorities().stream()
-//                .map(GrantedAuthority::getAuthority) // GrantedAuthority로부터 권한을 가져오기
-//                .findFirst() // 첫 번째 권한만 가져오기
-//                .orElse(null); // 권한이 없으면 null
-//
-//        UserDTO userDTO = new UserDTO();
-//        userDTO.setUsername(username);
-//        userDTO.setRole(role);
-//
-//        return ResponseEntity.ok(userDTO);
-//    }
-
-
