@@ -14,12 +14,12 @@ import lombok.NoArgsConstructor;
 public class UserDTO {
     private Long id;
 
-    @NotBlank
+    @NotBlank(groups = ValidationGroups.Create.class)
     @Size(min = 6, max = 20, message = "Id : 6자~20자 사이가 아님")
     @Pattern(regexp = "^[a-zA-Z]+[a-zA-Z0-9]*$", message = "Id : 영어만 or 영어+숫자 조합만 허용")
     private String username;
 
-    @NotBlank
+    @NotBlank(groups = ValidationGroups.Create.class)
     @Size(min = 8, max = 20, message = "비밀번호 : 8자~20자 사이가 아님")
     @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]*$", message = "비밀번호 : 영어+숫자 조합만 허용")
     private String password;
