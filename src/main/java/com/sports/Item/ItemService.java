@@ -99,7 +99,9 @@ public class ItemService {
         Item item = itemRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("해당 상품을 찾을 수 없습니다."));
 
-        itemRepository.delete(item);
+        // 상품 삭제 상태로 업데이트
+        item.setDeleted(true);
+        itemRepository.save(item);
     }
 
     public Item findById(Long itemId) {
