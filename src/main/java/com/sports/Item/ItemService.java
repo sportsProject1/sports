@@ -79,21 +79,15 @@ public class ItemService {
                 .orElseThrow(() -> new RuntimeException("카테고리를 찾을 수 없습니다."));
         item.setCategory(category);
 
-        // 기존 이미지 URL 가져오기
-        List<String> existingImgUrls = Arrays.asList(item.getImgurl().split(","));
-
-        // 파일 처리 로직 추가
-        if (dto.getFiles() != null && !dto.getFiles().isEmpty()) {
-            List<String> imgUrls = s3Service.saveFiles(dto.getFiles());
-            item.setImgurl(String.join(",", imgUrls)); // 이미지 URL 저장
+        // 이미지 파일 처리
+        if (files != null && !files.isEmpty()) {
+            List<String> imgUrls = s3Service.saveFiles(files);
+            item.setImgurl(String.join(",", imgUrls)); // 새로운 이미지 URL로 업데이트
         }
+        // 파일이 없으면 기존 이미지 URL을 그대로 유지
 
-        // 업데이트된 이미지 URL 설정
-        item.setImgurl(String.join(",", existingImgUrls));
-
-        itemRepository.save(item);
+        itemRepository.save(item); // 업데이트된 아이템 저장
     }
-
 
     @PreAuthorize("hasRole('ROLE_MANAGER') or @userService.findByUsername(authentication.name).id == #user.id")
     public void delete(Long id, User user) {
