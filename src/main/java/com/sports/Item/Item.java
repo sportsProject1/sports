@@ -34,4 +34,7 @@ public class Item {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    @Column(name = "is_deleted", nullable = false)
+    private boolean isDeleted = false;
 }
