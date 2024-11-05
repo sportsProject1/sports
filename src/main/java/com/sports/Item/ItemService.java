@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -23,7 +24,7 @@ public class ItemService {
     private final S3Service s3Service;
 
     @Transactional
-    public void addItem(ItemDTO itemDTO, List<MultipartFile> files, User user) throws IOException {
+    public Item addItem(ItemDTO itemDTO, List<MultipartFile> files, User user) throws IOException {
         Item item = new Item();
 
         item.setTitle(itemDTO.getTitle());
@@ -31,6 +32,10 @@ public class ItemService {
         item.setDesc(itemDTO.getDesc());
         item.setStock(itemDTO.getStock());
         item.setUser(user);
+
+        if (files == null) {
+            files = Collections.emptyList(); // null이면 빈 리스트로 처리
+        }
 
         // 이미지를 S3에 업로드 후 URL 리스트 생성
         List<String> imgUrls = s3Service.saveFiles(files);
@@ -40,7 +45,7 @@ public class ItemService {
                 .orElseThrow(() -> new RuntimeException("카테고리를 찾을 수 없습니다."));
         item.setCategory(category);
 
-        itemRepository.save(item);
+        return itemRepository.save(item);  // 저장된 Item 객체를 반환
     }
 
     public ItemDTO getItemDetail(Long id) {
@@ -99,7 +104,9 @@ public class ItemService {
         Item item = itemRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("해당 상품을 찾을 수 없습니다."));
 
-        itemRepository.delete(item);
+        // 상품 삭제 상태로 업데이트
+        item.setDeleted(true);
+        itemRepository.save(item);
     }
 
     public Item findById(Long itemId) {

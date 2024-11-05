@@ -1,11 +1,11 @@
 package com.sports.Payment;
 
-import com.sports.Cart.CartDTO;
+import com.sports.PaymentDetail.PaymentDetailDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.security.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -18,7 +18,11 @@ public class PaymentDTO {
 
     private boolean paymentWhether;
 
-    private Timestamp paymentTime;
+    private LocalDateTime paymentTime;
 
-    private List<CartDTO> carts;
+    private Long totalPrice;
+
+    private List<PaymentDetailDTO> paymentDetails;
+
+    private String paymentStatusMessage;
 }
