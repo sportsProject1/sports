@@ -2,29 +2,6 @@ import styled from "styled-components";
 import {Banner, MainContainer, SectionTitle} from "../styled/main/MainPageStyled";
 import {Card, PostList} from "../styled/Common";
 
-const PostContainer = styled.div`
-    width: 1200px;
-    height: 800px;
-    margin: 0 auto;
-    >form{
-        width: 100%;
-        >input,textarea{
-            width: 100%;
-            padding: 25px;
-        }
-        >textarea{
-            min-height: 500px;
-            max-height: 500px;
-            resize: none;
-        }
-        >select{
-            padding: 15px 30px;
-        }
-    }
-    
-    
-
-`
 function Home() {
 
     return (
