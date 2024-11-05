@@ -74,3 +74,36 @@ export const PostList = styled.div`
   width: 100%;
   margin-bottom: 40px;
 `;
+
+export const KakaoLogin = styled.button`
+    width: 100%;
+    padding: ${({ theme }) => theme.spacing.medium};
+    background-color: #FEE500;
+    color:#000000;
+    font-size: ${({ theme }) => theme.fontSizes.medium};
+    font-weight: bold;
+    border: none;
+    border-radius: ${({ theme }) => theme.borderRadius};
+    transition: ${({ theme }) => theme.transition};
+    &:hover {
+        background-color: ${({ theme }) => theme.colors.secondary};
+        box-shadow: ${({ theme }) => theme.boxShadow};
+    }
+    
+`;
+export const GoogleLogin = styled.button`
+    width: 100%;
+    padding: ${({ theme }) => theme.spacing.medium};
+    background-color: #4285F4;
+    color:#FFFFFF;
+    font-size: ${({ theme }) => theme.fontSizes.medium};
+    font-weight: bold;
+    border: none;
+    border-radius: ${({ theme }) => theme.borderRadius};
+    transition: ${({ theme }) => theme.transition};
+    &:hover {
+        background-color: ${({ theme }) => theme.colors.secondary};
+        box-shadow: ${({ theme }) => theme.boxShadow};
+    }
+    
+`;

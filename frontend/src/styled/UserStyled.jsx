@@ -105,3 +105,29 @@ export const PassMessage = styled.div`
 export const ErrorMessage = styled.div`
     color:${props => props.theme.colors.error};
 `
+
+
+export const LoginFormWrap = styled.form`
+    max-width: 400px;
+    margin: 0 auto;
+    > button{
+        margin-top:15px;
+    }
+`
+
+export const InputGroup = styled.div`
+    width: 100%;
+  margin-bottom: ${({ theme }) => theme.spacing.large};
+`
+export const Label = styled.label`
+  display: block;
+  margin-bottom: ${({ theme }) => theme.spacing.small};
+  color: ${({ theme }) => theme.colors.text};
+`
+
+export const ErrorText = styled.div`
+  font-size: ${({ theme }) => theme.fontSizes.small};
+  color: ${({ theme }) => theme.colors.error};
+  margin-top: ${({ theme }) => theme.spacing.xsmall};
+  line-height: 1.4;
+`;
