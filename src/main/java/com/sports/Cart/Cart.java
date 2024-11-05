@@ -33,8 +33,4 @@ public class Cart {
     private boolean paymentStatus = false;
 
     private boolean isChecked = false;
-
-    @ManyToOne
-    @JoinColumn(name = "payment_id")
-    private Payment payment;
 }

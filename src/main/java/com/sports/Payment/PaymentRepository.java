@@ -9,6 +9,9 @@ import java.util.List;
 
 public interface PaymentRepository extends JpaRepository<Payment, Long> {
 
-    @Query("SELECT p FROM Payment p JOIN p.carts c WHERE c.user = :user")
+    @Query("SELECT p FROM Payment p WHERE p.user = :user")
     List<Payment> findByUser(@Param("user") User user);
+
+    @Query("SELECT p FROM Payment p JOIN FETCH p.paymentDetails WHERE p.user = :user")
+    List<Payment> findByUserWithDetails(@Param("user") User user);
 }
