@@ -21,16 +21,18 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true) // secured 어노테이션 활성화 -> 컨트롤러 어딘가 @Secured("ROLE_ADMIN")해주면 admin만 들어갈수있게 되는것// prePostEnabled 어노테이션 활성화 -> Secured와 같지만, 권한을 여러개 걸어주거나 복잡한 권한을 부여할때
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final PrincipalUserDetailsService principalUserDetailsService;
+    private final PrincipalOauth2UserService principalOauth2UserService;
 
     @Autowired
-    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter, PrincipalUserDetailsService principalUserDetailsService) {
+    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter, PrincipalUserDetailsService principalUserDetailsService, PrincipalOauth2UserService principalOauth2UserService) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
         this.principalUserDetailsService = principalUserDetailsService;
+        this.principalOauth2UserService = principalOauth2UserService;
     }
 
     @Bean
@@ -45,7 +47,7 @@ public class SecurityConfig {
                         .requestMatchers("/manager").hasRole("MANAGER")
                         .requestMatchers("/clerk").hasRole("CLERK")
                         .requestMatchers("/shop/add").authenticated()
-                        .requestMatchers("/", "/register", "/login", "/refresh", "/user", "/shop", "/shop/**").permitAll()
+                        .requestMatchers("/", "/register", "/login", "/oauth2/**", "/refresh", "/user", "/shop", "/shop/**").permitAll()
                         .anyRequest().authenticated())
                 .exceptionHandling(exceptionHandling -> exceptionHandling
                         .authenticationEntryPoint((request, response, authException) -> {
@@ -53,7 +55,13 @@ public class SecurityConfig {
                 }))
                 .formLogin(formLogin -> formLogin.disable())
                 .logout(logout -> logout.disable())         // 시큐리티의 기본 로그인,로그아웃 비활성화
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // 주입받은 JWT 필터 사용
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class) // 주입받은 JWT 필터 사용
+                .oauth2Login(oauth2Login -> oauth2Login
+                        .userInfoEndpoint(userInfo -> userInfo
+                                .userService(principalOauth2UserService)
+                        )
+                );
+
         return http.build();
     }
 
