@@ -20,16 +20,18 @@ public class CartService{
     private final ItemService itemService;
 
     public List<CartDTO> getCartItemsByUserId(String userId) {
-        Long id = Long.valueOf(userId); // 필요 시 Long으로 변환
+        Long id = Long.valueOf(userId);
         List<Cart> cartItems = cartRepository.findByUserId(id);
 
         return cartItems.stream()
+                .filter(cart -> !cart.getItem().isDeleted()) // 삭제되지 않은 아이템만 필터링
+                .filter(cart -> !cart.isPaymentStatus()) // 결제되지 않은 아이템만 필터링
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
     }
 
     public CartDTO addCartItem(CartDTO cartDTO, String userId) {
-        Long id = Long.valueOf(userId); // 필요 시 Long으로 변환
+        Long id = Long.valueOf(userId);
         User user = userService.findById(String.valueOf(id));
         Item item = itemService.findById(cartDTO.getItem().getId());
 
@@ -100,5 +102,9 @@ public class CartService{
 
     public List<Cart> getAvailableCartEntities(User user) {
         return cartRepository.findByUserAndIsCheckedAndPaymentStatus(user, true, false);
+    }
+
+    public void saveAll(List<Cart> cartItems) {
+        cartRepository.saveAll(cartItems);
     }
 }

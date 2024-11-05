@@ -37,7 +37,7 @@ public class ItemController {
 
     @GetMapping("/list")
     public List<ItemDTO> shopList() {
-        List<Item> items = itemRepository.findAll();
+        List<Item> items = itemRepository.findAllByIsDeletedFalse();
         return items.stream()
                 .map(item -> new ItemDTO(
                         item.getId(),
