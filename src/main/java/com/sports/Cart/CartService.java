@@ -103,4 +103,8 @@ public class CartService{
     public List<Cart> getAvailableCartEntities(User user) {
         return cartRepository.findByUserAndIsCheckedAndPaymentStatus(user, true, false);
     }
+
+    public void saveAll(List<Cart> cartItems) {
+        cartRepository.saveAll(cartItems);
+    }
 }

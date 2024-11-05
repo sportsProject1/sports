@@ -1,6 +1,8 @@
 package com.sports.Payment;
 
 import com.sports.Cart.Cart;
+import com.sports.PaymentDetail.PaymentDetail;
+import com.sports.user.User;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
@@ -22,6 +24,12 @@ public class Payment {
     @CreationTimestamp
     private LocalDateTime paymentTime;
 
+    private Long totalPrice;
+
     @OneToMany(mappedBy = "payment", cascade = CascadeType.ALL)
-    private List<Cart> carts;
+    private List<PaymentDetail> paymentDetails;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 }
