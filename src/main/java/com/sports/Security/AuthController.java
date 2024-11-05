@@ -80,4 +80,14 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }
     }
+
+    @GetMapping("oauth2/token")
+    public ResponseEntity<?> getToken(HttpServletRequest request) {
+        String token = request.getHeader("Authorization");
+        if (token != null) {
+            return ResponseEntity.ok().header("Authorization", token).build();
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+    }
 }
