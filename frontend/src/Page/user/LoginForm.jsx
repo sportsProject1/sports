@@ -5,8 +5,8 @@ import axios from "axios";
 import React from "react";
 import {useDispatch} from "react-redux";
 import {setCredentials} from "../../Store/authSlice";
-import {ErrorText, InputGroup, Label, LoginFormWrap} from "../../styled/Form";
-import {Button, Input} from "../../styled/Common";
+import {Button, GoogleLogin, Input, KakaoLogin} from "../../styled/Common";
+import {ErrorText, InputGroup, Label, LoginFormWrap} from "../../styled/UserStyled";
 
 function LoginForm() {
     const navigate = useNavigate();
@@ -57,6 +57,10 @@ function LoginForm() {
         },
     });
 
+    const onKakao = () =>{
+        window.location.href = 'http://localhost:8090/oauth2/authorization/kakao';
+    }
+
     return(
         <LoginFormWrap onSubmit={formik.handleSubmit} action={"/login"} method={"POST"}>
             <InputGroup>
@@ -93,6 +97,8 @@ function LoginForm() {
 
             <Link to={"/register"}>회원가입</Link>
             <Button type="submit">로그인</Button>
+            <GoogleLogin type="submit">구글 로그인</GoogleLogin>
+            <KakaoLogin onClick={onKakao} type="submit">카카오 로그인</KakaoLogin>
 
         </LoginFormWrap>
     )

@@ -21,7 +21,7 @@ function FormFields({ formik, handlePhoneChange,isSignUp,disable,onUpdate,handle
                     {field === "nickname" && "이름"}
                     {field === "phone" && "전화번호"}
                     {field === "email" && "이메일"}
-                    {field === "address" && "주소"}
+                    {field === "zipCode" && "주소"}
                     <input
                         placeholder={`${field}를 입력하세요.`}
                         name={field}
