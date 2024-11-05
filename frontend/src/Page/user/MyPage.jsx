@@ -21,7 +21,7 @@ function MyPage(){
             setUserData(data.data)
         }
         getData();
-    }, [getData]);
+    }, [userUpdate]);
     if(userData){
         return (
             <div>
