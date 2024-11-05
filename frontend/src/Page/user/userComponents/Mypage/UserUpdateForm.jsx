@@ -38,11 +38,12 @@ function UserUpdateForm({userData,onUpdate}){
             file:'',
         },
         validationSchema:Yup.object({
-            phone:Yup.string().required('전화번호를 입력하세요.').matches(/^[0-9]{3}-[0-9]{4}-[0-9]{4}$/, '전화번호 형식이 유효하지 않습니다.'),
-            email:Yup.string().email("유효한 이메일을 입력하세요.").required("이메일을 입력하세요"),
-            address: Yup.string().required("주소를 입력하세요.")
+            // phone:Yup.string().required('전화번호를 입력하세요.').matches(/^[0-9]{3}-[0-9]{4}-[0-9]{4}$/, '전화번호 형식이 유효하지 않습니다.'),
+            // email:Yup.string().email("유효한 이메일을 입력하세요.").required("이메일을 입력하세요"),
+            // address: Yup.string().required("주소를 입력하세요.")
         }),
         onSubmit: async (values) => {
+            console.log(123)
             const formData = new FormData();
             formData.append("nickname", values.nickname);
             formData.append("phone", values.phone);
@@ -56,11 +57,14 @@ function UserUpdateForm({userData,onUpdate}){
             }
             try{
                 await putTokenData("/user/update",formData);
+                onUpdate();
             }catch(error){
                 console.error(error)
             }
 
         }
+
+
     })
 
     const formatPhoneNumber = (value) => {

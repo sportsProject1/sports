@@ -1,9 +1,9 @@
 // RegisterForm.jsx
-import React, {useState} from 'react';
+import React, { useState, useRef } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import useImageUploader from "../../hooks/useImageUploader";
-import {FormWrap, RegisterFormWrap} from "../../styled/UserStyled";
+import { FormWrap } from "../../styled/UserStyled";
 import { postData } from "../../Server/ApiServiceNoToken";
 import ProfileImageUpload from "./userComponents/ProfileImageUpload";
 import FormFields from "./userComponents/FormFields";
@@ -11,7 +11,8 @@ import ValidationMessages from "./userComponents/ValidationMessages";
 
 function RegisterForm({ onSuccess }) {
     const { images, handleImageChange, resetImages } = useImageUploader(false);
-    const [isImageDeleted, setIsImageDeleted] = useState(false); // 이미지 삭제 여부를 추적하는 상태 변수
+    const [isImageDeleted, setIsImageDeleted] = useState(false);
+    const postcodeRef = useRef();
 
     const formatPhoneNumber = (value) => {
         const onlyNumbers = value.replace(/\D/g, "");
@@ -28,6 +29,9 @@ function RegisterForm({ onSuccess }) {
             phone: '',
             email: '',
             address: '',
+            zipCode: '', // 우편번호를 위한 필드
+            roadAddress: '', // 도로명 주소를 위한 필드
+            detailAddress: '', // 상세 주소를 위한 필드
             file: '',
         },
         validationSchema: Yup.object({
@@ -36,7 +40,7 @@ function RegisterForm({ onSuccess }) {
             nickname: Yup.string().min(2, "이름은 최소 두 글자 이상이어야 합니다.").required('이름을 입력하세요.'),
             phone: Yup.string().matches(/^\d{3}-\d{4}-\d{4}$/, '형식이 올바르지 않습니다 (예: 010-1234-5678).').required('전화번호를 입력하세요.'),
             email: Yup.string().email('유효한 이메일을 입력하세요.').required('이메일을 입력하세요.'),
-            address: Yup.string().required('주소를 입력하세요.'),
+            detailAddress: Yup.string().required('상세주소를 입력하세요.'), // 상세주소에 대한 유효성 검사 추가
         }),
         onSubmit: async (values) => {
             const formData = new FormData();
@@ -45,12 +49,12 @@ function RegisterForm({ onSuccess }) {
             formData.append("nickname", values.nickname);
             formData.append("phone", values.phone);
             formData.append("email", values.email);
-            formData.append("address", values.address);
+            formData.append("address", `${values.zipCode}, ${values.roadAddress}, ${values.detailAddress}`); // 주소를 콤마로 구분하여 담기
 
             if (images.length > 0) {
                 formData.append("file", images[0].file);
-            } else if(isImageDeleted){
-                formData.append("file",null);
+            } else if (isImageDeleted) {
+                formData.append("file", null);
             }
             try {
                 await postData("/register", formData);
@@ -66,6 +70,32 @@ function RegisterForm({ onSuccess }) {
         formik.setFieldValue("phone", formattedPhone);
     };
 
+    const handleAddressSearch = () => {
+        const openPostcode = () => {
+            if (postcodeRef.current) {
+                postcodeRef.current.open();
+            }
+        };
+
+        if (!postcodeRef.current) {
+            const script = document.createElement('script');
+            script.src = "//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js";
+            script.async = true;
+            script.onload = () => {
+                postcodeRef.current = new window.daum.Postcode({
+                    oncomplete: (data) => {
+                        formik.setFieldValue("zipCode", data.zonecode); // 우편번호
+                        formik.setFieldValue("roadAddress", data.roadAddress); // 도로명 주소
+                    },
+                });
+                openPostcode();
+            };
+            document.body.appendChild(script);
+        } else {
+            openPostcode();
+        }
+    };
+
     return (
         <FormWrap onSubmit={formik.handleSubmit} encType="multipart/form-data">
             <ProfileImageUpload
@@ -74,9 +104,15 @@ function RegisterForm({ onSuccess }) {
                 handleImageChange={handleImageChange}
                 resetImages={resetImages}
                 setIsImageDeleted={setIsImageDeleted}
-            update={true}/>
-            <FormFields formik={formik} handlePhoneChange={handlePhoneChange} isSignUp={"sign"} />
-            <ValidationMessages formik={formik} /> {/* ValidationMessages에 formik 객체 전달 */}
+                update={true}
+            />
+            <FormFields
+                formik={formik}
+                handlePhoneChange={handlePhoneChange}
+                handleAddressSearch={handleAddressSearch}
+                isSignUp={"sign"}
+            />
+            <ValidationMessages formik={formik} />
         </FormWrap>
     );
 }

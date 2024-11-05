@@ -2,10 +2,10 @@
 import React from 'react';
 import { FormFieldsWrapper } from "../../../styled/UserStyled";
 
-function FormFields({ formik, handlePhoneChange,isSignUp,disable,onUpdate }) {
+function FormFields({ formik, handlePhoneChange,isSignUp,disable,onUpdate,handleAddressSearch }) {
     const fields =
         isSignUp === "sign"
-            ? ["username", "password", "nickname", "phone", "email", "address"]
+            ? ["username", "password", "nickname", "phone", "email","zipCode","roadAddress", "detailAddress"]
             : isSignUp === "update"
                 ? ["nickname", "phone", "email", "address"]
                 : ["username", "password", "nickname", "phone", "email", "address"];
@@ -21,7 +21,7 @@ function FormFields({ formik, handlePhoneChange,isSignUp,disable,onUpdate }) {
                     {field === "nickname" && "이름"}
                     {field === "phone" && "전화번호"}
                     {field === "email" && "이메일"}
-                    {field === "address" && "주소"}
+                    {field === "zipCode" && "주소"}
                     <input
                         placeholder={`${field}를 입력하세요.`}
                         name={field}
@@ -30,11 +30,15 @@ function FormFields({ formik, handlePhoneChange,isSignUp,disable,onUpdate }) {
                         onBlur={formik.handleBlur} // 추가된 부분
                         value={formik.values[field]}
                         disabled={disable}
+                        readOnly={field === "roadAddress" || field === "zipCode"}
                     />
                 </label>
             ))}
             {isSignUp === "sign" ? (
+                <>
+                <button type={"button"} onClick={handleAddressSearch}>주소 검색</button>
                 <button type="submit">회원가입</button>
+                </>
             ) : isSignUp === "update" ? (
                 <div>
                     <button type="submit">변경하기</button>
