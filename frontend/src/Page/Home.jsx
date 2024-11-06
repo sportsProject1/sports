@@ -1,11 +1,25 @@
 import styled from "styled-components";
 import {
     Banner,
-    BannerContainer, BannerInfo,
+    BannerContainer,
+    BannerInfo,
     BannerWrapper,
     MainContainer,
-    NavButton, Price, ProductName, SectionContainer,
-    SectionTitle, Image, CardWrapper, Card, Footer
+    NavButton,
+    Price,
+    ProductName,
+    SectionContainer,
+    SectionTitle,
+    Image,
+    CardWrapper,
+    Card,
+    Footer,
+    PostCard,
+    PostImage,
+    PlaceholderIcon,
+    CategoryTag,
+    PostContent,
+    PostTitle, Author, PostInfo
 } from "../styled/main/MainPageStyled";
 import { Divider} from "../styled/Common";
 import React, {useEffect, useState} from "react";
@@ -28,6 +42,73 @@ function Home() {
         { id: 6, image: 'https://via.placeholder.com/300', name: '상품 6', price: '₩60,000' },
         { id: 7, image: 'https://via.placeholder.com/300', name: '상품 7', price: '₩70,000' },
         { id: 8, image: 'https://via.placeholder.com/300', name: '상품 8', price: '₩80,000' },
+    ];
+    const posts = [
+        {
+            id: 1,
+            category: '홈 트레이닝',
+            title: '효과적인 홈 트레이닝 방법',
+            author: '헬스매니아',
+            date: '2024.05.01',
+            views: 1200,
+        },
+        {
+            id: 2,
+            category: '홈 트레이닝',
+            title: '효과적인 홈 트레이닝 방법',
+            author: '헬스매니아',
+            date: '2024.05.01',
+            views: 1200,
+        },
+        {
+            id: 3,
+            category: '홈 트레이닝',
+            title: '효과적인 홈 트레이닝 방법',
+            author: '헬스매니아',
+            date: '2024.05.01',
+            views: 1200,
+        },
+        {
+            id: 4,
+            category: '홈 트레이닝',
+            title: '효과적인 홈 트레이닝 방법',
+            author: '헬스매니아',
+            date: '2024.05.01',
+            views: 1200,
+        },
+        {
+            id: 5,
+            category: '홈 트레이닝',
+            title: '효과적인 홈 트레이닝 방법',
+            author: '헬스매니아',
+            date: '2024.05.01',
+            views: 1200,
+        },
+        {
+            id: 6,
+            category: '홈 트레이닝',
+            title: '효과적인 홈 트레이닝 방법',
+            author: '헬스매니아',
+            date: '2024.05.01',
+            views: 1200,
+        },
+        {
+            id: 7,
+            category: '홈 트레이닝',
+            title: '효과적인 홈 트레이닝 방법',
+            author: '헬스매니아',
+            date: '2024.05.01',
+            views: 1200,
+        },
+        {
+            id: 8,
+            category: '홈 트레이닝',
+            title: '효과적인 홈 트레이닝 방법',
+            author: '헬스매니아',
+            date: '2024.05.01',
+            views: 1200,
+        },
+        // 추가 게시글 데이터...
     ];
 
     useEffect(() => {
@@ -92,15 +173,24 @@ function Home() {
 
             <SectionTitle>최신 게시글</SectionTitle>
             <SectionContainer>
-                <CardWrapper translateX={-pageIndex * 50}>
-                    {products.map(product => (
-                        <Card key={product.id}>
-                            <Image src={product.image} alt={product.name} />
-                            <ProductName>{product.name}</ProductName>
-                            <Price>{product.price}</Price>
-                        </Card>
-                    ))}
-                </CardWrapper>
+                <CardWrapper>
+                {posts.map((post) => (
+
+                    <PostCard key={post.id}>
+                        <PostImage>
+                            <PlaceholderIcon>📷</PlaceholderIcon>
+                            <CategoryTag>{post.category}</CategoryTag>
+                        </PostImage>
+                        <PostContent>
+                            <PostTitle>{post.title}</PostTitle>
+                            <Author>{post.author}</Author>
+                            <PostInfo>
+
+                            </PostInfo>
+                        </PostContent>
+                    </PostCard>
+                ))}
+                    </CardWrapper>
                 <NavButton left onClick={handleItemPrevSlide}>◀</NavButton>
                 <NavButton onClick={handleItemNextSlide}>▶</NavButton>
             </SectionContainer>
