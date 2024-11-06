@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -81,13 +82,13 @@ public class AuthController {
         }
     }
 
-    @GetMapping("oauth2/token")
-    public ResponseEntity<?> getToken(HttpServletRequest request) {
-        String token = request.getHeader("Authorization");
-        if (token != null) {
-            return ResponseEntity.ok().header("Authorization", token).build();
+    @GetMapping("/api/protected")
+    public ResponseEntity<String> getProtectedResource(@AuthenticationPrincipal PrincipalUserDetails userDetails) {
+        if (userDetails != null) {
+            return ResponseEntity.ok("안녕하쇼, " + userDetails.getUsername() + "! 보호된 리소스에 접근성공 하셨쇼.");
         } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("사용자 인증 실패하셨쇼.");
         }
     }
+
 }

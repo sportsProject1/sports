@@ -8,7 +8,7 @@ function OAuth2RedirectHandler() {
     useEffect(() => {
         const checkToken = async () =>{
             try{
-                const res = axios.get("http://localhost:8090/api/protected",{
+                const res = await axios.get("http://localhost:8090/api/protected",{
                     withCredentials: true,
                 });
                 if(res.status === 200 ){
@@ -24,7 +24,7 @@ function OAuth2RedirectHandler() {
             }
         }
         checkToken();
-    }, [navigate()]);
+    }, [navigate]);
 
     return <div>로딩중</div>;
 }
