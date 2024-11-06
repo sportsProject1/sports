@@ -57,12 +57,14 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
                     return userRepository.save(newUser);
                 });
 
-        // JWT 생성
+        // JWT 액세스 토큰 및 리프레시 토큰 생성
         Long userId = userEntity.getId();
-        String token = jwtTokenProvider.createToken(userId, userEntity.getUsername(), userEntity.getRole());
+        String accessToken = jwtTokenProvider.createToken(userId, userEntity.getUsername(), userEntity.getRole());
+        String refreshToken = jwtTokenProvider.createRefreshToken();
 
-        // JWT를 응답 헤더에 추가
-        response.addHeader("Authorization", "Bearer " + token);
+        // JWT 액세스 및 리프레시 토큰을 응답 헤더에 추가
+        response.addHeader("Authorization", "Bearer " + accessToken);
+        response.addHeader("Refresh-Token", "Bearer " + refreshToken);
 
         return new PrincipalUserDetails(userEntity, oAuth2User.getAttributes());
     }
