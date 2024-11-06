@@ -37,7 +37,10 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
 
         // OAuth2 공급자 정보 가져오기
         String provider = userRequest.getClientRegistration().getRegistrationId(); // "google" 또는 "kakao"
-        String providerId = (provider.equals("google")) ? oAuth2User.getAttribute("sub") : oAuth2User.getAttribute("id");
+        String providerId = (provider.equals("google"))
+                ? oAuth2User.getAttribute("sub").toString()
+                : oAuth2User.getAttribute("id").toString(); // id를 long으로 제공해도 String으로 변환
+
         String username = provider + "_" + providerId;
         String email = oAuth2User.getAttribute("email");
         String role = "ROLE_USER";
@@ -57,15 +60,16 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
                     return userRepository.save(newUser);
                 });
 
-        // JWT 액세스 토큰 및 리프레시 토큰 생성
+        // JWT 생성
         Long userId = userEntity.getId();
         String accessToken = jwtTokenProvider.createToken(userId, userEntity.getUsername(), userEntity.getRole());
         String refreshToken = jwtTokenProvider.createRefreshToken();
 
-        // JWT 액세스 및 리프레시 토큰을 응답 헤더에 추가
+        // JWT를 응답 헤더에 추가
         response.addHeader("Authorization", "Bearer " + accessToken);
         response.addHeader("Refresh-Token", "Bearer " + refreshToken);
 
         return new PrincipalUserDetails(userEntity, oAuth2User.getAttributes());
     }
+
 }
