@@ -29,10 +29,6 @@ export const lightTheme = {
         accent: '#FFB74D', // accent for highlights
         error: '#D32F2F',
         card: "#fff",
-        kakaoBackground: '#FEE500',
-        kakaoFont: '#000000',
-        googleBackground: '#4285F4',
-        googleFont: '#FFFFFF',
     },
 }
 
@@ -48,9 +44,5 @@ export const darkTheme = {
         accent: '#FF4081',
         error: '#FF5252',
         card: '#2a2a2a',
-        kakaoBackground: '#FEE500',
-        kakaoFont: '#000000',
-        googleBackground: '#4285F4',
-        googleFont: '#FFFFFF',
     },
 }
