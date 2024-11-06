@@ -59,21 +59,12 @@ public class CartController {
     @PutMapping("/update/{id}")
     public ResponseEntity<String> updateCartItem(
             @PathVariable Long id,
-            @RequestParam(required = false) Integer count,
-            @RequestParam(required = false) Boolean isChecked) {
+            @RequestBody CartDTO cartDTO) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
         User user = userService.findByUsername(username);
-
-        CartDTO cartDTO = new CartDTO();
-        if (count != null) {
-            cartDTO.setCount(count);
-        }
-        if (isChecked != null) {
-            cartDTO.setChecked(isChecked);
-        }
 
         cartService.update(id, cartDTO, user);
         return ResponseEntity.ok("장바구니 항목이 업데이트되었습니다.");
