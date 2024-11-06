@@ -60,6 +60,10 @@ function LoginForm() {
     const onKakao = () =>{
         window.location.href = 'http://localhost:8090/oauth2/authorization/kakao';
     }
+    const onGoogle = () =>{
+        window.location.href = 'http://localhost:8090/oauth2/authorization/google';
+    }
+
 
     return(
         <LoginFormWrap onSubmit={formik.handleSubmit} action={"/login"} method={"POST"}>
@@ -97,7 +101,7 @@ function LoginForm() {
 
             <Link to={"/register"}>회원가입</Link>
             <Button type="submit">로그인</Button>
-            <GoogleLogin type="submit">구글 로그인</GoogleLogin>
+            <GoogleLogin onClick={onGoogle} type="submit">구글 로그인</GoogleLogin>
             <KakaoLogin onClick={onKakao} type="submit">카카오 로그인</KakaoLogin>
 
         </LoginFormWrap>
