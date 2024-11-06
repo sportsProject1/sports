@@ -1,10 +1,8 @@
 package com.sports.Security;
 
-import com.sports.user.UserDTO;
-import com.sports.user.UserRefreshTokenRepository;
-import com.sports.user.UserService;
-import com.sports.user.ValidationGroups;
+import com.sports.user.*;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -29,6 +28,7 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
     private final UserRefreshTokenRepository userRefreshTokenRepository;
+    private final UserRepository userRepository;
 
     // 회원가입
     @PostMapping("/register")
@@ -82,13 +82,25 @@ public class AuthController {
         }
     }
 
-    @GetMapping("/api/protected")
-    public ResponseEntity<String> getProtectedResource(@AuthenticationPrincipal PrincipalUserDetails userDetails) {
-        if (userDetails != null) {
-            return ResponseEntity.ok("안녕하쇼, " + userDetails.getUsername() + "! 보호된 리소스에 접근성공 하셨쇼.");
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("사용자 인증 실패하셨쇼.");
-        }
+    @GetMapping("/api/oauth2/token")
+    public Map<String, String> getToken(@AuthenticationPrincipal PrincipalUserDetails userDetails) {
+        String accessToken = jwtTokenProvider.createToken(userDetails.getId(), userDetails.getUsername(), userDetails.getRole());
+        String refreshToken = jwtTokenProvider.createRefreshToken();
+
+        // 영속성 컨텍스트에서 User 엔티티 가져오기
+        User user = userRepository.findById(userDetails.getId()).get();
+
+        // 리프레시 토큰을 UserRefreshToken 테이블에 저장 또는 업데이트
+        UserRefreshToken userRefreshToken = userRefreshTokenRepository.findById(userDetails.getId())
+                .orElse(new UserRefreshToken(user, refreshToken));
+        userRefreshToken.updateRefreshToken(refreshToken);
+        userRefreshTokenRepository.save(userRefreshToken);
+
+        Map<String, String> tokens = new HashMap<>();
+        tokens.put("accessToken", accessToken);
+        tokens.put("refreshToken", refreshToken);
+
+        return tokens;
     }
 
 }

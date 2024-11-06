@@ -1,32 +1,37 @@
-import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 function OAuth2RedirectHandler() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const checkToken = async () =>{
-            try{
-                const res = await axios.get("http://localhost:8090/api/protected",{
+        const fetchTokens = async () => {
+            try {
+                const response = await axios.get("http://localhost:8090/api/oauth2/token", {
                     withCredentials: true,
                 });
-                if(res.status === 200 ){
-                    console.log("로그인 성공")
-                    navigate("/",{replace:true});
-                }else{
-                    console.error("인증실패")
-                    navigate("/login")
+
+                const { accessToken, refreshToken } = response.data;
+
+                if (accessToken && refreshToken) {
+                    localStorage.setItem("accessToken", accessToken);
+                    localStorage.setItem("refreshToken", refreshToken);
+
+                    navigate("/", { replace: true });
+                } else {
+                    navigate("/login");
                 }
-            }catch (error){
-                console.log(error,"에러뜸")
+            } catch (error) {
+                console.error("토큰 가져오기 실패:", error);
                 navigate("/login");
             }
-        }
-        checkToken();
+        };
+
+        fetchTokens();
     }, [navigate]);
 
-    return <div>로딩중</div>;
+    return <div>로딩 중...</div>;
 }
 
 export default OAuth2RedirectHandler;

@@ -19,6 +19,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.List;
+
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true) // secured 어노테이션 활성화 -> 컨트롤러 어딘가 @Secured("ROLE_ADMIN")해주면 admin만 들어갈수있게 되는것// prePostEnabled 어노테이션 활성화 -> Secured와 같지만, 권한을 여러개 걸어주거나 복잡한 권한을 부여할때
@@ -93,6 +95,7 @@ public class SecurityConfig {
         configuration.addAllowedOrigin("http://localhost:3000"); // React 앱의 주소
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
+        configuration.setExposedHeaders(List.of("Authorization", "Refresh-Token"));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
