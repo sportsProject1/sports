@@ -12,6 +12,8 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+
 @Service
 public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
 
@@ -35,41 +37,33 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = super.loadUser(userRequest);
 
-        // OAuth2 공급자 정보 가져오기
-        String provider = userRequest.getClientRegistration().getRegistrationId(); // "google" 또는 "kakao"
-        String providerId = (provider.equals("google"))
+        String provider = userRequest.getClientRegistration().getRegistrationId();
+        String providerId = provider.equals("google")
                 ? oAuth2User.getAttribute("sub").toString()
-                : oAuth2User.getAttribute("id").toString(); // id를 long으로 제공해도 String으로 변환
-
-        String username = provider + "_" + providerId;
+                : oAuth2User.getAttribute("id").toString();
         String email = oAuth2User.getAttribute("email");
+        String username = provider + "_" + providerId;
         String role = "ROLE_USER";
 
-        // 사용자 데이터 확인 및 자동 회원가입
-        User userEntity = userRepository.findByUsername(username)
-                .orElseGet(() -> {
-                    System.out.println("최초 로그인, 자동 회원가입 처리");
-                    User newUser = User.builder()
-                            .username(username)
-                            .password(bCryptPasswordEncoder.encode("OAUTH2_PASSWORD"))
-                            .email(email)
-                            .role(role)
-                            .provider(provider)
-                            .providerId(providerId)
-                            .build();
-                    return userRepository.save(newUser);
-                });
+        User userEntity = userRepository.findByEmail(email).orElseGet(() -> {
+            User newUser = User.builder()
+                    .username(username)
+                    .password(bCryptPasswordEncoder.encode("OAUTH2_PASSWORD"))
+                    .email(email)
+                    .role(role)
+                    .provider(provider)
+                    .providerId(providerId)
+                    .build();
+            return userRepository.save(newUser);
+        });
 
-        // JWT 생성
-        Long userId = userEntity.getId();
-        String accessToken = jwtTokenProvider.createToken(userId, userEntity.getUsername(), userEntity.getRole());
-        String refreshToken = jwtTokenProvider.createRefreshToken();
-
-        // JWT를 응답 헤더에 추가
-        response.addHeader("Authorization", "Bearer " + accessToken);
-        response.addHeader("Refresh-Token", "Bearer " + refreshToken);
+        // Redirect to client after successful OAuth2 login
+        try {
+            response.sendRedirect("http://localhost:3000/oauth2/redirect");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         return new PrincipalUserDetails(userEntity, oAuth2User.getAttributes());
     }
-
 }

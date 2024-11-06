@@ -74,4 +74,13 @@ public class PrincipalUserDetails implements UserDetails, OAuth2User {
     public String getName() {
         return user.getUsername(); // 사용자명을 반환 (또는 providerId 등 고유 식별자를 반환할 수도 있음)
     }
+
+    public Long getId() {
+        return user.getId();
+    }
+
+    public String getRole() {
+        return user.getRole();
+    }
+
 }

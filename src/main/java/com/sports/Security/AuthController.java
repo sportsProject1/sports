@@ -1,16 +1,15 @@
 package com.sports.Security;
 
-import com.sports.user.UserDTO;
-import com.sports.user.UserRefreshTokenRepository;
-import com.sports.user.UserService;
-import com.sports.user.ValidationGroups;
+import com.sports.user.*;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -18,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -28,6 +28,7 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
     private final UserRefreshTokenRepository userRefreshTokenRepository;
+    private final UserRepository userRepository;
 
     // 회원가입
     @PostMapping("/register")
@@ -81,13 +82,25 @@ public class AuthController {
         }
     }
 
-    @GetMapping("oauth2/token")
-    public ResponseEntity<?> getToken(HttpServletRequest request) {
-        String token = request.getHeader("Authorization");
-        if (token != null) {
-            return ResponseEntity.ok().header("Authorization", token).build();
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
+    @GetMapping("/api/oauth2/token")
+    public Map<String, String> getToken(@AuthenticationPrincipal PrincipalUserDetails userDetails) {
+        String accessToken = jwtTokenProvider.createToken(userDetails.getId(), userDetails.getUsername(), userDetails.getRole());
+        String refreshToken = jwtTokenProvider.createRefreshToken();
+
+        // 영속성 컨텍스트에서 User 엔티티 가져오기
+        User user = userRepository.findById(userDetails.getId()).get();
+
+        // 리프레시 토큰을 UserRefreshToken 테이블에 저장 또는 업데이트
+        UserRefreshToken userRefreshToken = userRefreshTokenRepository.findById(userDetails.getId())
+                .orElse(new UserRefreshToken(user, refreshToken));
+        userRefreshToken.updateRefreshToken(refreshToken);
+        userRefreshTokenRepository.save(userRefreshToken);
+
+        Map<String, String> tokens = new HashMap<>();
+        tokens.put("accessToken", accessToken);
+        tokens.put("refreshToken", refreshToken);
+
+        return tokens;
     }
+
 }
