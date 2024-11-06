@@ -101,8 +101,8 @@ function LoginForm() {
 
             <Link to={"/register"}>회원가입</Link>
             <Button type="submit">로그인</Button>
-            <GoogleLogin onClick={onGoogle} type="submit">구글 로그인</GoogleLogin>
-            <KakaoLogin onClick={onKakao} type="submit">카카오 로그인</KakaoLogin>
+            <GoogleLogin onClick={onGoogle} type="button">구글 로그인</GoogleLogin>
+            <KakaoLogin onClick={onKakao} type="button">카카오 로그인</KakaoLogin>
 
         </LoginFormWrap>
     )
