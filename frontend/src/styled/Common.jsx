@@ -107,3 +107,11 @@ export const GoogleLogin = styled.button`
     }
     
 `;
+
+export const Divider = styled.div`
+    width: 250px;
+    height: 4px;
+    margin: 30px auto;
+    background-color: #cccccc;
+    border-radius: 2px;
+`;

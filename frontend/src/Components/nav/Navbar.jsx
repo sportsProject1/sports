@@ -4,7 +4,7 @@ import {useEffect, useState} from "react";
 
 const NavContainer = styled.nav`
     width:100%;
-    height: 130px;
+    height: 100px;
 `
 const NavBox = styled.nav.withConfig({
     shouldForwardProp: (prop) => prop !== "showNavbar"
@@ -18,6 +18,7 @@ const NavBox = styled.nav.withConfig({
         background-color: #fff;
         transition: transform 0.3s ease;
         transform: ${({ showNavbar }) => (showNavbar ? "translateY(0)" : "translateY(-100%)")};
+    z-index: 99;
 `
 
 function Navbar(){
