@@ -11,6 +11,7 @@ import ShopAdd from "./Page/shop/ShopAdd";
 import ShopDetail from "./Page/shop/ShopDetail";
 import MyPage from "./Page/user/MyPage";
 import ShopCart from "./Page/shop/ShopCart";
+import OAuth2RedirectHandler from "./Utils/OAuth2RedirectHandler";
 
 const Routes = createBrowserRouter([
     {
@@ -30,7 +31,9 @@ const Routes = createBrowserRouter([
             { path: '/shop/add', element: <ShopAdd/>},
             { path: '/shop/cart', element: <ShopCart/>},
 
-            { path: '/mypage', element: <MyPage/>}
+            { path: '/mypage', element: <MyPage/>},
+
+            { path: '/oauth2/redirect', element: <OAuth2RedirectHandler/>}
         ]
     }
 ]);
