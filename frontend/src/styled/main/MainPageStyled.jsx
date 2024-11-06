@@ -113,3 +113,76 @@ export const Footer = styled.footer`
     height: 150px;
     background-color: green;
 `
+
+export const PostCard = styled.div`
+    width: 25%;
+    background-color: #ffffff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #e0e0e0;
+    position: relative;
+    margin: 10px;
+`;
+
+// 카테고리 태그 스타일
+export const CategoryTag = styled.span`
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #f1f3f5;
+    color: #495057;
+    font-size: 12px;
+    padding: 4px 8px;
+    border-radius: 12px;
+`;
+
+// 이미지 스타일
+export const PostImage = styled.div`
+    width: 100%;
+    height: 180px;
+    background-color: #e9ecef;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+`;
+
+// 이미지 아이콘 (없을 경우 보여줄 아이콘)
+export const PlaceholderIcon = styled.div`
+    font-size: 48px;
+    color: #adb5bd;
+`;
+
+// 콘텐츠 영역 스타일
+export const PostContent = styled.div`
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+`;
+
+// 제목 스타일
+export const PostTitle = styled.h3`
+    font-size: 16px;
+    font-weight: bold;
+    color: #212529;
+    margin: 0;
+`;
+
+// 작성자 스타일
+export const Author = styled.div`
+    font-size: 14px;
+    color: #868e96;
+`;
+
+// 날짜와 조회수 스타일
+export const PostInfo = styled.div`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: #868e96;
+`;
