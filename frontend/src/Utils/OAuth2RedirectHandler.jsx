@@ -6,33 +6,25 @@ function OAuth2RedirectHandler() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const getOAuth2Token = async () => {
-            try {
-                const res = await axios.get("http://localhost:8090/oauth2/token", {
+        const checkToken = async () =>{
+            try{
+                const res = axios.get("http://localhost:8090/api/protected",{
                     withCredentials: true,
                 });
-
-                if (res.status === 200) {
-                    // Authorization 헤더에서 토큰 가져오기
-                    const token = res.headers["accessToken"];
-                    const refreshToken = res.headers["refreshToken"];
-                    console.log("Access Token:", token);
-                    console.log("Refresh Token:", refreshToken);
-
-                    localStorage.setItem("token", token);
-                    localStorage.setItem("refreshToken", refreshToken);
-                    navigate("/", { replace: true });
-                } else {
-                    navigate("/login");
+                if(res.status === 200 ){
+                    console.log("로그인 성공")
+                    navigate("/",{replace:true});
+                }else{
+                    console.error("인증실패")
+                    navigate("/login")
                 }
-            } catch (err) {
-                console.log(err);
+            }catch (error){
+                console.log(error,"에러뜸")
                 navigate("/login");
             }
-        };
-
-        getOAuth2Token();
-    }, [navigate]);
+        }
+        checkToken();
+    }, [navigate()]);
 
     return <div>로딩중</div>;
 }
