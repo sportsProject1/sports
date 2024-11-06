@@ -73,6 +73,11 @@ public class ItemController {
 
             User user = userService.findByUsername(username);
 
+            if (file == null || file.isEmpty()) {
+                ItemResponseDTO response = new ItemResponseDTO("상품을 추가하려면 파일을 첨부해야 합니다.");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            }
+
             itemService.addItem(itemDTO, file,
                     user); // 파일을 함께 전달
             ItemResponseDTO response = new ItemResponseDTO("상품이 성공적으로 추가되었습니다.");
