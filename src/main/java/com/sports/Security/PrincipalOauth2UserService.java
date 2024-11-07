@@ -13,6 +13,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.Map;
 
 @Service
 public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
@@ -42,6 +43,11 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
                 ? oAuth2User.getAttribute("sub").toString()
                 : oAuth2User.getAttribute("id").toString();
         String email = oAuth2User.getAttribute("email");
+
+        Map<String, Object> properties = oAuth2User.getAttribute("properties");
+        String nickname = (String) properties.get("nickname");
+        String profileImageUrl = (String) properties.get("profile_image");
+
         String username = provider + "_" + providerId;
         String role = "ROLE_USER";
 
@@ -49,10 +55,12 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
             User newUser = User.builder()
                     .username(username)
                     .password(bCryptPasswordEncoder.encode("OAUTH2_PASSWORD"))
+                    .nickname(nickname)
                     .email(email)
                     .role(role)
                     .provider(provider)
                     .providerId(providerId)
+                    .imgURL(profileImageUrl)
                     .build();
             return userRepository.save(newUser);
         });

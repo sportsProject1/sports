@@ -25,7 +25,7 @@ public class UserService {
     private final BCryptPasswordEncoder passwordEncoder;
     private final S3Service s3Service;
 
-    // 회원가입 서비스
+    // 일반 회원가입 서비스
     public String register(UserDTO userDTO, MultipartFile file) throws IOException {
 
         String phone = userDTO.getPhone().replaceAll("[^0-9]", "");
@@ -55,7 +55,7 @@ public class UserService {
         return "회원가입이 성공적으로 완료되었습니다.";
     }
 
-    // 로그인 서비스
+    // 일반 로그인 서비스
     public AuthResponse authenticateUser(LoginRequest loginRequest, AuthenticationManager authenticationManager,
                                          JwtTokenProvider jwtTokenProvider, UserRefreshTokenRepository userRefreshTokenRepository) {
         Authentication authentication = authenticationManager.authenticate(
@@ -75,7 +75,7 @@ public class UserService {
         return new AuthResponse(user.getUsername(), user.getNickname(), role, accessToken, refreshToken);
     }
 
-    // 로그아웃 서비스
+    // 통합 로그아웃 서비스
     public void logout(String username, UserRefreshTokenRepository userRefreshTokenRepository) {
         User user = findByUsername(username);
         userRefreshTokenRepository.deleteByUserId(user.getId());
@@ -112,6 +112,11 @@ public class UserService {
     public User findById(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다."));
+    }
+
+    // 아이디 중복 여부
+    public boolean isUsernameDuplicate(String username) {
+        return userRepository.existsByUsername(username);
     }
 
     // 유저정보 저장하고 유저객체 반환

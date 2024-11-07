@@ -6,6 +6,7 @@ import com.sports.Security.JwtTokenProvider;
 import com.sports.user.User;
 import com.sports.user.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -13,6 +14,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -56,18 +58,50 @@ public class CartController {
         return ResponseEntity.ok(addedCartItem);
     }
 
-    @PutMapping("/update/{id}")
-    public ResponseEntity<String> updateCartItem(
-            @PathVariable Long id,
-            @RequestBody CartDTO cartDTO) {
+//    @PutMapping("/update/{id}")
+//    public ResponseEntity<String> updateCartItem(
+//            @PathVariable Long id,
+//            @RequestBody CartDTO cartDTO) {
+//
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        String username = authentication.getName();
+//
+//        User user = userService.findByUsername(username);
+//
+//        cartService.update(id, cartDTO, user);
+//        return ResponseEntity.ok("장바구니 항목이 업데이트되었습니다.");
+//    }
 
+    @PutMapping("/update/checkbox/{itemId}")
+    public ResponseEntity<?> updateCartCheckbox(@PathVariable Long itemId, @RequestBody Map<String, Boolean> body) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
-
         User user = userService.findByUsername(username);
 
-        cartService.update(id, cartDTO, user);
-        return ResponseEntity.ok("장바구니 항목이 업데이트되었습니다.");
+        boolean isChecked = body.get("isChecked");
+
+        try {
+            cartService.updateIsChecked(itemId, isChecked, user);
+            return ResponseEntity.ok("체크박스 상태가 업데이트되었습니다.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("체크박스 상태 업데이트 실패");
+        }
+    }
+
+    @PutMapping("/update/quantity/{itemId}")
+    public ResponseEntity<?> updateCartQuantity(@PathVariable Long itemId, @RequestBody Map<String, Integer> body) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User user = userService.findByUsername(username);
+
+        int count = body.get("count");
+
+        try {
+            cartService.updateQuantity(itemId, count, user);
+            return ResponseEntity.ok("수량이 업데이트되었습니다.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("수량 업데이트 실패");
+        }
     }
 
     @DeleteMapping("/delete")
