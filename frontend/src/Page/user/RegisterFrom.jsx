@@ -1,5 +1,5 @@
 // RegisterForm.jsx
-import React, { useState, useRef } from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import useImageUploader from "../../hooks/useImageUploader";
@@ -8,10 +8,15 @@ import { postData } from "../../Server/ApiServiceNoToken";
 import ProfileImageUpload from "./userComponents/ProfileImageUpload";
 import FormFields from "./userComponents/FormFields";
 import ValidationMessages from "./userComponents/ValidationMessages";
+import {values} from "lodash-es";
+import axios from "axios";
 
 function RegisterForm({ onSuccess }) {
     const { images, handleImageChange, resetImages } = useImageUploader(false);
     const [isImageDeleted, setIsImageDeleted] = useState(false);
+
+    const [isAvailable, setIsAvailable] = useState(null );
+
     const postcodeRef = useRef();
 
     const formatPhoneNumber = (value) => {
@@ -35,7 +40,22 @@ function RegisterForm({ onSuccess }) {
             file: '',
         },
         validationSchema: Yup.object({
-            username: Yup.string().min(3, '아이디는 최소 6자 이상이어야 합니다.').required('아이디는 6~20자 사이여야 합니다.'),
+            username: Yup.string().min(3, '아이디는 최소 6자 이상이어야 합니다.')
+                .required('아이디는 6~20자 사이여야 합니다.')
+                .test('check-username', '이미 사용 중인 아이디입니다.', async (value) => {
+                    if (!value) return false;
+                    try {
+                        const response = await axios.get('http://localhost:8090/oauth2/check-username', {
+                            params: { username: value },
+                        });
+                        // 서버의 응답 값을 사용하여 테스트의 결과를 반환
+                        const isDuplicate = response.data.isDuplicate;
+                        return !isDuplicate; // 중복이면 false 반환, 아니면 true 반환
+                    } catch (error) {
+                        console.error('Error checking username:', error);
+                        return false;
+                    }
+                }),
             password: Yup.string().min(8, '비밀번호는 최소 8자 이상 영어와 숫자를 섞어주세요.').required('비밀번호를 입력하세요.'),
             nickname: Yup.string().min(2, "이름은 최소 두 글자 이상이어야 합니다.").required('이름을 입력하세요.'),
             phone: Yup.string().matches(/^\d{3}-\d{4}-\d{4}$/, '형식이 올바르지 않습니다 (예: 010-1234-5678).').required('전화번호를 입력하세요.'),
@@ -64,6 +84,7 @@ function RegisterForm({ onSuccess }) {
             }
         },
     });
+
 
     const handlePhoneChange = (e) => {
         const formattedPhone = formatPhoneNumber(e.target.value);
@@ -112,7 +133,7 @@ function RegisterForm({ onSuccess }) {
                 handleAddressSearch={handleAddressSearch}
                 isSignUp={"sign"}
             />
-            <ValidationMessages formik={formik} />
+            <ValidationMessages isAvailable={isAvailable} formik={formik} />
         </FormWrap>
     );
 }

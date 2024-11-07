@@ -2,13 +2,17 @@
 import React from 'react';
 import { ErrorFieldsWrapper, PassMessage, ErrorMessage } from "../../../styled/UserStyled";
 
-function ValidationMessages({ formik }) {
+function ValidationMessages({ formik,isAvailable }) {
     return (
         <ErrorFieldsWrapper>
             {formik.errors.username ? (
                 <ErrorMessage>{formik.errors.username}</ErrorMessage>
             ) : formik.values.username.length >= 3 ? (
-                <PassMessage>아이디의 길이가 일치합니다.</PassMessage>
+                isAvailable !== null && !isAvailable ? (
+                    <ErrorMessage>이미 사용 중인 아이디입니다.</ErrorMessage>
+                ) : (
+                    <PassMessage>아이디의 길이가 일치합니다.</PassMessage>
+                )
             ) : (
                 <ErrorMessage>아이디의 길이가 맞지 않습니다.</ErrorMessage>
             )}
