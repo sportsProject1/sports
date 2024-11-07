@@ -15,7 +15,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Optional;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -94,6 +95,39 @@ public class UserService {
         User user = userRefreshToken.getUser();
         return jwtTokenProvider.createToken(user.getId(), user.getUsername(), user.getRole());
     }
+
+
+    // 오어스 로그인시 JWT토큰과 유저정보 반환하는 서비스
+//    public Map<String, Object> generateTokenResponseWithUser(Long userId, JwtTokenProvider jwtTokenProvider,
+//                                                             UserRefreshTokenRepository userRefreshTokenRepository) {
+//
+//
+//        String accessToken = jwtTokenProvider.createToken(user.getId(), user.getUsername(), user.getRole());
+//        String refreshToken = jwtTokenProvider.createRefreshToken();
+//
+//        // 영속성 컨텍스트에서 User 엔티티 가져오기
+//        User user = userRepository.findById(userDetails.getId()).get();
+//
+//        // 리프레시 토큰 저장 또는 업데이트
+//        UserRefreshToken userRefreshToken = userRefreshTokenRepository.findById(user.getId())
+//                .orElse(new UserRefreshToken(user, refreshToken));
+//        userRefreshToken.updateRefreshToken(refreshToken);
+//        userRefreshTokenRepository.save(userRefreshToken);
+//
+//        // 응답 데이터 구성
+//        Map<String, Object> response = new HashMap<>();
+//        response.put("accessToken", accessToken);
+//        response.put("refreshToken", refreshToken);
+//
+//        Map<String, Object> userInfo = new HashMap<>();
+//        userInfo.put("nickname", user.getNickname());
+//        userInfo.put("role", user.getRole());
+//        userInfo.put("username", user.getUsername());
+//        response.put("user", userInfo);
+//
+//        return response;
+//    }
+
 
 
     // username을 받아 User 조회
