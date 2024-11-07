@@ -115,3 +115,13 @@ export const Divider = styled.div`
     background-color: #cccccc;
     border-radius: 2px;
 `;
+
+export const ItemContainer = styled.div`
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 20px;
+    justify-content: center; /* 아이템을 왼쪽 정렬 */
+`;
