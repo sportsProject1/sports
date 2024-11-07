@@ -73,39 +73,6 @@ export const CardWrapper = styled.div`
     width: 200%; // 2 페이지 분량으로 설정
 `;
 
-export const Card = styled.div`
-    width:25%;
-    background-color: #fff;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    margin: 10px;
-`;
-
-export const Image = styled.img`
-    width: 100%;
-    height: 300px;
-    object-fit: cover;
-`;
-
-export const ProductName = styled.div`
-    font-size: 18px;
-    font-weight: bold;
-    padding: 10px 5px;
-    height: 50px;
-    overflow: hidden; // 텍스트가 길 때 잘림 처리
-`;
-
-export const Price = styled.div`
-    font-size: 16px;
-    color: #555;
-    padding: 5px;
-    height: 50px;
-`;
 
 export const Footer = styled.footer`
     width:100%;

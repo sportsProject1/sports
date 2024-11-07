@@ -25,4 +25,12 @@ public class PaymentDTO {
     private List<PaymentDetailDTO> paymentDetails;
 
     private String paymentStatusMessage;
+
+    public String getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    public void setPaymentMethod(String paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
 }

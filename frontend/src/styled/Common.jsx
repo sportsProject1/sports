@@ -52,29 +52,6 @@ export const Input = styled.input`
     }
 `;
 
-
-export const Card = styled.div`
-  display: flex;
-  justify-content: space-between;
-  padding: 15px;
-    background-color: ${({ theme }) => theme.colors.card};
-    border: ${({ theme }) => theme.colors.border};
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  margin-bottom: 15px;
-
-  &:hover {
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-  }
-`;
-
-export const PostList = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  margin-bottom: 40px;
-`;
-
 export const KakaoLogin = styled.button`
     width: 100%;
     padding: ${({ theme }) => theme.spacing.medium};
@@ -124,4 +101,41 @@ export const ItemContainer = styled.div`
     box-sizing: border-box;
     padding: 20px;
     justify-content: center; /* 아이템을 왼쪽 정렬 */
+`;
+
+// 카드 css
+
+export const Card = styled.div`
+    width:25%;
+    background-color: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin: 10px;
+    cursor: pointer;
+`;
+
+export const CardImage = styled.img`
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+`;
+
+export const ProductName = styled.div`
+    font-size: 18px;
+    font-weight: bold;
+    padding: 10px 5px;
+    height: 50px;
+    overflow: hidden; // 텍스트가 길 때 잘림 처리
+`;
+
+export const Price = styled.div`
+    font-size: 16px;
+    color: #555;
+    padding: 5px;
+    height: 50px;
 `;
