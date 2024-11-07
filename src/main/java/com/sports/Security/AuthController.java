@@ -86,7 +86,7 @@ public class AuthController {
     }
 
     // 아이디 중복체크
-    @GetMapping("/check-username")
+    @GetMapping("/oauth2/check-username")
     public ResponseEntity<Map<String, Boolean>> checkUsername(@RequestParam String username) {
         boolean isDuplicate = userService.isUsernameDuplicate(username);
         Map<String, Boolean> response = new HashMap<>();
