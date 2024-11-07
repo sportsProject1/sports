@@ -5,7 +5,7 @@ const SubMenuContainer = styled.div`
     display: flex;
     align-items: center;
     gap: 20px;
-    padding: 10px 20px;
+    padding: 20px;
     justify-content: space-between;
     width: 100%;
 `;

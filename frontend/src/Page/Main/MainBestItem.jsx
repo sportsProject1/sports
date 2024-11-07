@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import {Card, CardWrapper, NavButton, Price, ProductName, SectionContainer,Image} from "../../styled/main/MainPageStyled";
 import {handleNextSlide, handlePrevSlide} from "../../Utils/MainItemSlide";
+import {CardWrapper, NavButton, SectionContainer} from "../../styled/main/MainPageStyled";
+import {Card, CardImage, Price, ProductName} from "../../styled/Common";
 
 function MainBestItem() {
     const [pageIndex, setPageIndex] = useState(0);
@@ -21,7 +22,7 @@ function MainBestItem() {
             <CardWrapper $translateX={-pageIndex * 100 / totalPages}>
                 {products.map((product, index) => (
                     <Card key={`product-${product.id}-${index}`}>
-                        <Image src={product.image} alt={product.name} />
+                        <CardImage src={product.image} alt={product.name} />
                         <ProductName>{product.name}</ProductName>
                         <Price>{product.price}</Price>
                     </Card>
