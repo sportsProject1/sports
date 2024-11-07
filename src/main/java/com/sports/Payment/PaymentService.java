@@ -2,6 +2,8 @@ package com.sports.Payment;
 
 import com.sports.Cart.Cart;
 import com.sports.Cart.CartService;
+import com.sports.Item.Item;
+import com.sports.Item.ItemRepository;
 import com.sports.PaymentDetail.PaymentDetail;
 import com.sports.PaymentDetail.PaymentDetailDTO;
 import com.sports.user.User;
@@ -21,6 +23,7 @@ public class PaymentService {
     private final PaymentRepository paymentRepository;
     private final CartService cartService;
     private final UserService userService;
+    private final ItemRepository itemRepository;  // 아이템 리포지토리 추가
 
     public PaymentDTO processPayment(Long userId, String paymentMethod) {
         // 1. 유저 정보와 체크된 장바구니 항목들을 가져옵니다.
@@ -47,46 +50,59 @@ public class PaymentService {
                 paymentDetail.setItemTitle(cart.getItem().getTitle());
                 paymentDetail.setItemPrice(cart.getItem().getPrice());
                 paymentDetail.setItemCount(cart.getCount());
-                paymentDetail.setPayment(payment); // Payment와 연관을 설정
+                paymentDetail.setItemId(cart.getItem().getId());  // 아이템의 ID를 저장
 
                 // 총 금액을 계산
                 totalPrice += (long) cart.getItem().getPrice() * (long) cart.getCount();
 
-                paymentDetails.add(paymentDetail);
-
                 // 결제 상태 업데이트
                 cart.setPaymentStatus(true);
+
+                // 4. PaymentDetail 객체에 Payment 객체 설정 (이 부분이 중요)
+                paymentDetail.setPayment(payment);  // Payment 객체를 set 해줍니다.
+
+                paymentDetails.add(paymentDetail);
             }
         }
 
-        // 4. Payment 객체에 PaymentDetails 추가 및 총 금액 설정
+        // 5. Payment 객체에 PaymentDetails 추가 및 총 금액 설정
         payment.setPaymentDetails(paymentDetails);
         payment.setTotalPrice(totalPrice);
         payment.setPaymentWhether(true); // 결제 완료 표시
 
-        // 5. Payment 객체 저장
+        // 6. Payment 객체 저장
         paymentRepository.save(payment);
 
-        // 6. 장바구니 항목을 업데이트
+        // 7. 장바구니 항목을 업데이트
         cartService.saveAll(cartItems); // 결제 상태 업데이트 후 저장
 
-        // 7. PaymentDTO 반환
+        // 8. 아이템 재고 차감
+        for (PaymentDetail paymentDetail : paymentDetails) {
+            Long itemId = paymentDetail.getItemId(); // 아이템 ID
+            int itemCount = paymentDetail.getItemCount(); // 주문 수량
+
+            // 아이템 조회
+            Item item = itemRepository.findById(itemId)
+                    .orElseThrow(() -> new RuntimeException("아이템을 찾을 수 없습니다. itemId: " + itemId));
+
+            // 재고 차감
+            int newStock = item.getStock() - itemCount;
+
+            if (newStock < 0) {
+                throw new RuntimeException("재고가 부족합니다: " + item.getTitle());
+            }
+
+            item.setStock(newStock); // 재고 업데이트
+            itemRepository.save(item); // 아이템 저장
+        }
+
+        // 9. PaymentDTO 반환
         return convertToPaymentDTO(payment);
     }
 
-    public List<PaymentDTO> getPaymentsByUser(Long userId) {
-        User user = userService.findById(userId);  // 사용자 정보 조회
-        List<Payment> payments = paymentRepository.findByUser(user);  // 사용자 결제 내역 가져오기
 
-        // Payment를 PaymentDTO로 변환
-        List<PaymentDTO> paymentDTOs = new ArrayList<>();
-        for (Payment payment : payments) {
-            paymentDTOs.add(convertToPaymentDTO(payment));
-        }
 
-        return paymentDTOs;
-    }
-
+    // PaymentDTO로 변환
     private PaymentDTO convertToPaymentDTO(Payment payment) {
         List<PaymentDetailDTO> paymentDetailDTOs = createPaymentDetailDTOs(payment.getPaymentDetails());
 
@@ -120,6 +136,19 @@ public class PaymentService {
         }
 
         return paymentDetailDTOs;
+    }
+
+    public List<PaymentDTO> getPaymentsByUser(Long userId) {
+        User user = userService.findById(userId);  // 사용자 정보 조회
+        List<Payment> payments = paymentRepository.findByUser(user);  // 사용자 결제 내역 가져오기
+
+        // Payment를 PaymentDTO로 변환
+        List<PaymentDTO> paymentDTOs = new ArrayList<>();
+        for (Payment payment : payments) {
+            paymentDTOs.add(convertToPaymentDTO(payment));
+        }
+
+        return paymentDTOs;
     }
 
 }
