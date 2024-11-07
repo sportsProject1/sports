@@ -10,7 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -104,15 +103,47 @@ public class CartController {
         }
     }
 
-    @DeleteMapping("/delete")
+//    @DeleteMapping("/delete")
+//    public ResponseEntity<String> deleteCheckedItems() {
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        String username = authentication.getName();
+//
+//        User user = userService.findByUsername(username);
+//
+//        cartService.deleteCheckedItems(user);
+//        return ResponseEntity.ok("선택한 항목이 삭제되었습니다.");
+//    }
+
+    // 개별 항목 삭제 메서드
+    @DeleteMapping("/delete/{itemId}")
+    public ResponseEntity<String> deleteCartItem(@PathVariable Long itemId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        User user = userService.findByUsername(username);
+
+        try {
+            cartService.deleteCartItem(itemId, user);
+            return ResponseEntity.ok("장바구니 항목이 삭제되었습니다.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("장바구니 항목 삭제 실패");
+        }
+    }
+
+    // 체크된 항목 삭제 메서드
+    @DeleteMapping("/delete/checked")
     public ResponseEntity<String> deleteCheckedItems() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
         User user = userService.findByUsername(username);
 
-        cartService.deleteCheckedItems(user);
-        return ResponseEntity.ok("선택한 항목이 삭제되었습니다.");
+        try {
+            cartService.deleteCheckedItems(user);
+            return ResponseEntity.ok("선택한 항목이 삭제되었습니다.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("선택한 항목 삭제 실패");
+        }
     }
 
     @GetMapping("/checkout")
@@ -122,7 +153,7 @@ public class CartController {
 
         User user = userService.findByUsername(username);
 
-        List<CartDTO> checkedItems = cartService.getCheckedCartItems(user);
+        List<CartDTO> checkedItems = cartService.getAvailableCartItems(user);
         return ResponseEntity.ok(checkedItems);
     }
 }

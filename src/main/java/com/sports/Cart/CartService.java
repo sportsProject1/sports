@@ -73,7 +73,33 @@ public class CartService {
         cartRepository.save(cart);
     }
 
-    // 장바구니 항목 삭제
+//    // 장바구니 항목 삭제
+//    public void deleteCheckedItems(User user) {
+//        List<Cart> checkedItems = cartRepository.findByUserAndIsChecked(user, true);
+//
+//        for (Cart cart : checkedItems) {
+//            if (!cart.getUser().getId().equals(user.getId())) {
+//                throw new RuntimeException("권한이 없습니다.");
+//            }
+//        }
+//
+//        cartRepository.deleteAll(checkedItems);
+//    }
+
+    // 개별 항목 삭제
+    public void deleteCartItem(Long itemId, User user) {
+        Cart cart = cartRepository.findById(itemId)
+                .orElseThrow(() -> new RuntimeException("장바구니 항목을 찾을 수 없습니다."));
+
+        if (!cart.getUser().getId().equals(user.getId())) {
+            throw new RuntimeException("권한이 없습니다.");
+        }
+
+        // 항목 삭제
+        cartRepository.delete(cart);
+    }
+
+    // 체크된 항목 삭제
     public void deleteCheckedItems(User user) {
         List<Cart> checkedItems = cartRepository.findByUserAndIsChecked(user, true);
 
@@ -85,6 +111,7 @@ public class CartService {
 
         cartRepository.deleteAll(checkedItems);
     }
+
 
     private CartDTO convertToDto(Cart cart) {
         return new CartDTO(
