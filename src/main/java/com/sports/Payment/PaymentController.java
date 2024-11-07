@@ -23,7 +23,7 @@ public class PaymentController {
     private final UserService userService;
 
     @PostMapping("/process")
-    public ResponseEntity<PaymentDTO> processPayment(@RequestParam String paymentMethod) {
+    public ResponseEntity<PaymentDTO> processPayment(@RequestBody String paymentMethod) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         User user;
