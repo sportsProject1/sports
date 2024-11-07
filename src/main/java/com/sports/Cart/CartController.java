@@ -71,6 +71,7 @@ public class CartController {
 //        return ResponseEntity.ok("장바구니 항목이 업데이트되었습니다.");
 //    }
 
+    //장바구니 체크박스 업데이트
     @PutMapping("/update/checkbox/{itemId}")
     public ResponseEntity<?> updateCartCheckbox(@PathVariable Long itemId, @RequestBody Map<String, Boolean> body) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -87,6 +88,7 @@ public class CartController {
         }
     }
 
+    //장바구니 수량 업데이트
     @PutMapping("/update/quantity/{itemId}")
     public ResponseEntity<?> updateCartQuantity(@PathVariable Long itemId, @RequestBody Map<String, Integer> body) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -146,6 +148,7 @@ public class CartController {
         }
     }
 
+    //결제대기로
     @GetMapping("/checkout")
     public ResponseEntity<List<CartDTO>> getCheckedItemsForCheckout() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
