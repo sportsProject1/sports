@@ -82,8 +82,8 @@ public class AuthController {
         }
     }
 
-    @GetMapping("/api/oauth2/token")
-    public Map<String, String> getToken(@AuthenticationPrincipal PrincipalUserDetails userDetails) {
+    @GetMapping("/oauth2/token")
+    public Map<String, Object> getToken(@AuthenticationPrincipal PrincipalUserDetails userDetails) {
         String accessToken = jwtTokenProvider.createToken(userDetails.getId(), userDetails.getUsername(), userDetails.getRole());
         String refreshToken = jwtTokenProvider.createRefreshToken();
 
@@ -96,11 +96,17 @@ public class AuthController {
         userRefreshToken.updateRefreshToken(refreshToken);
         userRefreshTokenRepository.save(userRefreshToken);
 
-        Map<String, String> tokens = new HashMap<>();
-        tokens.put("accessToken", accessToken);
-        tokens.put("refreshToken", refreshToken);
+        Map<String, Object> response = new HashMap<>();
+        response.put("accessToken", accessToken);
+        response.put("refreshToken", refreshToken);
 
-        return tokens;
+        Map<String, Object> userInfo = new HashMap<>();
+        userInfo.put("nickname", user.getNickname());
+        userInfo.put("role", user.getRole());
+        userInfo.put("username", user.getUsername());
+        response.put("user", userInfo);
+
+        return response;
     }
 
 }
