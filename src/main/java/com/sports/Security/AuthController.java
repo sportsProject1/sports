@@ -30,7 +30,7 @@ public class AuthController {
     private final UserRefreshTokenRepository userRefreshTokenRepository;
     private final UserRepository userRepository;
 
-    // 회원가입
+    // 일반 회원가입
     @PostMapping("/register")
     public ResponseEntity<Map<String, String>> signUp(@Validated(ValidationGroups.Create.class) @ModelAttribute UserDTO userDTO,
                                                       @RequestParam(value = "file", required = false) MultipartFile file) throws IOException {
@@ -45,7 +45,7 @@ public class AuthController {
         }
     }
 
-    // 로그인
+    // 일반 로그인
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@ModelAttribute LoginRequest loginRequest) {
         try {
@@ -57,31 +57,7 @@ public class AuthController {
         }
     }
 
-    // 로그아웃
-    @PostMapping("/logout")
-    @Transactional
-    public ResponseEntity<String> logout(HttpServletRequest request) {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        userService.logout(username, userRefreshTokenRepository);
-        return ResponseEntity.ok("로그아웃 되었습니다.");
-    }
-
-    // 리프레시 토큰으로 새로운 액세스 토큰 생성
-    @PostMapping("/refresh")
-    public ResponseEntity<?> refreshAccessToken(@RequestBody Map<String, String> request) {
-        String refreshToken = request.get("refreshToken");
-        if (refreshToken == null || refreshToken.trim().isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid request: 리프레시토큰 없음");
-        }
-
-        try {
-            String newAccessToken = userService.refreshAccessToken(refreshToken.trim(), jwtTokenProvider, userRefreshTokenRepository);
-            return ResponseEntity.ok(Map.of("accessToken", newAccessToken));
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
-        }
-    }
-
+    // 소셜 로그인 (JWT토큰, 소셜에서 전달되는 유저정보 전송)
     @GetMapping("/oauth2/token")
     public Map<String, Object> getToken(@AuthenticationPrincipal PrincipalUserDetails userDetails) {
         String accessToken = jwtTokenProvider.createToken(userDetails.getId(), userDetails.getUsername(), userDetails.getRole());
@@ -108,5 +84,41 @@ public class AuthController {
 
         return response;
     }
+
+    // 아이디 중복체크
+    @GetMapping("/check-username")
+    public ResponseEntity<Map<String, Boolean>> checkUsername(@RequestParam String username) {
+        boolean isDuplicate = userService.isUsernameDuplicate(username);
+        Map<String, Boolean> response = new HashMap<>();
+        response.put("isDuplicate", isDuplicate);
+        return ResponseEntity.ok(response);
+    }
+
+    // 통합 로그아웃
+    @PostMapping("/logout")
+    @Transactional
+    public ResponseEntity<String> logout(HttpServletRequest request) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        userService.logout(username, userRefreshTokenRepository);
+        return ResponseEntity.ok("로그아웃 되었습니다.");
+    }
+
+    // 리프레시 토큰으로 새로운 액세스 토큰 생성
+    @PostMapping("/refresh")
+    public ResponseEntity<?> refreshAccessToken(@RequestBody Map<String, String> request) {
+        String refreshToken = request.get("refreshToken");
+        if (refreshToken == null || refreshToken.trim().isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid request: 리프레시토큰 없음");
+        }
+
+        try {
+            String newAccessToken = userService.refreshAccessToken(refreshToken.trim(), jwtTokenProvider, userRefreshTokenRepository);
+            return ResponseEntity.ok(Map.of("accessToken", newAccessToken));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+        }
+    }
+
+
 
 }
