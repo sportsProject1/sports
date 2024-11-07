@@ -1,6 +1,5 @@
 import SubMenu from "../../Components/SubMenu";
-import {BoardWrap} from "../../styled/Board/BoardPageStyled";
-import {ItemBox, ItemContainer} from "../../styled/Common";
+import {ItemContainer} from "../../styled/Common";
 import {
     Author,
     CategoryTag,
@@ -10,7 +9,9 @@ import {
     PostImage,
     PostTitle
 } from "../../styled/main/MainPageStyled";
-import React from "react";
+import React, {useState} from "react";
+import Pagination from "../../Components/Pagination";
+import {ListWrap} from "../../styled/List/ListStyled";
 
 function BoardWrapper(){
     const posts = [
@@ -22,14 +23,36 @@ function BoardWrapper(){
         { id: 1, category: '홈 트레이닝', title: '효과적인 홈 트레이닝 방법', author: '헬스매니아', date: '2024.05.01', views: 1200 },
         { id: 1, category: '홈 트레이닝', title: '효과적인 홈 트레이닝 방법', author: '헬스매니아', date: '2024.05.01', views: 1200 },
         { id: 1, category: '홈 트레이닝', title: '효과적인 홈 트레이닝 방법', author: '헬스매니아', date: '2024.05.01', views: 1200 },
+        { id: 1, category: '홈 트레이닝', title: '효과적인 홈 트레이닝 방법', author: '헬스매니아', date: '2024.05.01', views: 1200 },
+        { id: 1, category: '홈 트레이닝', title: '효과적인 홈 트레이닝 방법', author: '헬스매니아', date: '2024.05.01', views: 1200 },
+        { id: 1, category: '홈 트레이닝', title: '효과적인 홈 트레이닝 방법', author: '헬스매니아', date: '2024.05.01', views: 1200 },
+        { id: 1, category: '홈 트레이닝', title: '효과적인 홈 트레이닝 방법', author: '헬스매니아', date: '2024.05.01', views: 1200 },
+        { id: 1, category: '홈 트레이닝', title: '효과적인 홈 트레이닝 방법', author: '헬스매니아', date: '2024.05.01', views: 1200 },
+        { id: 1, category: '홈 트레이닝', title: '효과적인 홈 트레이닝 방법', author: '헬스매니아', date: '2024.05.01', views: 1200 },
+        { id: 1, category: '홈 트레이닝', title: '효과적인 홈 트레이닝 방법', author: '헬스매니아', date: '2024.05.01', views: 1200 },
+        { id: 1, category: '홈 트레이닝', title: '효과적인 홈 트레이닝 방법', author: '헬스매니아', date: '2024.05.01', views: 1200 },
 
         // 다른 게시글들...
     ];
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 9;
+
+    // 현재 페이지의 게시글 슬라이싱
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentPosts = posts.slice(indexOfFirstItem, indexOfLastItem);
+
+    // 페이지 변경 핸들러
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
+    };
+
+
     return(
-        <BoardWrap>
+        <ListWrap>
             <SubMenu/>
             <ItemContainer>
-                {posts.map((post, index) => (
+                {currentPosts.map((post, index) => (
                     <PostCard key={post.id + index}>
                         <PostImage>
                             <PlaceholderIcon>📷</PlaceholderIcon>
@@ -43,7 +66,14 @@ function BoardWrapper(){
                 ))}
             </ItemContainer>
 
-        </BoardWrap>
+            <Pagination
+                totalItems={posts.length}
+                itemsPerPage={itemsPerPage}
+                currentPage={currentPage}
+                onPageChange={handlePageChange}
+            />
+
+        </ListWrap>
     )
 }
 export default BoardWrapper;

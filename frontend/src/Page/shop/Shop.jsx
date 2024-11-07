@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
-import {Link, useNavigate} from "react-router-dom";
+import {useEffect, useState} from "react";
+import {useNavigate} from "react-router-dom";
 import {fetchData} from "../../Server/ApiServiceNoToken";
-import {ShopCard, ShopContainer, ShopList} from "../../styled/shopStyled";
+import {ShopContainer} from "../../styled/shopStyled";
+import SideMenu from "../../Components/SideMenu";
+import ItemWrapper from "./ItemWrapper";
 
 function Shop() {
     const [items, setItems] = useState([]);
@@ -13,24 +14,12 @@ function Shop() {
         fetchData("/shop/list",setItems);
     }, []);
     // const thumbnailUrl = item.imgurl.split(',')[0];
+    console.log(items)
 
     return (
         <ShopContainer>
-            <Link to={"/shop/add"}>상품 추가하기</Link>
-
-            <ShopList>
-                {items.map((item)=>{
-                    const thumbnailUrl = item.imgurl.split(',')[0];
-                    return(
-                        <ShopCard key={item.id} onClick={()=>navigate(`/shop/detail/${item.id}`)}>
-                            <img src={thumbnailUrl} alt={"#"}/>
-                            <p>{item.title}</p>
-                            <p>{item.price}</p>
-                        </ShopCard>
-                    )
-                })}
-            </ShopList>
-
+            <SideMenu/>
+            <ItemWrapper items={items}/>
         </ShopContainer>
     );
 }

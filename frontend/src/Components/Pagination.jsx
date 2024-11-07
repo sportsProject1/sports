@@ -1,5 +1,11 @@
 // Pagination.js
 import React from 'react';
+import styled from "styled-components";
+
+const PaginationWrap = styled.div`
+    text-align: center;
+    padding: 15px;
+`
 
 const Pagination = ({ totalItems, itemsPerPage, currentPage, onPageChange }) => {
     const totalPages = Math.ceil(totalItems / itemsPerPage);
@@ -11,7 +17,7 @@ const Pagination = ({ totalItems, itemsPerPage, currentPage, onPageChange }) => 
     };
 
     return (
-        <div className="pagination">
+        <PaginationWrap>
             <button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>
                 Previous
             </button>
@@ -27,7 +33,7 @@ const Pagination = ({ totalItems, itemsPerPage, currentPage, onPageChange }) => 
             <button onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages}>
                 Next
             </button>
-        </div>
+        </PaginationWrap>
     );
 };
 
