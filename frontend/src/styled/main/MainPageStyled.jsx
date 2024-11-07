@@ -12,12 +12,11 @@ export const BannerContainer = styled.div`
     display: flex;
     overflow: hidden; // 넘치는 부분 숨기기
     position: relative; // 슬라이드 버튼 등을 위한 포지셔닝
-    z-index: -1;
 `;
 export const BannerWrapper = styled.div`
     display: flex;
     width: 300%;
-    transform: translateX(${props => props.translateX}%);
+    transform: translateX(${props => props.$translateX}%);
     transition: transform 0.5s ease-in-out;
 `;
 
@@ -50,7 +49,7 @@ export const NavButton = styled.button`
     padding: 10px;
     cursor: pointer;
     font-size: 24px;
-    ${props => (props.left ? 'left: 10px' : 'right: 10px')};
+    ${({ $left }) => ($left ? 'left: 10px' : 'right: 10px')};
     z-index: 1;
 `;
 
@@ -70,7 +69,7 @@ export const SectionContainer = styled.div`
 export const CardWrapper = styled.div`
     display: flex;
     transition: transform 0.5s ease-in-out;
-    transform: translateX(${props => props.translateX}%);
+    transform: translateX(${props => props.$translateX}%);
     width: 200%; // 2 페이지 분량으로 설정
 `;
 
