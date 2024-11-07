@@ -1,6 +1,5 @@
 package com.sports.Cart;
 
-import com.sports.Interface.updatable;
 import com.sports.Item.Item;
 import com.sports.Item.ItemService;
 import com.sports.user.User;
@@ -13,12 +12,13 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class CartService{
+public class CartService {
 
     private final CartRepository cartRepository;
     private final UserService userService;
     private final ItemService itemService;
 
+    // 장바구니 항목 조회 (사용자 아이디로)
     public List<CartDTO> getCartItemsByUserId(String userId) {
         Long id = Long.valueOf(userId);
         List<Cart> cartItems = cartRepository.findByUserId(id);
@@ -30,6 +30,7 @@ public class CartService{
                 .collect(Collectors.toList());
     }
 
+    // 장바구니 항목 추가
     public CartDTO addCartItem(CartDTO cartDTO, String userId) {
         Long id = Long.valueOf(userId);
         User user = userService.findById(String.valueOf(id));
@@ -44,7 +45,8 @@ public class CartService{
         return convertToDto(savedCart);
     }
 
-    public void update(Long id, CartDTO dto, User user) {
+    // 수량 업데이트 메서드
+    public void updateQuantity(Long id, int count, User user) {
         Cart cart = cartRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("장바구니 항목을 찾을 수 없습니다."));
 
@@ -53,16 +55,25 @@ public class CartService{
         }
 
         // 수량 업데이트
-        if (dto.getCount() != null) {
-            cart.setCount(dto.getCount());
-        }
-
-        // 체크 상태 업데이트
-        cart.setChecked(dto.isChecked());
-
+        cart.setCount(count);
         cartRepository.save(cart);
     }
 
+    // 체크박스 상태 업데이트 메서드
+    public void updateIsChecked(Long id, boolean isChecked, User user) {
+        Cart cart = cartRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("장바구니 항목을 찾을 수 없습니다."));
+
+        if (!cart.getUser().getId().equals(user.getId())) {
+            throw new RuntimeException("권한이 없습니다.");
+        }
+
+        // 체크 상태 업데이트
+        cart.setChecked(isChecked);
+        cartRepository.save(cart);
+    }
+
+    // 장바구니 항목 삭제
     public void deleteCheckedItems(User user) {
         List<Cart> checkedItems = cartRepository.findByUserAndIsChecked(user, true);
 
