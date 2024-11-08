@@ -1,6 +1,6 @@
 // ValidationMessages.jsx
 import React from 'react';
-import { ErrorFieldsWrapper, PassMessage, ErrorMessage } from "../../../styled/UserStyled";
+import { ErrorFieldsWrapper, PassMessage, ErrorMessage } from "../../../styled/user/UserStyled";
 
 function ValidationMessages({ formik,isAvailable }) {
     return (

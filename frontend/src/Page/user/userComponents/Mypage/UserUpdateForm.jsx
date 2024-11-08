@@ -5,7 +5,7 @@ import useImageUploader from "../../../../hooks/useImageUploader";
 import {putTokenData} from "../../../../Server/ApiService";
 import ProfileImageUpload from "../ProfileImageUpload";
 import FormFields from "../FormFields";
-import {FormWrap} from "../../../../styled/UserStyled";
+import {FormWrap} from "../../../../styled/user/UserStyled";
 
 function UserUpdateForm({userData,onUpdate}){
 

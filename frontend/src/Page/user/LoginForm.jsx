@@ -6,7 +6,7 @@ import React from "react";
 import {useDispatch} from "react-redux";
 import {setCredentials} from "../../Store/authSlice";
 import {Button, GoogleLogin, Input, KakaoLogin} from "../../styled/Common";
-import {ErrorText, InputGroup, Label, LoginFormWrap} from "../../styled/UserStyled";
+import {ErrorText, InputGroup, Label, LoginFormWrap} from "../../styled/user/UserStyled";
 
 function LoginForm() {
     const navigate = useNavigate();

@@ -2,10 +2,12 @@ import {ListWrap} from "../../styled/List/ListStyled";
 import SubMenu from "../../Components/SubMenu";
 import React, {useState} from "react";
 import {Card, ItemContainer, Price, ProductName,CardImage} from "../../styled/Common";
-import Pagination from "../../Components/Pagination";
+import Pagination from "../../Components/Pagination/Pagination";
 import {useNavigate} from "react-router-dom";
+import PagePagination from "../../Components/Pagination/PagePagination";
 
 function ItemWrapper({items}){
+
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 9;
 
@@ -20,6 +22,9 @@ function ItemWrapper({items}){
     const handlePageChange = (page) => {
         setCurrentPage(page);
     };
+    const onNavigate = () =>{
+        navigate("/shop/add")
+    }
 
     return(
         <ListWrap>
@@ -34,12 +39,13 @@ function ItemWrapper({items}){
             ))}
             </ItemContainer>
 
-            <Pagination
+            <PagePagination
                 totalItems={items.length}
-                itemsPerPage={itemsPerPage}
                 currentPage={currentPage}
+                itemsPerPage={itemsPerPage}
                 onPageChange={handlePageChange}
-            />
+                Text={"상품 추가"}
+                navigate={onNavigate}/>
         </ListWrap>
     )
 }
