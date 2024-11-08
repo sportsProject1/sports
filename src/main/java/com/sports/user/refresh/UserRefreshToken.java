@@ -1,5 +1,6 @@
-package com.sports.user;
+package com.sports.user.refresh;
 
+import com.sports.user.entito.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;

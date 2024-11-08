@@ -1,8 +1,7 @@
 package com.sports.Cart;
 
 import com.sports.Item.Item;
-import com.sports.Payment.Payment;
-import com.sports.user.User;
+import com.sports.user.entito.User;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;

@@ -1,7 +1,7 @@
 package com.sports.Cart;
 
 import com.sports.Item.Item;
-import com.sports.user.User;
+import com.sports.user.entito.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

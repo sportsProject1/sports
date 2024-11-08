@@ -2,8 +2,7 @@ package com.sports.Item;
 
 import com.sports.Category.Category;
 import com.sports.Category.CategoryService;
-import com.sports.Interface.updatable;
-import com.sports.user.User;
+import com.sports.user.entito.User;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -11,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
