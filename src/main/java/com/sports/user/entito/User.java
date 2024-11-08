@@ -1,4 +1,4 @@
-package com.sports.user;
+package com.sports.user.entito;
 
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -45,3 +45,4 @@ public class User {
         this.createDate = createDate;
     }
 }
+

@@ -1,12 +1,16 @@
-package com.sports.user;
+package com.sports.user.service;
 
 import com.sports.Item.S3Service;
-import com.sports.Security.AuthResponse;
-import com.sports.Security.JwtTokenProvider;
-import com.sports.Security.LoginRequest;
+import com.sports.Security.dto.AuthResponse;
+import com.sports.Security.jwt.JwtTokenProvider;
+import com.sports.Security.dto.LoginRequest;
+import com.sports.user.refresh.UserRefreshToken;
+import com.sports.user.refresh.UserRefreshTokenRepository;
+import com.sports.user.repository.UserRepository;
+import com.sports.user.entito.User;
+import com.sports.user.entito.UserDTO;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
+import org.springframework.beans.BeanUtils;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -23,7 +27,6 @@ import java.util.Map;
 public class UserService {
 
     private final UserRepository userRepository;
-    @Lazy @Autowired
     private final BCryptPasswordEncoder passwordEncoder;
     private final S3Service s3Service;
     private final UserContextService userContextService;
@@ -58,7 +61,7 @@ public class UserService {
         return "회원가입이 성공적으로 완료되었습니다.";
     }
 
-    // 일반 로그인 서비스
+    // 일반 로그인 서비스 -- username, nickname, role, JWT토큰 반환
     public AuthResponse authenticateUser(LoginRequest loginRequest, AuthenticationManager authenticationManager,
                                          JwtTokenProvider jwtTokenProvider, UserRefreshTokenRepository userRefreshTokenRepository) {
         Authentication authentication = authenticationManager.authenticate(
@@ -79,13 +82,14 @@ public class UserService {
     }
 
 
-    // 오어스 로그인시 JWT토큰과 유저정보 반환하는 서비스
+    // 오어스 로그인 서비스 -- 일반 로그인과 같은 정보 반환
     public Map<String, Object> generateTokenResponseWithUser(Long userId, JwtTokenProvider jwtTokenProvider,
                                                              UserRefreshTokenRepository userRefreshTokenRepository) {
         // 영속성 컨텍스트에서 User 엔티티 가져오기
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다."));
 
+        // JWT 토큰 생성
         String accessToken = jwtTokenProvider.createToken(user.getId(), user.getUsername(), user.getRole());
         String refreshToken = jwtTokenProvider.createRefreshToken();
 
@@ -95,7 +99,7 @@ public class UserService {
         userRefreshToken.updateRefreshToken(refreshToken);
         userRefreshTokenRepository.save(userRefreshToken);
 
-        // 응답 데이터 구성
+        // 응답 데이터 구성 (토큰/ 유저정보)
         Map<String, Object> response = new HashMap<>();
         response.put("accessToken", accessToken);
         response.put("refreshToken", refreshToken);
@@ -104,11 +108,46 @@ public class UserService {
         userInfo.put("nickname", user.getNickname());
         userInfo.put("role", user.getRole());
         userInfo.put("username", user.getUsername());
+        userInfo.put("email", user.getEmail());
+        userInfo.put("imgURL", user.getImgURL());
+
         response.put("user", userInfo);
 
         return response;
     }
 
+    // 마이페이지 유저정보 업데이트 서비스
+    public UserDTO updateUser(UserDTO userDTO, MultipartFile file) throws IOException {
+        // 현재 사용자의 정보를 가져옴
+        User existingUser = userContextService.getCurrentUser();
+
+        // userDTO의 값으로 기존 user 엔티티 업데이트
+        existingUser.setNickname(userDTO.getNickname());
+        existingUser.setPhone(userDTO.getPhone());
+        existingUser.setEmail(userDTO.getEmail());
+        existingUser.setAddress(userDTO.getAddress());
+
+        // 이미지 파일 처리 로직
+        if (file != null && !file.isEmpty()) {
+            // 새로운 파일이 업로드된 경우 - 기존 URL과 비교
+            String newImgURL = s3Service.saveFile(file.getOriginalFilename(), file.getInputStream());
+
+            // 기존 이미지 URL과 다를 때만 업데이트
+            if (!newImgURL.equals(existingUser.getImgURL())) {
+                existingUser.setImgURL(newImgURL);
+            }
+        }
+        // 파일이 null일 경우 이미지를 업데이트하지 않음
+
+        // 변경된 사용자 정보를 저장
+        User updatedUser = userRepository.save(existingUser);
+
+        // 변경된 엔티티를 DTO로 변환 후 반환
+        UserDTO updatedUserDTO = new UserDTO();
+        BeanUtils.copyProperties(updatedUser, updatedUserDTO);
+
+        return updatedUserDTO;
+    }
 
     // 아이디 중복 여부
     public boolean isUsernameDuplicate(String username) {
