@@ -73,13 +73,6 @@ export const CardWrapper = styled.div`
     width: 200%; // 2 페이지 분량으로 설정
 `;
 
-
-export const Footer = styled.footer`
-    width:100%;
-    height: 150px;
-    background-color: green;
-`
-
 export const PostCard = styled.div`
     width: 25%;
     background-color: #ffffff;

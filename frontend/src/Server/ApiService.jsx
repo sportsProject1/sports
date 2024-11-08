@@ -50,9 +50,10 @@ export const putTokenJsonData = async (url,formData)=>{
                 "Content-Type": "application/json",
             }
         })
+        console.log("성공",response)
     }
     catch(error){
-        console.log(error)
+        console.log("에러",error)
     }
 }
 
