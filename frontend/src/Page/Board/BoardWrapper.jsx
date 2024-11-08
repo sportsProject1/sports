@@ -1,5 +1,11 @@
 import SubMenu from "../../Components/SubMenu";
-import {ItemContainer} from "../../styled/Common";
+import {
+    CreateButton,
+    CreateButtonContainer,
+    ItemContainer,
+    PaginationContainer,
+    PaginationWrapper
+} from "../../styled/Common";
 import {
     Author,
     CategoryTag,
@@ -10,10 +16,15 @@ import {
     PostTitle
 } from "../../styled/main/MainPageStyled";
 import React, {useState} from "react";
-import Pagination from "../../Components/Pagination";
+import Pagination from "../../Components/Pagination/Pagination";
 import {ListWrap} from "../../styled/List/ListStyled";
+import PagePagination from "../../Components/Pagination/PagePagination";
+import {useNavigate} from "react-router-dom";
 
 function BoardWrapper(){
+
+    const navigate = useNavigate();
+
     const posts = [
         { id: 1, category: '홈 트레이닝', title: '효과적인 홈 트레이닝 방법', author: '헬스매니아', date: '2024.05.01', views: 1200 },
         { id: 1, category: '홈 트레이닝', title: '효과적인 홈 트레이닝 방법', author: '헬스매니아', date: '2024.05.01', views: 1200 },
@@ -47,6 +58,10 @@ function BoardWrapper(){
         setCurrentPage(page);
     };
 
+    const onNavigate = () => {
+        navigate("/")
+    }
+
 
     return(
         <ListWrap>
@@ -66,12 +81,13 @@ function BoardWrapper(){
                 ))}
             </ItemContainer>
 
-            <Pagination
-                totalItems={posts.length}
-                itemsPerPage={itemsPerPage}
-                currentPage={currentPage}
-                onPageChange={handlePageChange}
-            />
+            <PagePagination
+            totalItems={posts.length}
+            currentPage={currentPage}
+            itemsPerPage={itemsPerPage}
+            onPageChange={handlePageChange}
+            Text={"글 작성"}
+            navigate={onNavigate}/>
 
         </ListWrap>
     )

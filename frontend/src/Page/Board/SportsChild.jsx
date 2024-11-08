@@ -1,6 +1,6 @@
 import {useParams} from "react-router-dom";
 import React, {useEffect, useState} from "react";
-import Pagination from "../../Components/Pagination";
+import Pagination from "../../Components/Pagination/Pagination";
 
 
 
