@@ -1,5 +1,6 @@
 package com.sports.Cart;
 
+import com.sports.Item.Item;
 import com.sports.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -11,4 +12,6 @@ public interface CartRepository extends JpaRepository<Cart, Long> {
     List<Cart> findByUserAndIsChecked(User user, boolean isChecked);
 
     List<Cart> findByUserAndIsCheckedAndPaymentStatus(User user, boolean isChecked, boolean paymentStatus);
+
+    Cart findByUserAndItemAndPaymentStatusFalse(User user, Item item);
 }
