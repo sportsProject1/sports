@@ -28,7 +28,7 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
     private final UserRefreshTokenRepository userRefreshTokenRepository;
-    private final UserRepository userRepository;
+    private final UserContextService userContextService;
 
     // 일반 회원가입
     @PostMapping("/register")
@@ -38,11 +38,9 @@ public class AuthController {
         String resultMessage = userService.register(userDTO, file);
         Map<String, String> response = Map.of("message", resultMessage);
 
-        if ("회원가입이 성공적으로 완료되었습니다.".equals(resultMessage)) {
-            return ResponseEntity.ok(response);
-        } else {
-            return ResponseEntity.badRequest().body(response);
-        }
+        return "회원가입이 성공적으로 완료되었습니다.".equals(resultMessage)
+                ? ResponseEntity.ok(response)
+                : ResponseEntity.badRequest().body(response);
     }
 
     // 일반 로그인
@@ -59,30 +57,10 @@ public class AuthController {
 
     // 소셜 로그인 (JWT토큰, 소셜에서 전달되는 유저정보 전송)
     @GetMapping("/oauth2/token")
-    public Map<String, Object> getToken(@AuthenticationPrincipal PrincipalUserDetails userDetails) {
-        String accessToken = jwtTokenProvider.createToken(userDetails.getId(), userDetails.getUsername(), userDetails.getRole());
-        String refreshToken = jwtTokenProvider.createRefreshToken();
-
-        // 영속성 컨텍스트에서 User 엔티티 가져오기
-        User user = userRepository.findById(userDetails.getId()).get();
-
-        // 리프레시 토큰을 UserRefreshToken 테이블에 저장 또는 업데이트
-        UserRefreshToken userRefreshToken = userRefreshTokenRepository.findById(userDetails.getId())
-                .orElse(new UserRefreshToken(user, refreshToken));
-        userRefreshToken.updateRefreshToken(refreshToken);
-        userRefreshTokenRepository.save(userRefreshToken);
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("accessToken", accessToken);
-        response.put("refreshToken", refreshToken);
-
-        Map<String, Object> userInfo = new HashMap<>();
-        userInfo.put("nickname", user.getNickname());
-        userInfo.put("role", user.getRole());
-        userInfo.put("username", user.getUsername());
-        response.put("user", userInfo);
-
-        return response;
+    public ResponseEntity<Map<String, Object>> getToken() {
+        User currentUser = userContextService.getCurrentUser(); // 현재 사용자 정보 가져오기
+        Map<String, Object> response = userService.generateTokenResponseWithUser(currentUser.getId(), jwtTokenProvider, userRefreshTokenRepository);
+        return ResponseEntity.ok(response);
     }
 
     // 아이디 중복체크
@@ -99,7 +77,7 @@ public class AuthController {
     @Transactional
     public ResponseEntity<String> logout(HttpServletRequest request) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        userService.logout(username, userRefreshTokenRepository);
+        userContextService.logout(username, userRefreshTokenRepository);
         return ResponseEntity.ok("로그아웃 되었습니다.");
     }
 
@@ -112,13 +90,10 @@ public class AuthController {
         }
 
         try {
-            String newAccessToken = userService.refreshAccessToken(refreshToken.trim(), jwtTokenProvider, userRefreshTokenRepository);
+            String newAccessToken = userContextService.refreshAccessToken(refreshToken.trim(), jwtTokenProvider, userRefreshTokenRepository);
             return ResponseEntity.ok(Map.of("accessToken", newAccessToken));
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }
     }
-
-
-
 }

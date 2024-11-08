@@ -3,6 +3,7 @@ package com.sports.Cart;
 import com.sports.Item.Item;
 import com.sports.Item.ItemService;
 import com.sports.user.User;
+import com.sports.user.UserContextService;
 import com.sports.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,7 +16,7 @@ import java.util.stream.Collectors;
 public class CartService {
 
     private final CartRepository cartRepository;
-    private final UserService userService;
+    private final UserContextService userContextService;
     private final ItemService itemService;
 
     // 장바구니 항목 조회 (사용자 아이디로)
@@ -33,7 +34,7 @@ public class CartService {
     // 장바구니 항목 추가
     public CartDTO addCartItem(CartDTO cartDTO, String userId) {
         Long id = Long.valueOf(userId);
-        User user = userService.findById(String.valueOf(id));
+        User user = userContextService.findById(String.valueOf(id));
         Item item = itemService.findById(cartDTO.getItem().getId());
 
         Cart cart = new Cart();
