@@ -2,7 +2,6 @@ package com.sports.Cart;
 
 import com.sports.Item.Item;
 import com.sports.Item.ItemService;
-import com.sports.Security.JwtTokenProvider;
 import com.sports.user.User;
 import com.sports.user.UserService;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +20,6 @@ import java.util.Map;
 @CrossOrigin(origins = "http://localhost:3000")
 public class CartController {
 
-    private final JwtTokenProvider jwtTokenProvider;
     private final CartService cartService;
     private final CartRepository cartRepository;
     private final ItemService itemService;
@@ -30,12 +28,26 @@ public class CartController {
     @GetMapping("")
     public ResponseEntity<CartResponseDTO> getCartItems() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
 
+        // 인증되지 않은 사용자 처리
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new CartResponseDTO("로그인 후 접근 가능합니다.", null));
+        }
+
+        String username = authentication.getName();
         User user = userService.findByUsername(username);
 
+        // 사용자가 존재하지 않거나, 문제가 있을 경우 처리
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new CartResponseDTO("사용자를 찾을 수 없습니다.", null));
+        }
+
+        // 장바구니 항목 가져오기
         List<CartDTO> cartItems = cartService.getCartItemsByUserId(String.valueOf(user.getId()));
         CartResponseDTO response = new CartResponseDTO("장바구니 항목 조회 성공", cartItems);
+
         return ResponseEntity.ok(response);
     }
 
