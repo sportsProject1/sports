@@ -9,6 +9,8 @@ import com.sports.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -77,61 +79,64 @@ public class CartController {
     }
 
     //장바구니 수량 업데이트
-    @PutMapping("/update/quantity/{itemId}")
-    public ResponseEntity<?> updateCartQuantity(@PathVariable Long itemId, @RequestBody Map<String, Integer> body) {
+    @PutMapping("/update/count/{itemId}")
+    public ResponseEntity<CartResponseDTO> updateCartCount(@PathVariable Long itemId, @RequestBody Map<String, Integer> body) {
         User user = userContextService.getCurrentUser();
 
         int count = body.get("count");
 
         try {
-            cartService.updateQuantity(itemId, count, user);
-            return ResponseEntity.ok("수량이 업데이트되었습니다.");
+            cartService.updateCount(itemId, count, user);
+            List<CartDTO> updatedCartItems = cartService.getCartItemsByUserId(String.valueOf(user.getId()));
+            CartResponseDTO response = new CartResponseDTO("수량이 업데이트되었습니다.", updatedCartItems);
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("수량 업데이트 실패");
+            CartResponseDTO response = new CartResponseDTO("수량 업데이트 실패", null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
 
-//    @DeleteMapping("/delete")
-//    public ResponseEntity<String> deleteCheckedItems() {
-//        User user = userContextService.getCurrentUser();
-//
-//        cartService.deleteCheckedItems(user);
-//        return ResponseEntity.ok("선택한 항목이 삭제되었습니다.");
-//    }
-
     // 개별 항목 삭제 메서드
     @DeleteMapping("/delete/{itemId}")
-    public ResponseEntity<String> deleteCartItem(@PathVariable Long itemId) {
+    public ResponseEntity<CartResponseDTO> deleteCartItem(@PathVariable Long itemId) {
         User user = userContextService.getCurrentUser();
+
 
         try {
             cartService.deleteCartItem(itemId, user);
-            return ResponseEntity.ok("장바구니 항목이 삭제되었습니다.");
+            List<CartDTO> updatedCartItems = cartService.getCartItemsByUserId(String.valueOf(user.getId()));
+            CartResponseDTO response = new CartResponseDTO("장바구니 항목이 삭제되었습니다.", updatedCartItems);
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("장바구니 항목 삭제 실패");
+            CartResponseDTO response = new CartResponseDTO("장바구니 항목 삭제 실패", null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
 
     // 체크된 항목 삭제 메서드
     @DeleteMapping("/delete/checked")
-    public ResponseEntity<String> deleteCheckedItems() {
+    public ResponseEntity<CartResponseDTO> deleteCheckedItems() {
         User user = userContextService.getCurrentUser();
 
         try {
             cartService.deleteCheckedItems(user);
-            return ResponseEntity.ok("선택한 항목이 삭제되었습니다.");
+            List<CartDTO> updatedCartItems = cartService.getCartItemsByUserId(String.valueOf(user.getId()));
+            CartResponseDTO response = new CartResponseDTO("선택한 항목이 삭제되었습니다.", updatedCartItems);
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("선택한 항목 삭제 실패");
+            CartResponseDTO response = new CartResponseDTO("선택한 항목 삭제 실패", null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
 
     //결제대기로
     @GetMapping("/checkout")
-    public ResponseEntity<List<CartDTO>> getCheckedItemsForCheckout() {
+    public ResponseEntity<CartResponseDTO> getCheckedItemsForCheckout() {
         User user = userContextService.getCurrentUser();
 
         List<CartDTO> checkedItems = cartService.getAvailableCartItems(user);
-        return ResponseEntity.ok(checkedItems);
+        CartResponseDTO response = new CartResponseDTO("결제대기 항목 조회 성공", checkedItems);
+        return ResponseEntity.ok(response);
     }
 }
 

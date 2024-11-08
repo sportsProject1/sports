@@ -139,3 +139,33 @@ export const Price = styled.div`
     padding: 5px;
     height: 50px;
 `;
+export const PaginationContainer = styled.div`
+    display: flex;
+    justify-content: center; /* 페이지네이션을 중앙에 정렬 */
+    align-items: center;
+    margin-top: 20px;
+    position: relative;
+    padding-bottom: 25px;
+`;
+
+// 글 생성 버튼 컨테이너 (절대 위치)
+export const CreateButtonContainer = styled.div`
+    position: absolute;
+    right: 0;
+`;
+
+export const CreateButton = styled.button`
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-right: 25px;
+
+    &:hover {
+        background-color: #45a049;
+    }
+`;

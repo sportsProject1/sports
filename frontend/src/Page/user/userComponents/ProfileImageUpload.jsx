@@ -1,6 +1,6 @@
 // ProfileImageUpload.jsx
 import React from 'react';
-import {ProfileImageWrapper} from "../../../styled/UserStyled";
+import {ProfileImageWrapper} from "../../../styled/user/UserStyled";
 
 function ProfileImageUpload({ images,
                                 handleImageChange,

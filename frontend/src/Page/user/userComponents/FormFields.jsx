@@ -1,6 +1,6 @@
 // FormFields.jsx
 import React from 'react';
-import { FormFieldsWrapper } from "../../../styled/UserStyled";
+import { FormFieldsWrapper } from "../../../styled/user/UserStyled";
 
 function FormFields({ formik, handlePhoneChange,isSignUp,disable,onUpdate,handleAddressSearch }) {
     const fields =

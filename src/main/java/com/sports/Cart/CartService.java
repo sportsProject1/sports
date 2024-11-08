@@ -47,7 +47,7 @@ public class CartService {
     }
 
     // 수량 업데이트 메서드
-    public void updateQuantity(Long id, int count, User user) {
+    public void updateCount(Long id, Integer count, User user) {
         Cart cart = cartRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("장바구니 항목을 찾을 수 없습니다."));
 
@@ -114,7 +114,7 @@ public class CartService {
     }
 
 
-    private CartDTO convertToDto(Cart cart) {
+    public CartDTO convertToDto(Cart cart) {
         return new CartDTO(
                 cart.getId(),
                 cart.getCount(),

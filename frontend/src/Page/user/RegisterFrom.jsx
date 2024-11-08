@@ -3,7 +3,7 @@ import React, {useState, useRef, useEffect} from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import useImageUploader from "../../hooks/useImageUploader";
-import { FormWrap } from "../../styled/UserStyled";
+import { FormWrap } from "../../styled/user/UserStyled";
 import { postData } from "../../Server/ApiServiceNoToken";
 import ProfileImageUpload from "./userComponents/ProfileImageUpload";
 import FormFields from "./userComponents/FormFields";
