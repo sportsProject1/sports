@@ -1,19 +1,13 @@
 package com.sports.user;
 
 import com.sports.Item.S3Service;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.util.ReflectionUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.beans.BeanUtils;
-import org.springframework.util.ReflectionUtils;
-
-import java.lang.reflect.Field;
 
 import java.io.IOException;
 
@@ -24,12 +18,13 @@ public class UserController {
 
     private final UserService userService;
     private final S3Service s3Service;
+    private final UserContextService userContextService;
 
     // 마이페이지에 띄울 유저정보 보내기
     @GetMapping("/mypage")
     public ResponseEntity<UserDTO> getUserPageInfo(Authentication authentication) {
         String username = authentication.getName(); // 현재 인증된 사용자의 username 가져오기
-        User user = userService.findByUsername(username); // 가져온 username으로 유저테이블에서 조회
+        User user = userContextService.findByUsername(username); // 가져온 username으로 유저테이블에서 조회
 
         UserDTO userDTO = new UserDTO();
         BeanUtils.copyProperties(user, userDTO); // 객체복사
@@ -43,7 +38,7 @@ public class UserController {
                                               @RequestParam(value = "file", required = false) MultipartFile file) throws IOException {
 
         // 현재 사용자의 정보를 가져옴
-        User existingUser = userService.findByUsername(authentication.getName());
+        User existingUser = userContextService.findByUsername(authentication.getName());
 
         // userDTO의 값으로 기존 user 엔티티 업데이트
         existingUser.setNickname(userDTO.getNickname());

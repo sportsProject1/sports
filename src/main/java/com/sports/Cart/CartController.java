@@ -4,12 +4,11 @@ import com.sports.Item.Item;
 import com.sports.Item.ItemService;
 import com.sports.Security.JwtTokenProvider;
 import com.sports.user.User;
+import com.sports.user.UserContextService;
 import com.sports.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,14 +23,11 @@ public class CartController {
     private final JwtTokenProvider jwtTokenProvider;
     private final CartService cartService;
     private final ItemService itemService;
-    private final UserService userService;
+    private final UserContextService userContextService;
 
     @GetMapping("")
     public ResponseEntity<List<CartDTO>> getCartItems() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-
-        User user = userService.findByUsername(username);
+        User user = userContextService.getCurrentUser();
 
         List<CartDTO> cartItems = cartService.getCartItemsByUserId(String.valueOf(user.getId()));
         return ResponseEntity.ok(cartItems);
@@ -42,10 +38,7 @@ public class CartController {
             @RequestParam("cartCount") Integer count,
             @RequestParam("itemId") Long itemId) {
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-
-        User user = userService.findByUsername(username);
+        User user = userContextService.getCurrentUser();
 
         CartDTO cartDTO = new CartDTO();
         cartDTO.setCount(count);
@@ -62,10 +55,7 @@ public class CartController {
 //            @PathVariable Long id,
 //            @RequestBody CartDTO cartDTO) {
 //
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        String username = authentication.getName();
-//
-//        User user = userService.findByUsername(username);
+//        User user = userContextService.getCurrentUser();
 //
 //        cartService.update(id, cartDTO, user);
 //        return ResponseEntity.ok("장바구니 항목이 업데이트되었습니다.");
@@ -74,9 +64,7 @@ public class CartController {
     //장바구니 체크박스 업데이트
     @PutMapping("/update/checkbox/{itemId}")
     public ResponseEntity<?> updateCartCheckbox(@PathVariable Long itemId, @RequestBody Map<String, Boolean> body) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        User user = userService.findByUsername(username);
+        User user = userContextService.getCurrentUser();
 
         boolean isChecked = body.get("isChecked");
 
@@ -91,9 +79,7 @@ public class CartController {
     //장바구니 수량 업데이트
     @PutMapping("/update/quantity/{itemId}")
     public ResponseEntity<?> updateCartQuantity(@PathVariable Long itemId, @RequestBody Map<String, Integer> body) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        User user = userService.findByUsername(username);
+        User user = userContextService.getCurrentUser();
 
         int count = body.get("count");
 
@@ -107,10 +93,7 @@ public class CartController {
 
 //    @DeleteMapping("/delete")
 //    public ResponseEntity<String> deleteCheckedItems() {
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        String username = authentication.getName();
-//
-//        User user = userService.findByUsername(username);
+//        User user = userContextService.getCurrentUser();
 //
 //        cartService.deleteCheckedItems(user);
 //        return ResponseEntity.ok("선택한 항목이 삭제되었습니다.");
@@ -119,10 +102,7 @@ public class CartController {
     // 개별 항목 삭제 메서드
     @DeleteMapping("/delete/{itemId}")
     public ResponseEntity<String> deleteCartItem(@PathVariable Long itemId) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-
-        User user = userService.findByUsername(username);
+        User user = userContextService.getCurrentUser();
 
         try {
             cartService.deleteCartItem(itemId, user);
@@ -135,10 +115,7 @@ public class CartController {
     // 체크된 항목 삭제 메서드
     @DeleteMapping("/delete/checked")
     public ResponseEntity<String> deleteCheckedItems() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-
-        User user = userService.findByUsername(username);
+        User user = userContextService.getCurrentUser();
 
         try {
             cartService.deleteCheckedItems(user);
@@ -151,10 +128,7 @@ public class CartController {
     //결제대기로
     @GetMapping("/checkout")
     public ResponseEntity<List<CartDTO>> getCheckedItemsForCheckout() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-
-        User user = userService.findByUsername(username);
+        User user = userContextService.getCurrentUser();
 
         List<CartDTO> checkedItems = cartService.getAvailableCartItems(user);
         return ResponseEntity.ok(checkedItems);

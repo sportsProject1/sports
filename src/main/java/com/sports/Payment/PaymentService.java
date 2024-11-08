@@ -7,6 +7,7 @@ import com.sports.Item.ItemRepository;
 import com.sports.PaymentDetail.PaymentDetail;
 import com.sports.PaymentDetail.PaymentDetailDTO;
 import com.sports.user.User;
+import com.sports.user.UserContextService;
 import com.sports.user.UserService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -22,12 +23,12 @@ public class PaymentService {
 
     private final PaymentRepository paymentRepository;
     private final CartService cartService;
-    private final UserService userService;
+    private final UserContextService userContextService;
     private final ItemRepository itemRepository;  // 아이템 리포지토리 추가
 
     public PaymentDTO processPayment(Long userId, String paymentMethod) {
         // 1. 유저 정보와 체크된 장바구니 항목들을 가져옵니다.
-        User user = userService.findById(userId);
+        User user = userContextService.findById(userId);
         List<Cart> cartItems = cartService.getAvailableCartEntities(user);
 
         if (cartItems.isEmpty()) {
@@ -139,7 +140,7 @@ public class PaymentService {
     }
 
     public List<PaymentDTO> getPaymentsByUser(Long userId) {
-        User user = userService.findById(userId);  // 사용자 정보 조회
+        User user = userContextService.findById(userId);  // 사용자 정보 조회
         List<Payment> payments = paymentRepository.findByUser(user);  // 사용자 결제 내역 가져오기
 
         // Payment를 PaymentDTO로 변환

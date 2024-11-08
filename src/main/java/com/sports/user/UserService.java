@@ -5,11 +5,11 @@ import com.sports.Security.AuthResponse;
 import com.sports.Security.JwtTokenProvider;
 import com.sports.Security.LoginRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,8 +23,10 @@ import java.util.Map;
 public class UserService {
 
     private final UserRepository userRepository;
+    @Lazy @Autowired
     private final BCryptPasswordEncoder passwordEncoder;
     private final S3Service s3Service;
+    private final UserContextService userContextService;
 
     // 일반 회원가입 서비스
     public String register(UserDTO userDTO, MultipartFile file) throws IOException {
@@ -63,7 +65,7 @@ public class UserService {
                 new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword())
         );
 
-        User user = findByUsername(authentication.getName());
+        User user = userContextService.findByUsername(authentication.getName());
         String role = authentication.getAuthorities().iterator().next().getAuthority();
         String accessToken = jwtTokenProvider.createToken(user.getId(), user.getUsername(), role);
         String refreshToken = jwtTokenProvider.createRefreshToken();
@@ -76,77 +78,37 @@ public class UserService {
         return new AuthResponse(user.getUsername(), user.getNickname(), role, accessToken, refreshToken);
     }
 
-    // 통합 로그아웃 서비스
-    public void logout(String username, UserRefreshTokenRepository userRefreshTokenRepository) {
-        User user = findByUsername(username);
-        userRefreshTokenRepository.deleteByUserId(user.getId());
-        SecurityContextHolder.clearContext();
-    }
-
-    // 리프레시 토큰 갱신 서비스
-    public String refreshAccessToken(String refreshToken, JwtTokenProvider jwtTokenProvider,
-                                     UserRefreshTokenRepository userRefreshTokenRepository) {
-        if (!jwtTokenProvider.validateToken(refreshToken)) {
-            throw new RuntimeException("유효하지 않은 리프레시 토큰입니다.");
-        }
-
-        UserRefreshToken userRefreshToken = userRefreshTokenRepository.findByRefreshToken(refreshToken)
-                .orElseThrow(() -> new RuntimeException("유효하지 않은 리프레시 토큰입니다."));
-        User user = userRefreshToken.getUser();
-        return jwtTokenProvider.createToken(user.getId(), user.getUsername(), user.getRole());
-    }
-
 
     // 오어스 로그인시 JWT토큰과 유저정보 반환하는 서비스
-//    public Map<String, Object> generateTokenResponseWithUser(Long userId, JwtTokenProvider jwtTokenProvider,
-//                                                             UserRefreshTokenRepository userRefreshTokenRepository) {
-//
-//
-//        String accessToken = jwtTokenProvider.createToken(user.getId(), user.getUsername(), user.getRole());
-//        String refreshToken = jwtTokenProvider.createRefreshToken();
-//
-//        // 영속성 컨텍스트에서 User 엔티티 가져오기
-//        User user = userRepository.findById(userDetails.getId()).get();
-//
-//        // 리프레시 토큰 저장 또는 업데이트
-//        UserRefreshToken userRefreshToken = userRefreshTokenRepository.findById(user.getId())
-//                .orElse(new UserRefreshToken(user, refreshToken));
-//        userRefreshToken.updateRefreshToken(refreshToken);
-//        userRefreshTokenRepository.save(userRefreshToken);
-//
-//        // 응답 데이터 구성
-//        Map<String, Object> response = new HashMap<>();
-//        response.put("accessToken", accessToken);
-//        response.put("refreshToken", refreshToken);
-//
-//        Map<String, Object> userInfo = new HashMap<>();
-//        userInfo.put("nickname", user.getNickname());
-//        userInfo.put("role", user.getRole());
-//        userInfo.put("username", user.getUsername());
-//        response.put("user", userInfo);
-//
-//        return response;
-//    }
-
-
-
-    // username을 받아 User 조회
-    public User findByUsername(String username) {
-        return userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
-    }
-
-    // userId를 받아 조회 (String 타입)
-    public User findById(String userId) {
-        return userRepository.findById(Long.valueOf(userId))
+    public Map<String, Object> generateTokenResponseWithUser(Long userId, JwtTokenProvider jwtTokenProvider,
+                                                             UserRefreshTokenRepository userRefreshTokenRepository) {
+        // 영속성 컨텍스트에서 User 엔티티 가져오기
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다."));
+
+        String accessToken = jwtTokenProvider.createToken(user.getId(), user.getUsername(), user.getRole());
+        String refreshToken = jwtTokenProvider.createRefreshToken();
+
+        // 리프레시 토큰 저장 또는 업데이트
+        UserRefreshToken userRefreshToken = userRefreshTokenRepository.findById(user.getId())
+                .orElse(new UserRefreshToken(user, refreshToken));
+        userRefreshToken.updateRefreshToken(refreshToken);
+        userRefreshTokenRepository.save(userRefreshToken);
+
+        // 응답 데이터 구성
+        Map<String, Object> response = new HashMap<>();
+        response.put("accessToken", accessToken);
+        response.put("refreshToken", refreshToken);
+
+        Map<String, Object> userInfo = new HashMap<>();
+        userInfo.put("nickname", user.getNickname());
+        userInfo.put("role", user.getRole());
+        userInfo.put("username", user.getUsername());
+        response.put("user", userInfo);
+
+        return response;
     }
 
-    // userId를 받아 조회 (Long 타입)
-    public User findById(Long userId) {
-        return userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다."));
-    }
 
     // 아이디 중복 여부
     public boolean isUsernameDuplicate(String username) {
