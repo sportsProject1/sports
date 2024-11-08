@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import {fetchTokenData, putTokenData, putTokenJsonData} from "../../Server/ApiService";
+import {deleteTokenData, fetchTokenData, putTokenData, putTokenJsonData} from "../../Server/ApiService";
 import {useSelector} from "react-redux";
 import {
     CartContainer,
@@ -14,27 +14,43 @@ import {ItemInfo} from "../../styled/shopStyled";
 
 function ShopCart(){
     const [userCart,setUserCart] = useState([])
-    const [testCart, setTestCart] = useState([])
 
-    const handleCount = async (itemId, cartId, newCount) => {
-        if (newCount < 1) return; // 최소 수량 제한
-        const cartCount = {
+    const handleUpdate = async (type, itemId, cartId, value) => {
+        // 최소 수량 제한 조건 추가 (type이 count일 경우)
+        if (type === 'count' && value < 1) return;
+
+        // 요청 페이로드 구성
+        const payload = {
             cartId: cartId,
-            count: newCount
+            [type]: value // count 또는 isChecked에 따라 다르게 설정
         };
 
+        // 요청 경로 설정
+        const endpoint = type === 'count'
+            ? `/mypage/cart/update/count/${itemId}`
+            : type === 'delete'
+                ? `/mypage/cart/delete/${itemId}`
+                : `/mypage/cart/update/checkbox/${itemId}`;
         try {
-            await putTokenJsonData(`/mypage/cart/update/count/${itemId}`, cartCount);
-            // 성공적으로 업데이트된 경우 로컬 상태도 업데이트
-            setUserCart(prevCart =>
-                prevCart.map(item =>
-                    item.cartId === cartId ? { ...item, count: newCount } : item
-                ));
-            console.log(cartCount)
+            if(type === 'delete'){
+                await deleteTokenData(endpoint, payload);
+                setUserCart(prevCart => prevCart.filter(item => item.cartId !== cartId));
+            }else{
+                await putTokenJsonData(endpoint, payload);
+
+                // 로컬 상태 업데이트
+                setUserCart(prevCart =>
+                    prevCart.map(item =>
+                        item.cartId === cartId ? { ...item, [type]: value } : item
+                    )
+                );
+            }
+
         } catch (error) {
-            console.error('Failed to update count:', error);
+            console.error(`Failed to update ${type}:`, error);
         }
     };
+
 
     useEffect(() => {
             fetchTokenData("/mypage/cart").then(
@@ -43,37 +59,38 @@ function ShopCart(){
                         ...cartItem.item,
                         count: cartItem.count,
                         cartId: cartItem.id,
+                        isChecked: cartItem.checked,
                     }));
-                    setTestCart(data.data);
                     setUserCart(itemsWithCount);
                 }
             )
     }, []);
-    console.log(userCart)
-
 
     return (
         <CartContainer>
             {userCart.map(item => (
-                <CartItem key={item.id}>
-                    <Checkbox />
+                <CartItem key={item.cartId}>
+                    <Checkbox
+                        onChange={()=>handleUpdate('isChecked', item.cartId, item.cartId, !item.isChecked)}
+                        checked={item.isChecked} />
                     <ItemImage src={item.imgurl} alt={item.name} />
                     <ItemInfo>
                         <ItemName>{item.title}</ItemName>
                         <ItemPrice>{item.price.toLocaleString()}원</ItemPrice>
                     </ItemInfo>
                     <ItemActions>
-                        <button onClick={() => handleCount(item.id, item.cartId, item.count - 1)}>감소</button>
+                        <button onClick={() => handleUpdate('count', item.cartId, item.cartId, item.count + 1)}>감소</button>
 
                         <QuantityInput
-                            onChange={(e) => handleCount(item.id, item.cartId, parseInt(e.target.value, 10) || 1)}
                             type="number"
                             min="1"
-                            value={item.count}/>
+                            value={item.count}
+                            readOnly/>
 
-                        <button onClick={() => handleCount(item.id, item.cartId, item.count + 1)}>증가</button>
+                        <button onClick={() => handleUpdate('count', item.cartId, item.cartId,item.count + 1)}>증가</button>
 
-                        <DeleteButton>삭제</DeleteButton>
+                        <DeleteButton
+                        onClick={()=>handleUpdate('delete',item.cartId,item.cartId)}>삭제</DeleteButton>
                     </ItemActions>
                 </CartItem>
             ))}

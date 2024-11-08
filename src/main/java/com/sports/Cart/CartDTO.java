@@ -15,7 +15,8 @@ public class CartDTO {
     private Integer count;
 
     private Item item;
-    private User user;
+
+    private Long userId;
 
     private boolean paymentStatus;
 
