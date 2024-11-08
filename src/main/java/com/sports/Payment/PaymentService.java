@@ -26,10 +26,10 @@ public class PaymentService {
     private final UserContextService userContextService;
     private final ItemRepository itemRepository;  // 아이템 리포지토리 추가
 
-    public PaymentDTO processPayment(Long userId, String paymentMethod) {
+    public PaymentDTO processPayment(String userId, String paymentMethod) {
         // 1. 유저 정보와 체크된 장바구니 항목들을 가져옵니다.
-        User user = userContextService.findById(userId);
-        List<Cart> cartItems = cartService.getAvailableCartEntities(user);
+        User user = userContextService.findById(userId); // User 객체를 찾음
+        List<Cart> cartItems = cartService.getAvailableCartEntities(user.getId()); // User 객체를 전달
 
         if (cartItems.isEmpty()) {
             // 장바구니 항목이 비어 있으면 RuntimeException을 던집니다.
@@ -100,9 +100,6 @@ public class PaymentService {
         // 9. PaymentDTO 반환
         return convertToPaymentDTO(payment);
     }
-
-
-
 
     // PaymentDTO로 변환
     private PaymentDTO convertToPaymentDTO(Payment payment) {
