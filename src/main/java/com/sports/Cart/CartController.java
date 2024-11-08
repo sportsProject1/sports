@@ -89,8 +89,8 @@ public class CartController {
     }
 
     //장바구니 수량 업데이트
-    @PutMapping("/update/quantity/{itemId}")
-    public ResponseEntity<?> updateCartQuantity(@PathVariable Long itemId, @RequestBody Map<String, Integer> body) {
+    @PutMapping("/update/count/{itemId}")
+    public ResponseEntity<?> updateCartCount(@PathVariable Long itemId, @RequestBody Map<String, Integer> body) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         User user = userService.findByUsername(username);
@@ -98,7 +98,7 @@ public class CartController {
         int count = body.get("count");
 
         try {
-            cartService.updateQuantity(itemId, count, user);
+            cartService.updateCount(itemId, count, user);
             return ResponseEntity.ok("수량이 업데이트되었습니다.");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("수량 업데이트 실패");
