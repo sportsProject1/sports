@@ -3,17 +3,12 @@ package com.sports.Item;
 import com.sports.Category.Category;
 import com.sports.Category.CategoryDTO;
 import com.sports.Category.CategoryService;
-import com.sports.Security.JwtTokenProvider;
 import com.sports.user.User;
-import com.sports.user.UserService;
+import com.sports.user.UserContextService;
 import io.jsonwebtoken.MalformedJwtException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -31,9 +26,7 @@ public class ItemController {
     private final ItemService itemService;
     private final CategoryService categoryService;
     private final S3Service s3Service;
-
-    @Autowired
-    private UserService userService;
+    private final UserContextService userContextService;
 
     @GetMapping("/list")
     public List<ItemDTO> shopList() {
@@ -68,10 +61,7 @@ public class ItemController {
     public ResponseEntity<ItemResponseDTO> postItem(@ModelAttribute ItemDTO itemDTO,
                                                     @RequestParam("file") List<MultipartFile> file) {
         try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String username = authentication.getName();
-
-            User user = userService.findByUsername(username);
+            User user = userContextService.getCurrentUser();
 
             if (file == null || file.isEmpty()) {
                 ItemResponseDTO response = new ItemResponseDTO("상품을 추가하려면 파일을 첨부해야 합니다.");
@@ -113,10 +103,7 @@ public class ItemController {
             @ModelAttribute ItemDTO itemDTO,
             @RequestParam(value = "file", required = false) List<MultipartFile> file) {
         try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String username = authentication.getName();
-
-            User user = userService.findByUsername(username);
+            User user = userContextService.getCurrentUser();
 
             itemService.update(id, itemDTO, file, user);
             ItemResponseDTO response = new ItemResponseDTO("상품이 성공적으로 업데이트되었습니다.");
@@ -137,10 +124,7 @@ public class ItemController {
     public ResponseEntity<ItemResponseDTO> deleteItem(
             @PathVariable Long id) {
         try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String username = authentication.getName();
-
-            User user = userService.findByUsername(username);
+            User user = userContextService.getCurrentUser();
 
             itemService.delete(id, user);
             ItemResponseDTO response = new ItemResponseDTO("상품이 성공적으로 삭제되었습니다.");

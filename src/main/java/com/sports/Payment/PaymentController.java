@@ -1,6 +1,7 @@
 package com.sports.Payment;
 
 import com.sports.user.User;
+import com.sports.user.UserContextService;
 import com.sports.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,19 +21,11 @@ import java.util.List;
 public class PaymentController {
 
     private final PaymentService paymentService;
-    private final UserService userService;
+    private final UserContextService userContextService;
 
     @PostMapping("/process")
     public ResponseEntity<PaymentDTO> processPayment(@RequestBody String paymentMethod) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        User user;
-
-        try {
-            user = userService.findByUsername(username);  // Username을 통해 User 정보 가져오기
-        } catch (UsernameNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); // 유저가 없을 경우
-        }
+        User user = userContextService.getCurrentUser();
 
         // 결제 프로세스를 처리하고 결제 DTO 반환
         try {
@@ -46,15 +39,7 @@ public class PaymentController {
 
     @GetMapping("/history")
     public ResponseEntity<List<PaymentDTO>> getPaymentHistory() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        User user;
-
-        try {
-            user = userService.findByUsername(username); // Username을 통해 User 정보 가져오기
-        } catch (UsernameNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); // 유저가 없을 경우
-        }
+        User user = userContextService.getCurrentUser();
 
         List<PaymentDTO> paymentHistory = paymentService.getPaymentsByUser(user.getId());
 
