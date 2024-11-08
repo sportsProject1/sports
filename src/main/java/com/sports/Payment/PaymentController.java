@@ -29,7 +29,7 @@ public class PaymentController {
 
         // 결제 프로세스를 처리하고 결제 DTO 반환
         try {
-            PaymentDTO paymentDTO = paymentService.processPayment(user.getId(), paymentMethod);
+            PaymentDTO paymentDTO = paymentService.processPayment(String.valueOf(user.getId()), paymentMethod);
             return ResponseEntity.ok(paymentDTO); // 성공적으로 결제 처리
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
