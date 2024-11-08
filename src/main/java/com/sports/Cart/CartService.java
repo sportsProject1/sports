@@ -113,7 +113,7 @@ public class CartService {
     }
 
 
-    private CartDTO convertToDto(Cart cart) {
+    public CartDTO convertToDto(Cart cart) {
         return new CartDTO(
                 cart.getId(),
                 cart.getCount(),
