@@ -14,7 +14,6 @@ function Shop() {
         fetchData("/shop/list",setItems);
     }, []);
     // const thumbnailUrl = item.imgurl.split(',')[0];
-    console.log(items)
 
     return (
         <ShopContainer>

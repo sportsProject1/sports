@@ -14,7 +14,6 @@ import {ItemInfo} from "../../styled/shopStyled";
 
 function ShopCart(){
     const [userCart,setUserCart] = useState([])
-    const [testCart, setTestCart] = useState([])
 
     const handleCount = async (itemId, cartId, newCount) => {
         if (newCount < 1) return; // 최소 수량 제한
@@ -30,11 +29,26 @@ function ShopCart(){
                 prevCart.map(item =>
                     item.cartId === cartId ? { ...item, count: newCount } : item
                 ));
-            console.log(cartCount)
         } catch (error) {
             console.error('Failed to update count:', error);
         }
     };
+
+    const handleChecked = async (itemId,cartId,checked) =>{
+        const cartChecked = {
+            cartId: cartId,
+            isChecked: checked
+        };
+        try {
+            await putTokenJsonData(`/mypage/cart/update/checkbox/${itemId}`,cartChecked);
+            setUserCart(prevCart =>
+                prevCart.map(item =>
+                    item.cartId === cartId ? { ...item, isChecked: checked } : item
+                ));
+        } catch (err){
+            console.error(err)
+        }
+    }
 
     useEffect(() => {
             fetchTokenData("/mypage/cart").then(
@@ -43,8 +57,8 @@ function ShopCart(){
                         ...cartItem.item,
                         count: cartItem.count,
                         cartId: cartItem.id,
+                        isChecked: cartItem.checked,
                     }));
-                    setTestCart(data.data);
                     setUserCart(itemsWithCount);
                 }
             )
@@ -55,15 +69,17 @@ function ShopCart(){
     return (
         <CartContainer>
             {userCart.map(item => (
-                <CartItem key={item.id}>
-                    <Checkbox />
+                <CartItem key={item.cartId}>
+                    <Checkbox
+                        onChange={()=>handleChecked(item.cartId,item.cartId,!item.isChecked)}
+                        checked={item.isChecked} />
                     <ItemImage src={item.imgurl} alt={item.name} />
                     <ItemInfo>
                         <ItemName>{item.title}</ItemName>
                         <ItemPrice>{item.price.toLocaleString()}원</ItemPrice>
                     </ItemInfo>
                     <ItemActions>
-                        <button onClick={() => handleCount(item.id, item.cartId, item.count - 1)}>감소</button>
+                        <button onClick={() => handleCount(item.cartId, item.cartId, item.count - 1)}>감소</button>
 
                         <QuantityInput
                             onChange={(e) => handleCount(item.id, item.cartId, parseInt(e.target.value, 10) || 1)}
@@ -71,7 +87,7 @@ function ShopCart(){
                             min="1"
                             value={item.count}/>
 
-                        <button onClick={() => handleCount(item.id, item.cartId, item.count + 1)}>증가</button>
+                        <button onClick={() => handleCount(item.cartId, item.cartId, item.count + 1)}>증가</button>
 
                         <DeleteButton>삭제</DeleteButton>
                     </ItemActions>

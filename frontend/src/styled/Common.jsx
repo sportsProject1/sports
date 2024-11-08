@@ -169,3 +169,12 @@ export const CreateButton = styled.button`
         background-color: #45a049;
     }
 `;
+
+
+// Footer
+
+export const FooterContainer = styled.footer`
+    width:100%;
+    height: 150px;
+    background-color: green;
+`

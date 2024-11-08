@@ -1,5 +1,5 @@
-import { Divider} from "../../styled/Common";
-import {Footer, MainContainer, SectionTitle} from "../../styled/main/MainPageStyled";
+import {Divider, FooterContainer} from "../../styled/Common";
+import { MainContainer, SectionTitle} from "../../styled/main/MainPageStyled";
 import MainBanner from "./MainBanner";
 import MainBestBoard from "./MainBestBoard";
 import MainBestItem from "./MainBestItem";
@@ -16,7 +16,6 @@ function Home() {
             <SectionTitle>최신 게시글</SectionTitle>
             <MainBestItem/>
 
-            <Footer/>
 
         </MainContainer>
     )
