@@ -53,21 +53,21 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    // 토큰에서 userId (sub) 추출
+    // 토큰에서 userId 추출 (sub)
     public String extractUserId(String token) {
         return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
     }
 
-    // 토큰에서 username 추출
+    // 토큰에서 username 추출 (claims)
     public String getUsername(String token) {
         return (String) Jwts.parser()
                 .setSigningKey(secretKey)
                 .parseClaimsJws(token)
                 .getBody()
-                .get("username"); // username을 claims에서 추출
+                .get("username");
     }
 
-    // 토큰에서 role 추출
+    // 토큰에서 role 추출 (claims)
     public String getRole(String token) {
         return (String) Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().get("role");
     }
