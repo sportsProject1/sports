@@ -18,7 +18,7 @@ public class UserContextService {
 
     private final UserRepository userRepository;
 
-    // 현재 인증된 사용자 정보 가져오기
+    // 현재 인증된 사용자를 기준으로 User 객체 뽑기
     public User getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !(authentication.getPrincipal() instanceof PrincipalUserDetails)) {
@@ -30,9 +30,8 @@ public class UserContextService {
     }
 
     // 통합 로그아웃 서비스
-    public void logout(String username, UserRefreshTokenRepository userRefreshTokenRepository) {
-        User user = findByUsername(username);
-        userRefreshTokenRepository.deleteByUserId(user.getId());
+    public void logout(Long userId, UserRefreshTokenRepository userRefreshTokenRepository) {
+        userRefreshTokenRepository.deleteByUserId(userId);
         SecurityContextHolder.clearContext();
     }
 

@@ -81,8 +81,11 @@ public class AuthController {
     @PostMapping("/logout")
     @Transactional
     public ResponseEntity<String> logout(HttpServletRequest request) {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        userContextService.logout(username, userRefreshTokenRepository);
+        String token = (String) request.getAttribute("token");
+        System.out.println("token : " + token);
+        Long userId = Long.parseLong(jwtTokenProvider.extractUserId(token));
+        System.out.println("userId : " + userId);
+        userContextService.logout(userId, userRefreshTokenRepository);
         return ResponseEntity.ok("로그아웃 되었습니다.");
     }
 
