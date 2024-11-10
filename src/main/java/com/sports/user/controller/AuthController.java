@@ -1,5 +1,6 @@
 package com.sports.user.controller;
 
+import com.sports.Security.auth.PrincipalUserDetails;
 import com.sports.Security.dto.AuthResponse;
 import com.sports.Security.dto.LoginRequest;
 import com.sports.Security.jwt.JwtTokenProvider;
@@ -15,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -80,14 +82,18 @@ public class AuthController {
     // 통합 로그아웃
     @PostMapping("/logout")
     @Transactional
-    public ResponseEntity<String> logout(HttpServletRequest request) {
-        String token = (String) request.getAttribute("token");
-        System.out.println("token : " + token);
-        Long userId = Long.parseLong(jwtTokenProvider.extractUserId(token));
-        System.out.println("userId : " + userId);
+    public ResponseEntity<String> logout() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new IllegalArgumentException("인증된 사용자가 없어서 로그아웃 할 사람이 없습니다.");
+        }
+
+        Long userId = ((PrincipalUserDetails) authentication.getPrincipal()).getId();
         userContextService.logout(userId, userRefreshTokenRepository);
+
         return ResponseEntity.ok("로그아웃 되었습니다.");
     }
+
 
     // 리프레시 토큰으로 새로운 액세스 토큰 생성
     @PostMapping("/refresh")
