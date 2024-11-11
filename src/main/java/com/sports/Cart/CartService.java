@@ -2,8 +2,8 @@ package com.sports.Cart;
 
 import com.sports.Item.Item;
 import com.sports.Item.ItemService;
-import com.sports.user.User;
-import com.sports.user.UserContextService;
+import com.sports.user.entito.User;
+import com.sports.user.service.UserContextService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
