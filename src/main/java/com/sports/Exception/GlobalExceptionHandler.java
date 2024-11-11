@@ -3,6 +3,7 @@ package com.sports.Exception;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -41,5 +42,10 @@ public class GlobalExceptionHandler {
 
         // 그 외 다른 무결성 위반 처리
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("데이터 무결성 위반이 발생했습니다.");
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<String> handleAccessDeniedException(AccessDeniedException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("권한이 없습니다.");
     }
 }
