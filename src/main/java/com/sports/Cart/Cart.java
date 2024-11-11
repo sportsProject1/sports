@@ -1,7 +1,6 @@
 package com.sports.Cart;
 
 import com.sports.Item.Item;
-import com.sports.user.entito.User;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
@@ -22,9 +21,8 @@ public class Cart {
     @JoinColumn(name = "item_id", nullable = false)
     private Item item;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
 
     @CreationTimestamp
     private Timestamp orderTime;
