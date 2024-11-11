@@ -2,8 +2,8 @@ package com.sports.Cart;
 
 import com.sports.Item.Item;
 import com.sports.Item.ItemService;
-import com.sports.user.entito.User;
-import com.sports.user.service.UserContextService;
+import com.sports.user.User;
+import com.sports.user.UserContextService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -36,13 +36,24 @@ public class CartService {
         User user = userContextService.findById(userId);  // userId로 유저 조회
         Item item = itemService.findById(cartDTO.getItem().getId());
 
+        // 1. 동일한 상품이 이미 장바구니에 있는지 확인 (결제 상태가 false인 항목만)
+        Cart existingCart = cartRepository.findByUserIdAndItemAndPaymentStatusFalse(id, item);
+
+        if (existingCart != null) {
+            // 2. 이미 장바구니에 같은 상품이 존재하면 수량을 증가시킴
+            existingCart.setCount(existingCart.getCount() + cartDTO.getCount());
+            cartRepository.save(existingCart);  // 장바구니 항목 업데이트
+            return convertToDto(existingCart);  // 업데이트된 장바구니 항목 반환
+        }
+
+        // 3. 상품이 존재하지 않으면 새 항목을 추가
         Cart cart = new Cart();
         cart.setCount(cartDTO.getCount());
         cart.setItem(item);
         cart.setUser(user);
 
         Cart savedCart = cartRepository.save(cart);
-        return convertToDto(savedCart);
+        return convertToDto(savedCart);  // 새로 추가된 장바구니 항목 반환
     }
 
     // 수량 업데이트 메서드
