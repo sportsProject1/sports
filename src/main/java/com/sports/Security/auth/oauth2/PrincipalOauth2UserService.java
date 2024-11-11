@@ -35,7 +35,7 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = super.loadUser(userRequest);
 
-        String provider = userRequest.getClientRegistration().getRegistrationId();
+        String provider = userRequest.getClientRegistration().getRegistrationId();  // ex) google, kakao
         String providerId;
         String email;
         String nickname;
@@ -66,10 +66,29 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
         String username = provider + "_" + providerId;
         String role = "ROLE_USER";
 
-        User userEntity = (email != null && !email.isEmpty())
-                ? userRepository.findByEmail(email).orElseGet(() -> createUser(providerId, username, email, nickname, profileImageUrl, role, provider))
-                : userRepository.findByProviderId(providerId).orElseGet(() -> createUser(providerId, username, null, nickname, profileImageUrl, role, provider));
+        // Step 1: providerId로 사용자 찾기
+        User userEntity = userRepository.findByProviderId(providerId).orElse(null);
 
+        // Step 2: providerId로 사용자가 없으면 email로 찾기
+        if (userEntity == null) {
+            User existingUser = userRepository.findByEmail(email).orElse(null);
+
+            if (existingUser != null) {
+                // 이메일이 일치하고, provider가 null인 경우 업데이트
+                if (existingUser.getProvider() == null) {
+                    existingUser.setProvider(provider);
+                    existingUser.setProviderId(providerId);
+                    userRepository.save(existingUser);
+                    userEntity = existingUser;
+                } else {
+                    // 이메일이 일치하지만 provider가 다른 경우 새로운 계정 생성
+                    userEntity = createUser(providerId, username, email, nickname, profileImageUrl, role, provider);
+                }
+            } else {
+                // 이메일로도 사용자 없으면 새 사용자 생성
+                userEntity = createUser(providerId, username, email, nickname, profileImageUrl, role, provider);
+            }
+        }
         // Redirect to client after successful OAuth2 login
         try {
             response.sendRedirect("http://localhost:3000/oauth2/redirect");
