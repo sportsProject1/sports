@@ -1,105 +1,124 @@
-import {useEffect, useState} from "react";
-import {deleteTokenData, fetchTokenData, putTokenData, putTokenJsonData} from "../../Server/ApiService";
-import {useSelector} from "react-redux";
+import { useEffect, useState } from "react";
+import { deleteTokenData, fetchTokenData, putTokenJsonData } from "../../Server/ApiService";
 import {
     CartContainer,
-    CartItem, CartSummary,
-    Checkbox, CheckoutButton, DeleteButton,
-    ItemActions,
+    CartTable,
+    TableHeader,
+    TableRow,
+    TableData,
     ItemImage,
-    ItemName,
-    ItemPrice, QuantityInput, TotalPrice
+    QuantityInput,
+    DeleteButton,
+    CartSummary,
+    TotalPrice,
+    CheckoutButton, DeleteAllButton
 } from "../../styled/Shop/ShopStyled";
-import {ItemInfo} from "../../styled/shopStyled";
+import { useNavigate } from "react-router-dom";
 
-function ShopCart(){
-    const [userCart,setUserCart] = useState([])
+function ShopCart() {
+    const [userCart, setUserCart] = useState([]);
+    const navigate = useNavigate();
 
     const handleUpdate = async (type, itemId, cartId, value) => {
-        // 최소 수량 제한 조건 추가 (type이 count일 경우)
         if (type === 'count' && value < 1) return;
 
-        // 요청 페이로드 구성
         const payload = {
             cartId: cartId,
-            [type]: value // count 또는 isChecked에 따라 다르게 설정
+            [type]: value
         };
 
-        // 요청 경로 설정
         const endpoint = type === 'count'
             ? `/mypage/cart/update/count/${itemId}`
             : type === 'delete'
                 ? `/mypage/cart/delete/${itemId}`
                 : `/mypage/cart/update/checkbox/${itemId}`;
+
         try {
-            if(type === 'delete'){
+            if (type === 'delete') {
                 await deleteTokenData(endpoint, payload);
                 setUserCart(prevCart => prevCart.filter(item => item.cartId !== cartId));
-            }else{
+            } else {
                 await putTokenJsonData(endpoint, payload);
-
-                // 로컬 상태 업데이트
                 setUserCart(prevCart =>
                     prevCart.map(item =>
                         item.cartId === cartId ? { ...item, [type]: value } : item
                     )
                 );
             }
-
         } catch (error) {
             console.error(`Failed to update ${type}:`, error);
         }
     };
 
-
     useEffect(() => {
-            fetchTokenData("/mypage/cart").then(
-                (data)=>{
-                    const itemsWithCount = data.data.map(cartItem => ({
-                        ...cartItem.item,
-                        count: cartItem.count,
-                        cartId: cartItem.id,
-                        isChecked: cartItem.checked,
-                    }));
-                    setUserCart(itemsWithCount);
-                }
-            )
+        fetchTokenData("/mypage/cart").then(
+            (data) => {
+                const itemsWithCount = data.data.map(cartItem => ({
+                    ...cartItem.item,
+                    count: cartItem.count,
+                    cartId: cartItem.id,
+                    isChecked: cartItem.checked,
+                }));
+                setUserCart(itemsWithCount);
+            }
+        );
     }, []);
+    console.log(userCart);
 
     return (
         <CartContainer>
-            {userCart.map(item => (
-                <CartItem key={item.cartId}>
-                    <Checkbox
-                        onChange={()=>handleUpdate('isChecked', item.cartId, item.cartId, !item.isChecked)}
-                        checked={item.isChecked} />
-                    <ItemImage src={item.imgurl} alt={item.name} />
-                    <ItemInfo>
-                        <ItemName>{item.title}</ItemName>
-                        <ItemPrice>{item.price.toLocaleString()}원</ItemPrice>
-                    </ItemInfo>
-                    <ItemActions>
-                        <button onClick={() => handleUpdate('count', item.cartId, item.cartId, item.count + 1)}>감소</button>
-
-                        <QuantityInput
-                            type="number"
-                            min="1"
-                            value={item.count}
-                            readOnly/>
-
-                        <button onClick={() => handleUpdate('count', item.cartId, item.cartId,item.count + 1)}>증가</button>
-
-                        <DeleteButton
-                        onClick={()=>handleUpdate('delete',item.cartId,item.cartId)}>삭제</DeleteButton>
-                    </ItemActions>
-                </CartItem>
-            ))}
+            <DeleteAllButton>선택 항목 삭제</DeleteAllButton>
+            <CartTable>
+                <thead>
+                <tr>
+                    <TableHeader style={{ width: '10%' }}>선택</TableHeader>
+                    <TableHeader style={{ width: '10%' }}>사진</TableHeader>
+                    <TableHeader style={{ width: '30%' }}>상품명</TableHeader>
+                    <TableHeader style={{ width: '10%' }}>가격</TableHeader>
+                    <TableHeader style={{ width: '10%' }}>수량</TableHeader>
+                    <TableHeader style={{ width: '10%' }}>삭제</TableHeader>
+                </tr>
+                </thead>
+                <tbody>
+                {userCart.map(item => (
+                    <TableRow key={item.cartId}>
+                        <TableData>
+                            <input
+                                type="checkbox"
+                                onChange={() => handleUpdate('isChecked', item.cartId, item.cartId, !item.isChecked)}
+                                checked={item.isChecked}
+                            />
+                        </TableData>
+                        <TableData>
+                            <ItemImage src={item.imgurl} alt={item.name} />
+                        </TableData>
+                        <TableData>{item.title}</TableData>
+                        <TableData>{item.price.toLocaleString()}원</TableData>
+                        <TableData>
+                            <button onClick={() => handleUpdate('count', item.cartId, item.cartId, item.count - 1)}>▼
+                            </button>
+                            <QuantityInput
+                                type="number"
+                                min="1"
+                                value={item.count}
+                                readOnly
+                            />
+                            <button onClick={() => handleUpdate('count', item.cartId, item.cartId, item.count + 1)}>▲
+                            </button>
+                        </TableData>
+                        <TableData>
+                            <DeleteButton onClick={() => handleUpdate('delete', item.cartId, item.cartId)}>삭제</DeleteButton>
+                        </TableData>
+                    </TableRow>
+                ))}
+                </tbody>
+            </CartTable>
             <CartSummary>
                 <TotalPrice>합계: {userCart.reduce((total, item) => total + item.price * item.count, 0).toLocaleString()}원</TotalPrice>
-                <CheckoutButton>결제하기</CheckoutButton>
+                <CheckoutButton onClick={() => navigate('/shop/payment')}>결제하기</CheckoutButton>
             </CartSummary>
         </CartContainer>
-    )
+    );
 }
 
 export default ShopCart;
