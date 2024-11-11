@@ -1,7 +1,6 @@
 package com.sports.Payment;
 
 import com.sports.PaymentDetail.PaymentDetail;
-import com.sports.user.entito.User;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
@@ -28,7 +27,6 @@ public class Payment {
     @OneToMany(mappedBy = "payment", cascade = CascadeType.ALL)
     private List<PaymentDetail> paymentDetails;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
 }

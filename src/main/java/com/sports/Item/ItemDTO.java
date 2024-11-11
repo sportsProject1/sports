@@ -1,14 +1,17 @@
 package com.sports.Item;
 
 import jakarta.validation.constraints.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 @Data
-@RequiredArgsConstructor
+@NoArgsConstructor
+@AllArgsConstructor
 public class ItemDTO {
     private Long id;
 
@@ -28,19 +31,11 @@ public class ItemDTO {
     @Min(value = 1, message = "상품재고는 1 이상이어야 합니다.")
     private Integer stock;
 
-    @NotBlank
-    @Size(message = "카테고리는 반드시 선택해야 합니다.")
+    @NotNull(message = "카테고리는 반드시 선택해야 합니다.")
     private Long categoryId;
     private List<MultipartFile> files;
 
     public ItemDTO(Long id, String title, Integer price, String desc, String imgurl, Integer stock, Long categoryId) {
-        this.id = id;
-        this.title = title;
-        this.price = price;
-        this.desc = desc;
-        this.imgurl = imgurl;
-        this.stock = stock;
-        this.categoryId = categoryId;
+        this(id, title, price, desc, imgurl, stock, categoryId, null); //
     }
-
 }
