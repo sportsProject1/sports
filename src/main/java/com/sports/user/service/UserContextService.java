@@ -18,6 +18,16 @@ public class UserContextService {
 
     private final UserRepository userRepository;
 
+    // 현재 인증된 사용자의 User ID 가져오기
+    public Long getCurrentUserId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !(authentication.getPrincipal() instanceof PrincipalUserDetails)) {
+            throw new RuntimeException("현재 인증된 사용자가 없습니다.");
+        }
+        PrincipalUserDetails userDetails = (PrincipalUserDetails) authentication.getPrincipal();
+        return userDetails.getId(); // User ID 반환
+    }
+
     // 현재 인증된 사용자를 기준으로 User 객체 뽑기
     public User getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -29,25 +39,19 @@ public class UserContextService {
                 .orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다."));
     }
 
-    // 통합 로그아웃 서비스
-    public void logout(Long userId, UserRefreshTokenRepository userRefreshTokenRepository) {
-        userRefreshTokenRepository.deleteByUserId(userId);
-        SecurityContextHolder.clearContext();
-    }
-
-    // username을 받아 User 조회
+    // username으로 User 객체 뽑기
     public User findByUsername(String username) {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
     }
 
-    // userId를 받아 조회 (String 타입)
+    // userId로 User 객체 뽑기 (String 타입)
     public User findById(String userId) {
         return userRepository.findById(Long.valueOf(userId))
                 .orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다."));
     }
 
-    // userId를 받아 조회 (Long 타입)
+    // userId로 User 객체 뽑기 (Long 타입)
     public User findById(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다."));
@@ -64,5 +68,11 @@ public class UserContextService {
                 .orElseThrow(() -> new RuntimeException("유효하지 않은 리프레시 토큰입니다."));
         User user = userRefreshToken.getUser();
         return jwtTokenProvider.createToken(user.getId(), user.getUsername(), user.getRole());
+    }
+
+    // 통합 로그아웃 서비스
+    public void logout(Long userId, UserRefreshTokenRepository userRefreshTokenRepository) {
+        userRefreshTokenRepository.deleteByUserId(userId);
+        SecurityContextHolder.clearContext();
     }
 }
