@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Like {
+public class Likes {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
