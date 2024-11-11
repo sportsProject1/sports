@@ -2,7 +2,7 @@ import {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {fetchData} from "../../Server/ApiServiceNoToken";
 import {ShopContainer} from "../../styled/shopStyled";
-import SideMenu from "../../Components/SideMenu";
+import SideMenu from "../../Components/Menu/SideMenu";
 import ItemWrapper from "./ItemWrapper";
 
 function Shop() {

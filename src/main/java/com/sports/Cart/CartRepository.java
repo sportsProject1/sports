@@ -18,4 +18,6 @@ public interface CartRepository extends JpaRepository<Cart, Long> {
 
     // 사용자 아이디와 아이템으로 결제되지 않은 장바구니 항목 조회
     Cart findByUserIdAndItemAndPaymentStatusFalse(Long userId, Item item);
+
+    void deleteByItemId(Long itemId);
 }

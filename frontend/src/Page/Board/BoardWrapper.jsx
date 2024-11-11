@@ -1,4 +1,4 @@
-import SubMenu from "../../Components/SubMenu";
+import SubMenu from "../../Components/Menu/SubMenu";
 import {
     CreateButton,
     CreateButtonContainer,
@@ -59,7 +59,7 @@ function BoardWrapper(){
     };
 
     const onNavigate = () => {
-        navigate("/")
+        navigate("/board/add")
     }
 
 

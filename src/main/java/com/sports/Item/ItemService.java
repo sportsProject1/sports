@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -104,6 +105,8 @@ public class ItemService {
 
         // 상품 삭제 상태로 업데이트
         item.setDeleted(true);
+        item.setDeletedAt(LocalDateTime.now());
+
         itemRepository.save(item);
     }
 
