@@ -3,6 +3,7 @@ package com.sports.Item;
 import com.sports.Category.Category;
 import com.sports.Category.CategoryService;
 import com.sports.user.entito.User;
+import com.sports.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -20,16 +22,20 @@ public class ItemService {
     private final ItemRepository itemRepository;
     private final CategoryService categoryService;
     private final S3Service s3Service;
+    private final UserRepository userRepository;
 
     @Transactional
-    public Item addItem(ItemDTO itemDTO, List<MultipartFile> files, User user) throws IOException {
-        Item item = new Item();
+    public Item addItem(ItemDTO itemDTO, List<MultipartFile> files, Long userId) throws IOException {
+        // userId로 User 객체를 찾음
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다."));
 
+        Item item = new Item();
         item.setTitle(itemDTO.getTitle());
         item.setPrice(itemDTO.getPrice());
         item.setDesc(itemDTO.getDesc());
         item.setStock(itemDTO.getStock());
-        item.setUser(user);
+        item.setUserId(userId);  // userId 저장
 
         if (files == null) {
             files = Collections.emptyList(); // null이면 빈 리스트로 처리
@@ -43,7 +49,7 @@ public class ItemService {
                 .orElseThrow(() -> new RuntimeException("카테고리를 찾을 수 없습니다."));
         item.setCategory(category);
 
-        return itemRepository.save(item);  // 저장된 Item 객체를 반환
+        return itemRepository.save(item);  // 저장된 Item 객체 반환
     }
 
     public ItemDTO getItemDetail(Long id) {
@@ -68,12 +74,17 @@ public class ItemService {
         );
     }
 
-    @PreAuthorize("hasRole('ROLE_MANAGER') or @userService.findByUsername(authentication.name).id == #user.id")
-    public void update(Long id, ItemDTO dto, List<MultipartFile> files, User user) throws IOException {
+    @PreAuthorize("hasRole('ROLE_MANAGER') or @itemRepository.findById(#id).get().userId == authentication.principal.id")
+    public void update(Long id, ItemDTO dto, List<MultipartFile> files, Long userId) throws IOException {
+        // userId로 User 객체를 찾음
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다."));
+
+        // 상품을 찾음
         Item item = itemRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("해당 상품을 찾을 수 없습니다."));
 
-        // 상품 정보 업데이트
+        // 상품 정보를 업데이트
         item.setTitle(dto.getTitle());
         item.setPrice(dto.getPrice());
         item.setDesc(dto.getDesc());
@@ -84,26 +95,40 @@ public class ItemService {
                 .orElseThrow(() -> new RuntimeException("카테고리를 찾을 수 없습니다."));
         item.setCategory(category);
 
-        // 이미지 파일 처리
+        // 새 파일이 있다면 파일을 업로드하고 imgurl을 업데이트
         if (files != null && !files.isEmpty()) {
-            // 새 이미지가 있으면 업로드 후 URL 업데이트
-            List<String> imgUrls = s3Service.saveFiles(files);
-            item.setImgurl(String.join(",", imgUrls));
+            // 파일이 업로드되었을 때
+            List<String> imgUrls = s3Service.saveFiles(files); // 파일 저장하고 URL 받기
+            if (imgUrls != null && !imgUrls.isEmpty()) {
+                item.setImgurl(String.join(",", imgUrls)); // imgurl에 URL을 설정
+            } else {
+                throw new RuntimeException("파일 업로드에 실패했습니다.");
+            }
+        } else {
+            // 새 파일이 없다면 기존 이미지를 유지
+            if (item.getImgurl() == null || item.getImgurl().isEmpty()) {
+                // 기본 이미지 URL을 설정할 수 있다면 설정
+                item.setImgurl("https://mystudy5350.s3.amazonaws.com/test/222.jfif"); // 기본 이미지 URL로 설정할 수 있습니다.
+            }
+            // 기존 이미지를 그대로 사용
         }
-        // 새 이미지가 없으면 기존 이미지 URL을 그대로 유지
 
-        // 아이템 저장
+        // 상품 업데이트 저장
         itemRepository.save(item);
     }
 
+    @PreAuthorize("hasRole('ROLE_MANAGER') or @itemRepository.findById(#id).get().userId == authentication.principal.id")
+    public void delete(Long id, Long userId) {
+        // userId로 User 객체를 찾음
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다."));
 
-    @PreAuthorize("hasRole('ROLE_MANAGER') or @userService.findByUsername(authentication.name).id == #user.id")
-    public void delete(Long id, User user) {
         Item item = itemRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("해당 상품을 찾을 수 없습니다."));
 
-        // 상품 삭제 상태로 업데이트
         item.setDeleted(true);
+        item.setDeletedAt(LocalDateTime.now());
+
         itemRepository.save(item);
     }
 

@@ -25,7 +25,7 @@ public class PaymentController {
 
         // 결제 프로세스를 처리하고 결제 DTO 반환
         try {
-            PaymentDTO paymentDTO = paymentService.processPayment(String.valueOf(user.getId()), paymentMethod);
+            PaymentDTO paymentDTO = paymentService.processPayment(user.getId(), paymentMethod);  // user.getId()로 수정
             return ResponseEntity.ok(paymentDTO); // 성공적으로 결제 처리
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -37,12 +37,9 @@ public class PaymentController {
     public ResponseEntity<List<PaymentDTO>> getPaymentHistory() {
         User user = userContextService.getCurrentUser();
 
+        // 결제 내역과 결제 상세 정보를 포함한 PaymentDTO 반환
         List<PaymentDTO> paymentHistory = paymentService.getPaymentsByUser(user.getId());
 
-        if (paymentHistory.isEmpty()) {
-            return ResponseEntity.ok(paymentHistory); // 빈 리스트로 응답
-        }
-
-        return ResponseEntity.ok(paymentHistory);  // 결제 내역 리스트 반환
+        return ResponseEntity.ok(paymentHistory);
     }
 }

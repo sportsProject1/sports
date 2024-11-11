@@ -25,10 +25,10 @@ public class PaymentService {
     private final UserContextService userContextService;
     private final ItemRepository itemRepository;  // 아이템 리포지토리 추가
 
-    public PaymentDTO processPayment(String userId, String paymentMethod) {
+    public PaymentDTO processPayment(Long userId, String paymentMethod) {
         // 1. 유저 정보와 체크된 장바구니 항목들을 가져옵니다.
-        User user = userContextService.findById(userId); // User 객체를 찾음
-        List<Cart> cartItems = cartService.getAvailableCartEntities(user.getId()); // User 객체를 전달
+        User user = userContextService.findById(userId); // userId로 User 객체를 찾음
+        List<Cart> cartItems = cartService.getAvailableCartEntities(userId);
 
         if (cartItems.isEmpty()) {
             // 장바구니 항목이 비어 있으면 RuntimeException을 던집니다.
@@ -38,7 +38,7 @@ public class PaymentService {
         // 2. Payment 객체 생성 및 설정
         Payment payment = new Payment();
         payment.setPaymentMethod(paymentMethod);
-        payment.setUser(user);
+        payment.setUserId(userId);  // 'setUser' 대신 'setUserId' 사용
 
         long totalPrice = 0;
         List<PaymentDetail> paymentDetails = new ArrayList<>();
@@ -50,7 +50,7 @@ public class PaymentService {
                 paymentDetail.setItemTitle(cart.getItem().getTitle());
                 paymentDetail.setItemPrice(cart.getItem().getPrice());
                 paymentDetail.setItemCount(cart.getCount());
-                paymentDetail.setItemId(cart.getItem().getId());  // 아이템의 ID를 저장
+                paymentDetail.setItemId(cart.getItem().getId());
 
                 // 총 금액을 계산
                 totalPrice += (long) cart.getItem().getPrice() * (long) cart.getCount();
@@ -58,8 +58,8 @@ public class PaymentService {
                 // 결제 상태 업데이트
                 cart.setPaymentStatus(true);
 
-                // 4. PaymentDetail 객체에 Payment 객체 설정 (이 부분이 중요)
-                paymentDetail.setPayment(payment);  // Payment 객체를 set 해줍니다.
+                // 4. PaymentDetail 객체에 Payment 객체 설정
+                paymentDetail.setPayment(payment);  // Payment 객체를 set
 
                 paymentDetails.add(paymentDetail);
             }
@@ -137,10 +137,9 @@ public class PaymentService {
     }
 
     public List<PaymentDTO> getPaymentsByUser(Long userId) {
-        User user = userContextService.findById(userId);  // 사용자 정보 조회
-        List<Payment> payments = paymentRepository.findByUser(user);  // 사용자 결제 내역 가져오기
+        List<Payment> payments = paymentRepository.findByUserIdWithDetails(userId);  // 결제 내역과 결제 상세 정보 가져오기
 
-        // Payment를 PaymentDTO로 변환
+        // Payment 엔티티를 PaymentDTO로 변환
         List<PaymentDTO> paymentDTOs = new ArrayList<>();
         for (Payment payment : payments) {
             paymentDTOs.add(convertToPaymentDTO(payment));
@@ -148,5 +147,6 @@ public class PaymentService {
 
         return paymentDTOs;
     }
+
 
 }
