@@ -1,6 +1,7 @@
-// 서브메뉴 전체 컨테이너
+import React, { useState } from "react";
 import styled from "styled-components";
 
+// 서브메뉴 전체 컨테이너
 const SubMenuContainer = styled.div`
     display: flex;
     align-items: center;
@@ -33,13 +34,15 @@ const SearchIcon = styled.span`
     color: #333;
 `;
 
-// 필터 버튼 스타일
-const FilterButton = styled.button`
+// 필터 버튼 스타일 (styled-components prop 전달 방지 처리)
+const FilterButton = styled.button.withConfig({
+    shouldForwardProp: (prop) => prop !== '$active'
+})`
     border: none;
     padding: 8px 15px;
     border-radius: 20px;
-    background-color: ${({ active }) => (active ? '#333' : '#f5f5f5')};
-    color: ${({ active }) => (active ? '#fff' : '#333')};
+    background-color: ${({ $active }) => ($active ? '#333' : '#f5f5f5')};
+    color: ${({ $active }) => ($active ? '#fff' : '#333')};
     font-size: 14px;
     cursor: pointer;
     transition: background-color 0.3s ease;
@@ -49,7 +52,13 @@ const FilterButton = styled.button`
     }
 `;
 
-function SubMenu(props) {
+function SubMenu() {
+    const [activeButton, setActiveButton] = useState("New");
+
+    const handleButtonClick = (buttonName) => {
+        setActiveButton(buttonName);
+    };
+
     return (
         <SubMenuContainer>
             {/* 검색창 */}
@@ -60,12 +69,33 @@ function SubMenu(props) {
 
             {/* 필터 버튼들 */}
             <div>
-                <FilterButton active>New</FilterButton>
-                <FilterButton>Price ascending</FilterButton>
-                <FilterButton>Price descending</FilterButton>
-                <FilterButton>Rating</FilterButton>
+                <FilterButton
+                    $active={activeButton === "New"}
+                    onClick={() => handleButtonClick("New")}
+                >
+                    New
+                </FilterButton>
+                <FilterButton
+                    $active={activeButton === "Price ascending"}
+                    onClick={() => handleButtonClick("Price ascending")}
+                >
+                    Price ascending
+                </FilterButton>
+                <FilterButton
+                    $active={activeButton === "Price descending"}
+                    onClick={() => handleButtonClick("Price descending")}
+                >
+                    Price descending
+                </FilterButton>
+                <FilterButton
+                    $active={activeButton === "Rating"}
+                    onClick={() => handleButtonClick("Rating")}
+                >
+                    Rating
+                </FilterButton>
             </div>
         </SubMenuContainer>
-    )
+    );
 }
+
 export default SubMenu;

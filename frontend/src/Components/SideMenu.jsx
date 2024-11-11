@@ -6,7 +6,10 @@ export const SidebarContainer = styled.div`
     width: 350px;
 `;
 
-export const SidebarFixed = styled.div`
+// `scrollDirection` prop을 DOM에 전달되지 않도록 설정
+export const SidebarFixed = styled.div.withConfig({
+    shouldForwardProp: (prop) => prop !== 'scrollDirection'
+})`
     width: 300px;
     padding: 20px;
     border: 1px solid #e0e0e0;
