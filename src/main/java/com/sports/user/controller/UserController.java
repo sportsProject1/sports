@@ -1,6 +1,11 @@
-package com.sports.user;
+package com.sports.user.controller;
 
 import com.sports.Item.S3Service;
+import com.sports.user.entito.User;
+import com.sports.user.entito.UserDTO;
+import com.sports.user.repository.ValidationGroups;
+import com.sports.user.service.UserContextService;
+import com.sports.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.ResponseEntity;
@@ -34,38 +39,10 @@ public class UserController {
     // 마이페이지 수정
     @PutMapping("/update")
     public ResponseEntity<UserDTO> updateUser(@Validated(ValidationGroups.Update.class) @ModelAttribute UserDTO userDTO,
-                                              Authentication authentication,
                                               @RequestParam(value = "file", required = false) MultipartFile file) throws IOException {
+        UserDTO updatedUserDTO = userService.updateUser(userDTO, file);
 
-        // 현재 사용자의 정보를 가져옴
-        User existingUser = userContextService.findByUsername(authentication.getName());
-
-        // userDTO의 값으로 기존 user 엔티티 업데이트
-        existingUser.setNickname(userDTO.getNickname());
-        existingUser.setPhone(userDTO.getPhone());
-        existingUser.setEmail(userDTO.getEmail());
-        existingUser.setAddress(userDTO.getAddress());
-
-        // 이미지 파일 처리 로직
-        if (file != null && !file.isEmpty()) {
-            // 새로운 파일이 업로드된 경우 - 기존 URL과 비교
-            String newImgURL = s3Service.saveFile(file.getOriginalFilename(), file.getInputStream());
-
-            // 기존 이미지 URL과 다를 때만 업데이트
-            if (!newImgURL.equals(existingUser.getImgURL())) {
-                existingUser.setImgURL(newImgURL);
-            }
-        }
-        // 파일이 null일 경우 이미지를 업데이트하지 않음
-
-        // 변경된 사용자 정보를 저장
-        userService.saveUser(existingUser);
-
-        // 변경된 엔티티를 DTO로 변환 후 반환
-        UserDTO updatedUserDTO = new UserDTO();
-        BeanUtils.copyProperties(existingUser, updatedUserDTO);
-
-        return ResponseEntity.ok(updatedUserDTO); // 업데이트된 유저 정보를 DTO로 반환
+        return ResponseEntity.ok(updatedUserDTO);
     }
 
 

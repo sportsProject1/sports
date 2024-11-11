@@ -1,7 +1,7 @@
 package com.sports.Item;
 
 import com.sports.Category.Category;
-import com.sports.user.User;
+import com.sports.user.entito.User;
 import jakarta.persistence.*;
 import lombok.Data;
 

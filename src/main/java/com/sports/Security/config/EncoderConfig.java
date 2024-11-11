@@ -1,4 +1,4 @@
-package com.sports.Security;
+package com.sports.Security.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,4 +1,4 @@
-package com.sports.Security;
+package com.sports.Security.dto;
 
 import lombok.Getter;
 import lombok.Setter;

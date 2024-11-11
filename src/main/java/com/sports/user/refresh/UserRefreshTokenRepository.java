@@ -1,4 +1,4 @@
-package com.sports.user;
+package com.sports.user.refresh;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

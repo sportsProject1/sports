@@ -1,5 +1,7 @@
-package com.sports.Security;
+package com.sports.Security.jwt;
 
+import com.sports.Security.auth.PrincipalUserDetails;
+import com.sports.Security.auth.PrincipalUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

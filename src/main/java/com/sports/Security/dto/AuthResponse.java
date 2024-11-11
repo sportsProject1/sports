@@ -1,7 +1,5 @@
-package com.sports.Security;
+package com.sports.Security.dto;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.sports.user.UserDTO;
 import lombok.*;
 
 @Getter

@@ -1,6 +1,6 @@
-package com.sports.Security;
+package com.sports.Security.auth;
 
-import com.sports.user.User;
+import com.sports.user.entito.User;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
