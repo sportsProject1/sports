@@ -23,7 +23,7 @@ function ShopCart(){
         };
 
         try {
-            await putTokenJsonData(`/mypage/cart/update/count/${cartId}`, cartCount);
+            await putTokenJsonData(`/mypage/cart/update/count/${itemId}`, cartCount);
             // 성공적으로 업데이트된 경우 로컬 상태도 업데이트
             setUserCart(prevCart =>
                 prevCart.map(item =>
@@ -40,7 +40,7 @@ function ShopCart(){
             isChecked: checked
         };
         try {
-            await putTokenJsonData(`/mypage/cart/update/checkbox/${cartId}`,cartChecked);
+            await putTokenJsonData(`/mypage/cart/update/checkbox/${itemId}`,cartChecked);
             setUserCart(prevCart =>
                 prevCart.map(item =>
                     item.cartId === cartId ? { ...item, isChecked: checked } : item
