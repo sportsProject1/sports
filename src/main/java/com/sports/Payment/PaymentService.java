@@ -25,7 +25,7 @@ public class PaymentService {
     private final UserContextService userContextService;
     private final ItemRepository itemRepository;  // 아이템 리포지토리 추가
 
-    public PaymentDTO processPayment(Long userId, String paymentMethod, String deliveryAddress) {
+    public PaymentDTO processPayment(Long userId, String paymentMethod, String deliveryAddress, String phoneNumber, String name) {
         // 1. 유저 정보와 체크된 장바구니 항목들을 가져옵니다.
         User user = userContextService.findById(userId); // userId로 User 객체를 찾음
         List<Cart> cartItems = cartService.getAvailableCartEntities(userId);
@@ -40,6 +40,8 @@ public class PaymentService {
         payment.setPaymentMethod(paymentMethod);
         payment.setUserId(userId);
         payment.setDeliveryAddress(deliveryAddress);
+        payment.setPhoneNumber(phoneNumber);
+        payment.setName(name);
 
         long totalPrice = 0;
         List<PaymentDetail> paymentDetails = new ArrayList<>();
@@ -116,7 +118,9 @@ public class PaymentService {
                 payment.getTotalPrice(),
                 paymentDetailDTOs,
                 paymentStatusMessage,
-                payment.getDeliveryAddress()
+                payment.getDeliveryAddress(),
+                payment.getPhoneNumber(),
+                payment.getName()
         );
     }
 
