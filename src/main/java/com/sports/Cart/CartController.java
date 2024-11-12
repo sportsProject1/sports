@@ -132,8 +132,10 @@ public class CartController {
 
         List<CartDTO> checkedItems = cartService.getAvailableCartItems(userId);
         String deliveryAddress = user.getAddress();
+        String phoneNumber = user.getPhone();
+        String name = user.getNickname();
 
-        CartResponseDTO response = new CartResponseDTO("결제대기 항목 조회 성공", checkedItems, deliveryAddress);
+        CartResponseDTO response = new CartResponseDTO("결제대기 항목 조회 성공", checkedItems, deliveryAddress, phoneNumber, name);
         return ResponseEntity.ok(response);
     }
 }
