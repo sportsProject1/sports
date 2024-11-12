@@ -27,4 +27,8 @@ public class PaymentDTO {
     private String paymentStatusMessage;
 
     private String deliveryAddress;
+
+    private String phoneNumber;
+
+    private String name;
 }

@@ -46,6 +46,7 @@ public class S3Service {
         return s3Presigner.presignPutObject(preSignRequest).url().toString();
     }
 
+    // 단일 파일 저장
     public String saveFile(String fileName, InputStream inputStream) throws IOException {
 
         String basePath = "test/";
@@ -68,16 +69,15 @@ public class S3Service {
         return "https://" + bucket + ".s3.amazonaws.com/" + filePath;
     }
 
-    public List<String> saveFiles(List<MultipartFile> files) throws IOException {
+    // 여러 파일 저장
+    public String saveFiles(List<MultipartFile> files) throws IOException {
         List<String> fileUrls = new ArrayList<>();
         String basePath = "test/";
         String defaultImagePath = basePath + "222.jfif"; // 기본 이미지 경로
 
         // 파일 리스트가 비어 있거나 null인 경우 기본 이미지 추가
         if (files == null || files.isEmpty()) {
-            String defaultImageUrl = "https://" + bucket + ".s3.amazonaws.com/" + defaultImagePath;
-            fileUrls.add(defaultImageUrl);
-            return fileUrls;
+            return "https://" + bucket + ".s3.amazonaws.com/" + defaultImagePath;
         }
 
         // 파일 리스트가 있는 경우 각 파일을 처리
@@ -96,9 +96,12 @@ public class S3Service {
 
                 String fileUrl = "https://" + bucket + ".s3.amazonaws.com/" + filePath;
                 fileUrls.add(fileUrl);
+
             }
         }
 
-        return fileUrls; // URL 리스트 반환
+        // URL 리스트를 콤마로 연결하여 반환
+        return String.join(",", fileUrls);
     }
+
 }
