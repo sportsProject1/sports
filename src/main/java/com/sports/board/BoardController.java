@@ -30,9 +30,9 @@ public class BoardController {
     // 글쓰기
     @PostMapping("/add")
     public ResponseEntity<Long> createBoard(@ModelAttribute BoardRequestDTO boardRequestDTO,
-                                            @RequestParam(value = "file", required = false) MultipartFile file) throws IOException {
+                                            @RequestParam(value = "files", required = false) List<MultipartFile> files) throws IOException {
 
-        return ResponseEntity.ok(boardService.createBoard(boardRequestDTO, file));
+        return ResponseEntity.ok(boardService.createBoard(boardRequestDTO, files));
     }
 
     // 글 수정
@@ -44,8 +44,6 @@ public class BoardController {
         BoardResponseDTO updatedBoard = boardService.updateBoard(id, boardRequestDTO, file);
         return ResponseEntity.ok(updatedBoard); // 수정된 정보를 클라이언트에 반환
     }
-
-
 
     // 글 삭제
     @DeleteMapping("/{id}")

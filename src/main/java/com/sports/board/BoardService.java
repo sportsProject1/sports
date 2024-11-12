@@ -51,7 +51,7 @@ public class BoardService {
 
     // 글쓰기
     @Transactional
-    public Long createBoard(BoardRequestDTO boardRequestDTO, MultipartFile file) throws IOException {
+    public Long createBoard(BoardRequestDTO boardRequestDTO, List<MultipartFile> files) throws IOException {
         Long userId = userContextService.getCurrentUserId();
 
         // 작성자 확인
@@ -63,7 +63,7 @@ public class BoardService {
                 .orElseThrow(() -> new RuntimeException("해당 카테고리를 찾을 수 없습니다."));
 
         // 이미지 처리 (이미지가 있을 경우 저장)
-        String imgURL = processImage(file);
+        String imgURL = processImages(files);
         boardRequestDTO.setImgUrl(imgURL);
 
         // 게시글 엔티티 생성
@@ -150,6 +150,16 @@ public class BoardService {
     private String processImage(MultipartFile file) throws IOException {
         if (file != null && !file.isEmpty()) {
             return s3Service.saveFile(file.getOriginalFilename(), file.getInputStream());
+        }
+        // 기본 이미지 저장 처리
+        return s3Service.saveFile(null, null);
+    }
+
+    // 이미지들 처리
+    private String processImages(List<MultipartFile> files) throws IOException {
+        if (files != null && !files.isEmpty()) {
+            List<String> fileUrls = s3Service.saveFiles(files);
+            return String.join(",", fileUrls);
         }
         // 기본 이미지 저장 처리
         return s3Service.saveFile(null, null);
