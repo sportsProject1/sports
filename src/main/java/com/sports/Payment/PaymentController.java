@@ -20,18 +20,25 @@ public class PaymentController {
     private final UserContextService userContextService;
 
     @PostMapping("/process")
-    public ResponseEntity<PaymentDTO> processPayment(@RequestBody String paymentMethod, @RequestBody String deliveryAddress) {
+    public ResponseEntity<PaymentDTO> processPayment(@RequestBody PaymentDTO paymentDTO) {
         User user = userContextService.getCurrentUser();
 
         // 결제 프로세스를 처리하고 결제 DTO 반환
         try {
-            PaymentDTO paymentDTO = paymentService.processPayment(user.getId(), paymentMethod, deliveryAddress);
-            return ResponseEntity.ok(paymentDTO); // 성공적으로 결제 처리
+            PaymentDTO paymentResponseDTO = paymentService.processPayment(
+                    user.getId(),
+                    paymentDTO.getPaymentMethod(),
+                    paymentDTO.getDeliveryAddress(),
+                    paymentDTO.getPhoneNumber(),
+                    paymentDTO.getName()
+            );
+            return ResponseEntity.ok(paymentResponseDTO); // 성공적으로 결제 처리
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(null); // 예외 발생 시 서버 에러로 응답 (500 Internal Server Error)
         }
     }
+
 
     @GetMapping("/history")
     public ResponseEntity<List<PaymentDTO>> getPaymentHistory() {
