@@ -11,10 +11,13 @@ function Shop() {
     const navigate= useNavigate()
 
     useEffect(() => {
-        fetchData("/shop/list",setItems);
+        fetchData("/shop/list").then((res)=>{
+            console.log(res)
+            setItems(res.data)
+        });
     }, []);
     // const thumbnailUrl = item.imgurl.split(',')[0];
-
+    console.log(items);
     return (
         <ShopContainer>
             <SideMenu/>

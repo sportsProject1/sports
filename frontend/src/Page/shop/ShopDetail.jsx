@@ -32,7 +32,9 @@ function ShopDetail() {
     const { id } = useParams();
 
     useEffect(() => {
-        fetchData(`/shop/detail/${id}`, setFetchItem);
+        fetchData(`/shop/detail/${id}`).then((res)=>{
+            setFetchItem(res.data)
+        });
     }, [id]);
 
     const cartItemSubmit = async (e) => {

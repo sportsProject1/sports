@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import {Link} from "react-router-dom";
 
 // 전체 사이드바 컨테이너
 export const SidebarContainer = styled.div`
@@ -78,13 +79,12 @@ function SideMenu() {
     return (
         <SidebarContainer>
             <SidebarFixed scrollDirection={scrollDirection}>
+
                 <CategorySection>
-                    <SectionTitle>Keywords</SectionTitle>
-                    <div>
-                        <KeywordTag>Spring</KeywordTag>
-                        <KeywordTag>Smart</KeywordTag>
-                        <KeywordTag>Modern</KeywordTag>
-                    </div>
+                    <SectionTitle>Category 1</SectionTitle>
+                    <Link to={"/board"}>모두 보기</Link>
+                    <Link to={"soccer"}>축구</Link>
+                    <Link to={"basketball"}>농구</Link>
                 </CategorySection>
 
                 <CategorySection>
@@ -94,26 +94,6 @@ function SideMenu() {
                     <Label>Label Description</Label>
                 </CategorySection>
 
-                <CategorySection>
-                    <SectionTitle>Category 2</SectionTitle>
-                    <Label>Label Description</Label>
-                    <Label>Label Description</Label>
-                    <Label>Label Description</Label>
-                </CategorySection>
-
-                <CategorySection>
-                    <SectionTitle>Color</SectionTitle>
-                    <Label>Label</Label>
-                    <Label>Label</Label>
-                    <Label>Label</Label>
-                </CategorySection>
-
-                <CategorySection>
-                    <SectionTitle>Size</SectionTitle>
-                    <Label>Label</Label>
-                    <Label>Label</Label>
-                    <Label>Label</Label>
-                </CategorySection>
             </SidebarFixed>
         </SidebarContainer>
     );

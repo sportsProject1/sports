@@ -14,6 +14,7 @@ import ShopCart from "./Page/shop/ShopCart";
 import OAuth2RedirectHandler from "./Utils/OAuth2RedirectHandler";
 import Payment from "./Page/shop/Payment";
 import BoardAdd from "./Page/Board/BoardAdd";
+import BoardDetail from "./Page/Board/BoardDetail";
 
 const Routes = createBrowserRouter([
     {
@@ -22,12 +23,14 @@ const Routes = createBrowserRouter([
             { path: '/', element: <Home/> },
             { path: '/login', element: <Login/> },
             { path: '/register', element: <Register/> },
-            { path: '/boards', element: <Board/>,
+            { path: '/board', element: <Board/>,
                 children:[{
-                    path: '/boards/:sport', element: <SportsChild/>
+                    path: '/board/:sport', element: <SportsChild/>
                 }]
             },
             { path: '/board/add', element: <BoardAdd /> },
+            { path: '/board/detail/:id', element: <BoardDetail/> },
+
             { path: '/shop', element: <Shop/> },
             { path: '/shop/detail/:id', element:<ShopDetail/>},
             { path: '/shop/update/:id', element:<ShopAdd/>},

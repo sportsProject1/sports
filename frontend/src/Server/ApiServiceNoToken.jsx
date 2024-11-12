@@ -8,7 +8,7 @@ import {apiNoToken} from "./api";
 export const fetchData = async (url, setState) =>{
     try{
         const response = await apiNoToken.get(url);
-        setState(response.data);
+        return response
     }catch (error){
         console.log(error);
     }
