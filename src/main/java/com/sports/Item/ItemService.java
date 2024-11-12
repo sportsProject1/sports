@@ -42,8 +42,8 @@ public class ItemService {
         }
 
         // 이미지를 S3에 업로드 후 URL 리스트 생성
-        List<String> imgUrls = s3Service.saveFiles(files);
-        item.setImgurl(String.join(",", imgUrls)); // URL을 쉼표로 구분하여 저장
+        String imgUrls = s3Service.saveFiles(files);
+        item.setImgurl(imgUrls); // URL을 쉼표로 구분하여 저장
 
         Category category = categoryService.findById(itemDTO.getCategoryId())
                 .orElseThrow(() -> new RuntimeException("카테고리를 찾을 수 없습니다."));
@@ -98,9 +98,9 @@ public class ItemService {
         // 새 파일이 있다면 파일을 업로드하고 imgurl을 업데이트
         if (files != null && !files.isEmpty()) {
             // 파일이 업로드되었을 때
-            List<String> imgUrls = s3Service.saveFiles(files); // 파일 저장하고 URL 받기
+            String imgUrls = s3Service.saveFiles(files); // 파일 저장하고 URL 받기
             if (imgUrls != null && !imgUrls.isEmpty()) {
-                item.setImgurl(String.join(",", imgUrls)); // imgurl에 URL을 설정
+                item.setImgurl(imgUrls); // imgurl에 URL을 설정
             } else {
                 throw new RuntimeException("파일 업로드에 실패했습니다.");
             }

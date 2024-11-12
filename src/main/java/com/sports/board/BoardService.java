@@ -37,21 +37,19 @@ public class BoardService {
     // 게시글 상세 조회
     @Transactional
     public BoardResponseDTO getBoardById(Long id) {
-        Long currentUserId = userContextService.getCurrentUserId();
-
         Board board = boardRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
 
-        if (!board.getAuthor().getId().equals(currentUserId)) {
-            board.setViews(board.getViews() + 1); // 조회수 증가 - 본인은 증가안됨 ㅋㅋ
-            boardRepository.save(board);
-        }
+        // 조회수 증가
+        board.setViews(board.getViews() + 1);
+        boardRepository.save(board);
+
         return toResponseDTO(board);
     }
 
     // 글쓰기
     @Transactional
-    public Long createBoard(BoardRequestDTO boardRequestDTO, List<MultipartFile> files) throws IOException {
+    public Long createBoard(BoardRequestDTO boardRequestDTO) throws IOException {
         Long userId = userContextService.getCurrentUserId();
 
         // 작성자 확인
@@ -62,8 +60,8 @@ public class BoardService {
         Category category = categoryRepository.findById(boardRequestDTO.getCategoryId())
                 .orElseThrow(() -> new RuntimeException("해당 카테고리를 찾을 수 없습니다."));
 
-        // 이미지 처리 (이미지가 있을 경우 저장)
-        String imgURL = processImages(files);
+        // 이미지 처리 (이미지가 있을 경우 저장, 없으면 imgUrl = null)
+        String imgURL = processImagesAndNull(boardRequestDTO.getFile());
         boardRequestDTO.setImgUrl(imgURL);
 
         // 게시글 엔티티 생성
@@ -146,7 +144,7 @@ public class BoardService {
                 .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
     }
 
-    // 이미지 처리
+    // 이미지 단일 처리 - 파일 안보내도 기본이미지 저장
     private String processImage(MultipartFile file) throws IOException {
         if (file != null && !file.isEmpty()) {
             return s3Service.saveFile(file.getOriginalFilename(), file.getInputStream());
@@ -155,13 +153,23 @@ public class BoardService {
         return s3Service.saveFile(null, null);
     }
 
-    // 이미지들 처리
+    // 여러 이미지 처리 - 파일 안보내도 기본이미지 저장
     private String processImages(List<MultipartFile> files) throws IOException {
         if (files != null && !files.isEmpty()) {
-            List<String> fileUrls = s3Service.saveFiles(files);
-            return String.join(",", fileUrls);
+            String fileUrls = s3Service.saveFiles(files);
+            return fileUrls;
         }
         // 기본 이미지 저장 처리
         return s3Service.saveFile(null, null);
+    }
+
+    // 여러 이미지 처리 - 파일 안보내면 imgUrl필드 null값
+    private String processImagesAndNull(List<MultipartFile> files) throws IOException {
+        if (files != null && !files.isEmpty()) {
+            String fileUrls = s3Service.saveFiles(files);
+            return fileUrls;
+        }
+        // 기본 이미지 없이 imgUrl = null
+        return null;
     }
 }

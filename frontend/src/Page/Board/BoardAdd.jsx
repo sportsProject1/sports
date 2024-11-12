@@ -20,8 +20,8 @@ function BoardAdd() {
 
         // 여러 파일을 FormData에 추가
         if (values.file && values.file.length > 0) {
-            values.file.forEach((file, index) => {
-                formData.append(`file${index}`, file); // 각 파일을 개별적으로 추가
+            values.file.forEach((file) => {
+                formData.append("file", file); // 각 파일을 개별적으로 추가
             });
         }
 

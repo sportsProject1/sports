@@ -29,10 +29,8 @@ public class BoardController {
 
     // 글쓰기
     @PostMapping("/add")
-    public ResponseEntity<Long> createBoard(@ModelAttribute BoardRequestDTO boardRequestDTO,
-                                            @RequestParam(value = "files", required = false) List<MultipartFile> files) throws IOException {
-
-        return ResponseEntity.ok(boardService.createBoard(boardRequestDTO, files));
+    public ResponseEntity<Long> createBoard(@ModelAttribute BoardRequestDTO boardRequestDTO) throws IOException {
+        return ResponseEntity.ok(boardService.createBoard(boardRequestDTO));
     }
 
     // 글 수정

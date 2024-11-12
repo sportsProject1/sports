@@ -7,10 +7,12 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Entity
 @Data
@@ -30,12 +32,11 @@ public class Board {
     @Column(length = 2048)
     private String imgUrl;  // 이미지
 
-    @CreatedDate
+    @CreationTimestamp
     @Column(updatable = false, nullable = false)
     private LocalDateTime createdAt; // 작성일
 
     @LastModifiedDate
-    @Column(nullable = false)
     private LocalDateTime updatedAt; // 수정일
 
     @Column(nullable = false)
