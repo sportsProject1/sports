@@ -1,5 +1,5 @@
 import React from 'react';
-import CreateForm from "../../Components/CreateForm";
+import CreateForm from "../../Components/CreateForm/CreateForm";
 import {postTokenData} from "../../Server/ApiService";
 
 function BoardAdd() {
