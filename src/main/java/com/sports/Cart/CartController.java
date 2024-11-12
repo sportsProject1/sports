@@ -128,10 +128,12 @@ public class CartController {
     @GetMapping("/checkout")
     public ResponseEntity<CartResponseDTO> getCheckedItemsForCheckout() {
         User user = userContextService.getCurrentUser();
-        Long userId = user.getId();  // userId는 Long 타입으로 처리
+        Long userId = user.getId();
 
         List<CartDTO> checkedItems = cartService.getAvailableCartItems(userId);
-        CartResponseDTO response = new CartResponseDTO("결제대기 항목 조회 성공", checkedItems);
+        String deliveryAddress = user.getAddress();
+
+        CartResponseDTO response = new CartResponseDTO("결제대기 항목 조회 성공", checkedItems, deliveryAddress);
         return ResponseEntity.ok(response);
     }
 }

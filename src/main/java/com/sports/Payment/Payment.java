@@ -29,4 +29,6 @@ public class Payment {
 
     @Column(name = "user_id", nullable = false)
     private Long userId;
+
+    private String deliveryAddress;
 }
