@@ -25,4 +25,6 @@ public class PaymentDTO {
     private List<PaymentDetailDTO> paymentDetails;
 
     private String paymentStatusMessage;
+
+    private String deliveryAddress;
 }
