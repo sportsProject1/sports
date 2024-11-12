@@ -76,12 +76,11 @@ public class BoardService {
     // 글 수정
     @Transactional
     @PreAuthorize("#board.author.username == authentication.name or hasRole('ROLE_MANAGER')")
-    public BoardResponseDTO updateBoard(Long id, BoardRequestDTO boardRequestDTO, MultipartFile file) throws IOException {
-        Board board = boardRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
+    // authentication에 접근 권한이 없는 경우(작성자가 아님 & ROLE_MANAGER 아님) 403 Forbidden 오류 발생
+    public BoardResponseDTO updateBoard(@P("board") Board board, BoardRequestDTO boardRequestDTO) throws IOException {
 
         // 이미지 처리
-        String imgURL = processImage(file);
+        String imgURL = processImages(boardRequestDTO.getFile());
         board.setImgUrl(imgURL);
 
         // 카테고리 변경

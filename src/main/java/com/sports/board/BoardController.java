@@ -14,6 +14,7 @@ import java.util.List;
 public class BoardController {
 
     private final BoardService boardService;
+    private final BoardRepository boardRepository;
 
     // 게시판 전체 데이터 조회 (페이징 및 정렬 처리는 React에서)
     @GetMapping("/list")
@@ -36,11 +37,10 @@ public class BoardController {
     // 글 수정
     @PutMapping("/{id}")
     public ResponseEntity<BoardResponseDTO> updateBoard(@PathVariable Long id,
-                                                        @ModelAttribute BoardRequestDTO boardRequestDTO,
-                                                        @RequestParam(value = "file", required = false) MultipartFile file) throws IOException {
+                                                        @ModelAttribute BoardRequestDTO boardRequestDTO) throws IOException {
 
-        BoardResponseDTO updatedBoard = boardService.updateBoard(id, boardRequestDTO, file);
-        return ResponseEntity.ok(updatedBoard); // 수정된 정보를 클라이언트에 반환
+        Board board = boardService.getBoardEntityById(id);
+        return ResponseEntity.ok(boardService.updateBoard(board, boardRequestDTO));
     }
 
     // 글 삭제
