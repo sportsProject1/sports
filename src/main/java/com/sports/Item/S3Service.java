@@ -70,10 +70,20 @@ public class S3Service {
 
     public List<String> saveFiles(List<MultipartFile> files) throws IOException {
         List<String> fileUrls = new ArrayList<>();
+        String basePath = "test/";
+        String defaultImagePath = basePath + "222.jfif"; // 기본 이미지 경로
 
+        // 파일 리스트가 비어 있거나 null인 경우 기본 이미지 추가
+        if (files == null || files.isEmpty()) {
+            String defaultImageUrl = "https://" + bucket + ".s3.amazonaws.com/" + defaultImagePath;
+            fileUrls.add(defaultImageUrl);
+            return fileUrls;
+        }
+
+        // 파일 리스트가 있는 경우 각 파일을 처리
         for (MultipartFile file : files) {
             String fileName = file.getOriginalFilename();
-            String filePath = "test/" + fileName;
+            String filePath = basePath + fileName;
 
             try (InputStream inputStream = file.getInputStream()) {
                 s3Client.putObject(

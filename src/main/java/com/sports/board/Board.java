@@ -26,6 +26,8 @@ public class Board {
 
     @Column(columnDefinition = "TEXT")
     private String content; // 본문
+
+    @Column(length = 2048)
     private String imgUrl;  // 이미지
 
     @CreatedDate
