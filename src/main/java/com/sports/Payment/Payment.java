@@ -31,4 +31,8 @@ public class Payment {
     private Long userId;
 
     private String deliveryAddress;
+
+    private String phoneNumber;
+
+    private String name;
 }
