@@ -20,12 +20,12 @@ public class PaymentController {
     private final UserContextService userContextService;
 
     @PostMapping("/process")
-    public ResponseEntity<PaymentDTO> processPayment(@RequestBody String paymentMethod) {
+    public ResponseEntity<PaymentDTO> processPayment(@RequestBody String paymentMethod, @RequestBody String deliveryAddress) {
         User user = userContextService.getCurrentUser();
 
         // 결제 프로세스를 처리하고 결제 DTO 반환
         try {
-            PaymentDTO paymentDTO = paymentService.processPayment(user.getId(), paymentMethod);  // user.getId()로 수정
+            PaymentDTO paymentDTO = paymentService.processPayment(user.getId(), paymentMethod, deliveryAddress);
             return ResponseEntity.ok(paymentDTO); // 성공적으로 결제 처리
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

@@ -110,14 +110,6 @@ public class CartService {
         cartRepository.deleteAll(checkedItems);
     }
 
-    // 결제대기 항목 조회 메서드
-    public List<CartDTO> getCheckedCartItems(Long userId) {
-        List<Cart> checkedItems = cartRepository.findByUserIdAndIsChecked(userId, true);
-        return checkedItems.stream()
-                .map(this::convertToDto)
-                .collect(Collectors.toList());
-    }
-
     // 장바구니에서 결제되지 않은 항목 조회
     public List<CartDTO> getAvailableCartItems(Long userId) {
         List<Cart> availableItems = cartRepository.findByUserIdAndIsCheckedAndPaymentStatus(userId, true, false);

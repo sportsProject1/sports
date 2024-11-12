@@ -15,6 +15,7 @@ public class PaymentDetail {
     private Integer itemPrice;
     private Integer itemCount;
     private Long itemId;
+    private String itemUrl;
 
     @ManyToOne
     @JoinColumn(name = "payment_id")
