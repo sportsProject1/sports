@@ -3,7 +3,9 @@ package com.sports.board;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -13,7 +15,7 @@ public class BoardController {
 
     private final BoardService boardService;
 
-    // 게시판 전체 데이터 조회 (React에서 페이징 및 정렬 처리)
+    // 게시판 전체 데이터 조회 (페이징 및 정렬 처리는 React에서)
     @GetMapping("/list")
     public ResponseEntity<List<BoardResponseDTO>> getAllBoards() {
         return ResponseEntity.ok(boardService.getAllBoards());
@@ -27,8 +29,11 @@ public class BoardController {
 
     // 글쓰기
     @PostMapping("/add")
-    public ResponseEntity<Long> createBoard(@RequestBody BoardRequestDTO boardRequestDTO) {
-        return ResponseEntity.ok(boardService.createBoard(boardRequestDTO));
+    public ResponseEntity<Long> createBoard(
+            @ModelAttribute BoardRequestDTO boardRequestDTO,
+            @RequestParam(value = "file", required = false) MultipartFile file
+    ) throws IOException {
+        return ResponseEntity.ok(boardService.createBoard(boardRequestDTO, file));
     }
 
     // 글 수정
