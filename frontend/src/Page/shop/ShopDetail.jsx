@@ -17,9 +17,14 @@ import {
     AddToCartButton,
     ActionButton
 } from "../../styled/Shop/ShopStyled";
-import { DetailForm } from "../../styled/Form";
 import { deleteTokenData, postTokenData } from "../../Server/ApiService";
+import styled from "styled-components";
 
+
+const DetailForm = styled.form`
+    width: 100%;
+    
+`
 function ShopDetail() {
     const [fetchItem, setFetchItem] = useState();
     const [itemCount, setItemCount] = useState(1);

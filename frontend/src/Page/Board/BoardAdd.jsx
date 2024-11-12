@@ -6,11 +6,14 @@ function BoardAdd() {
     const initialValues = {
         title: '',
         content: '',
-        image: null
+        categoryId:'4',
+        file: null
     };
 
-    const handleSubmit = async() => {
-        await postTokenData("/board/add", initialValues);
+    const handleSubmit = async (values) => {
+        // 폼의 현재 값을 API 요청에 사용
+        console.log('제출된 값:', values); // 확인용
+        await postTokenData("/board/add", values);
     };
     return (
         <div>

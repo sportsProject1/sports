@@ -28,7 +28,7 @@ public class CartController {
     public ResponseEntity<List<CartDTO>> getCartItems() {
         // 현재 사용자 가져오기
         User user = userContextService.getCurrentUser();
-        String userId = String.valueOf(user.getId());
+        Long userId = user.getId();  // userId는 Long 타입으로 처리
 
         // 장바구니 항목 조회
         List<CartDTO> cartItems = cartService.getCartItemsByUserId(userId);
@@ -41,14 +41,14 @@ public class CartController {
             @RequestParam("itemId") Long itemId) {
 
         User user = userContextService.getCurrentUser();
-        String userId = String.valueOf(user.getId());
+        Long userId = user.getId();  // userId는 Long 타입으로 처리
 
         // 장바구니 항목 생성
         CartDTO cartDTO = new CartDTO();
         cartDTO.setCount(count);
         Item item = itemService.findById(itemId);
         cartDTO.setItem(item);
-        cartDTO.setUserId(user.getId());
+        cartDTO.setUserId(userId);
 
         // 장바구니 항목 추가
         CartDTO addedCartItem = cartService.addCartItem(cartDTO, userId);
@@ -59,7 +59,7 @@ public class CartController {
     @PutMapping("/update/checkbox/{itemId}")
     public ResponseEntity<?> updateCartCheckbox(@PathVariable Long itemId, @RequestBody Map<String, Boolean> body) {
         User user = userContextService.getCurrentUser();
-        String userId = String.valueOf(user.getId());
+        Long userId = user.getId();  // userId는 Long 타입으로 처리
 
         boolean isChecked = body.get("isChecked");
 
@@ -75,7 +75,7 @@ public class CartController {
     @PutMapping("/update/count/{itemId}")
     public ResponseEntity<CartResponseDTO> updateCartCount(@PathVariable Long itemId, @RequestBody Map<String, Integer> body) {
         User user = userContextService.getCurrentUser();
-        String userId = String.valueOf(user.getId());
+        Long userId = user.getId();  // userId는 Long 타입으로 처리
 
         int count = body.get("count");
 
@@ -94,7 +94,7 @@ public class CartController {
     @DeleteMapping("/delete/{itemId}")
     public ResponseEntity<CartResponseDTO> deleteCartItem(@PathVariable Long itemId) {
         User user = userContextService.getCurrentUser();
-        String userId = String.valueOf(user.getId());
+        Long userId = user.getId();  // userId는 Long 타입으로 처리
 
         try {
             cartService.deleteCartItem(itemId, userId);
@@ -111,7 +111,7 @@ public class CartController {
     @DeleteMapping("/delete/checked")
     public ResponseEntity<CartResponseDTO> deleteCheckedItems() {
         User user = userContextService.getCurrentUser();
-        String userId = String.valueOf(user.getId());
+        Long userId = user.getId();  // userId는 Long 타입으로 처리
 
         try {
             cartService.deleteCheckedItems(userId);
@@ -128,7 +128,7 @@ public class CartController {
     @GetMapping("/checkout")
     public ResponseEntity<CartResponseDTO> getCheckedItemsForCheckout() {
         User user = userContextService.getCurrentUser();
-        String userId = String.valueOf(user.getId());
+        Long userId = user.getId();  // userId는 Long 타입으로 처리
 
         List<CartDTO> checkedItems = cartService.getAvailableCartItems(userId);
         CartResponseDTO response = new CartResponseDTO("결제대기 항목 조회 성공", checkedItems);

@@ -62,14 +62,14 @@ public class ItemController {
                                                     @RequestParam("file") List<MultipartFile> file) {
         try {
             User user = userContextService.getCurrentUser();
+            Long userId = user.getId(); // 현재 사용자의 ID를 가져옴
 
             if (file == null || file.isEmpty()) {
                 ItemResponseDTO response = new ItemResponseDTO("상품을 추가하려면 파일을 첨부해야 합니다.");
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
             }
 
-            itemService.addItem(itemDTO, file,
-                    user); // 파일을 함께 전달
+            itemService.addItem(itemDTO, file, userId); // userId 전달
             ItemResponseDTO response = new ItemResponseDTO("상품이 성공적으로 추가되었습니다.");
             return ResponseEntity.ok(response);
         } catch (MalformedJwtException e) {
@@ -100,12 +100,21 @@ public class ItemController {
     @PutMapping("/update/{id}")
     public ResponseEntity<ItemResponseDTO> updateItem(
             @PathVariable Long id,
-            @ModelAttribute ItemDTO itemDTO,
+            @ModelAttribute ItemDTO itemDTO, // DTO를 받음
             @RequestParam(value = "file", required = false) List<MultipartFile> file) {
+        if (id == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ItemResponseDTO("유효하지 않은 상품 ID입니다."));
+        }
         try {
-            User user = userContextService.getCurrentUser();
+            System.out.println("ItemDTO: " + itemDTO); // 디버깅을 위한 로그 추가
+            System.out.println("Files: " + (file != null ? file.size() : "No files"));
 
-            itemService.update(id, itemDTO, file, user);
+            User user = userContextService.getCurrentUser();
+            Long userId = user.getId(); // 현재 사용자의 ID를 가져옴
+
+            // 아이템 업데이트
+            itemService.update(id, itemDTO, file, userId); // userId도 함께 전달
             ItemResponseDTO response = new ItemResponseDTO("상품이 성공적으로 업데이트되었습니다.");
             return ResponseEntity.ok(response);
         } catch (MalformedJwtException e) {
@@ -125,8 +134,9 @@ public class ItemController {
             @PathVariable Long id) {
         try {
             User user = userContextService.getCurrentUser();
+            Long userId = user.getId(); // 현재 사용자의 ID를 가져옴
 
-            itemService.delete(id, user);
+            itemService.delete(id, userId); // userId 전달
             ItemResponseDTO response = new ItemResponseDTO("상품이 성공적으로 삭제되었습니다.");
             return ResponseEntity.ok(response);
         } catch (MalformedJwtException e) {

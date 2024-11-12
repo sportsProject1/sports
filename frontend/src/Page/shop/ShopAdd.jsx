@@ -7,6 +7,20 @@ import { Form } from "../../styled/Form";
 import { useSelector } from "react-redux";
 import {postTokenData, putTokenData} from "../../Server/ApiService";
 import {fetchData} from "../../Server/ApiServiceNoToken";
+import styled from "styled-components";
+
+
+const FormTest = styled.form`
+    width: 50%;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    >input,select{
+        padding:15px;
+        margin:15px 0;
+    }
+`
+
 
 function ShopAdd() {
     const { id } = useParams(); // 상품 ID를 URL에서 가져옴
@@ -65,7 +79,7 @@ function ShopAdd() {
     return (
         <Container>
             <h1>{id ? "상품 수정 페이지" : "상품 추가 페이지"}</h1>
-            <Form onSubmit={handleSubmit} encType="multipart/form-data">
+            <FormTest onSubmit={handleSubmit} encType="multipart/form-data">
                 <input
                     onChange={(e) => handleChange(e, addItem, setAddItem)}
                     type="text"
@@ -130,7 +144,7 @@ function ShopAdd() {
                 </div>
 
                 <input type="submit" value={id ? "상품 수정" : "상품 등록"} />
-            </Form>
+            </FormTest>
         </Container>
     );
 }
