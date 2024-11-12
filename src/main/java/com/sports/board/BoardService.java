@@ -63,22 +63,12 @@ public class BoardService {
                 .orElseThrow(() -> new RuntimeException("해당 카테고리를 찾을 수 없습니다."));
 
         // 이미지 처리 (이미지가 있을 경우 저장)
-        String imgURL;
-        if (file != null && !file.isEmpty()) {
-            imgURL = s3Service.saveFile(file.getOriginalFilename(), file.getInputStream());
-        } else {
-            imgURL = s3Service.saveFile(null, null);
-        }
+        String imgURL = processImage(file);
         boardRequestDTO.setImgUrl(imgURL);
 
         // 게시글 엔티티 생성
-        Board board = Board.builder()
-                .title(boardRequestDTO.getTitle())
-                .content(boardRequestDTO.getContent())
-                .author(author)
-                .category(category)
-                .imgUrl(imgURL) // 저장된 이미지 URL 추가
-                .build();
+        Board board = toEntity(boardRequestDTO, author, category);
+        board.setImgUrl(imgURL); // 이미지 URL 추가
 
         // 게시글 저장 및 ID 반환
         return boardRepository.save(board).getId();
@@ -86,17 +76,32 @@ public class BoardService {
 
 
     // 글 수정
-    @PreAuthorize("#board.author.username == authentication.name or hasRole('ROLE_MANAGER')")
     @Transactional
-    public void updateBoard(@P("board") Board board, BoardRequestDTO boardRequestDTO) {
+    @PreAuthorize("#board.author.username == authentication.name or hasRole('ROLE_MANAGER')")
+    public BoardResponseDTO updateBoard(Long id, BoardRequestDTO boardRequestDTO, MultipartFile file) throws IOException {
+        Board board = boardRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
+
+        // 이미지 처리
+        String imgURL = processImage(file);
+        board.setImgUrl(imgURL);
+
+        // 카테고리 변경
+        Category category = categoryRepository.findById(boardRequestDTO.getCategoryId())
+                .orElseThrow(() -> new RuntimeException("해당 카테고리를 찾을 수 없습니다."));
+        board.setCategory(category);
+
+        // 제목 및 내용 변경
         board.setTitle(boardRequestDTO.getTitle());
         board.setContent(boardRequestDTO.getContent());
-        boardRepository.save(board);
+
+        Board updatedBoard = boardRepository.save(board);
+        return toResponseDTO(updatedBoard);
     }
 
     // 글 삭제
-    @PreAuthorize("#board.author.username == authentication.name or hasRole('ROLE_MANAGER')")
     @Transactional
+    @PreAuthorize("#board.author.username == authentication.name or hasRole('ROLE_MANAGER')")
     public void deleteBoard(@P("board") Board board) {
         boardRepository.delete(board);
     }
@@ -139,5 +144,14 @@ public class BoardService {
     public Board getBoardEntityById(Long id) {
         return boardRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
+    }
+
+    // 이미지 처리
+    private String processImage(MultipartFile file) throws IOException {
+        if (file != null && !file.isEmpty()) {
+            return s3Service.saveFile(file.getOriginalFilename(), file.getInputStream());
+        }
+        // 기본 이미지 저장 처리
+        return s3Service.saveFile(null, null);
     }
 }

@@ -29,20 +29,22 @@ public class BoardController {
 
     // 글쓰기
     @PostMapping("/add")
-    public ResponseEntity<Long> createBoard(
-            @ModelAttribute BoardRequestDTO boardRequestDTO,
-            @RequestParam(value = "file", required = false) MultipartFile file
-    ) throws IOException {
+    public ResponseEntity<Long> createBoard(@ModelAttribute BoardRequestDTO boardRequestDTO,
+                                            @RequestParam(value = "file", required = false) MultipartFile file) throws IOException {
+
         return ResponseEntity.ok(boardService.createBoard(boardRequestDTO, file));
     }
 
     // 글 수정
     @PutMapping("/{id}")
-    public ResponseEntity<Void> updateBoard(@PathVariable Long id, @RequestBody BoardRequestDTO boardRequestDTO) {
-        Board board = boardService.getBoardEntityById(id);
-        boardService.updateBoard(board, boardRequestDTO);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<BoardResponseDTO> updateBoard(@PathVariable Long id,
+                                                        @ModelAttribute BoardRequestDTO boardRequestDTO,
+                                                        @RequestParam(value = "file", required = false) MultipartFile file) throws IOException {
+
+        BoardResponseDTO updatedBoard = boardService.updateBoard(id, boardRequestDTO, file);
+        return ResponseEntity.ok(updatedBoard); // 수정된 정보를 클라이언트에 반환
     }
+
 
 
     // 글 삭제
