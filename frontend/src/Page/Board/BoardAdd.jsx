@@ -23,7 +23,10 @@ function BoardAdd() {
 
             values.file.forEach((file) => {
                 formData.append("file", file); // 각 파일을 개별적으로 추가
+<<<<<<< HEAD
 
+=======
+>>>>>>> 72567cfb53e9412a3aa01e74e8497f4461d337b7
             });
         }
 
