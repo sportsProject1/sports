@@ -1,5 +1,5 @@
 import {ListWrap} from "../../styled/List/ListStyled";
-import SubMenu from "../../Components/SubMenu";
+import SubMenu from "../../Components/Menu/SubMenu";
 import React, {useState} from "react";
 import {Card, ItemContainer, Price, ProductName,CardImage} from "../../styled/Common";
 import Pagination from "../../Components/Pagination/Pagination";
