@@ -11,9 +11,31 @@ function BoardAdd() {
     };
 
     const handleSubmit = async (values) => {
-        // 폼의 현재 값을 API 요청에 사용
         console.log('제출된 값:', values); // 확인용
-        await postTokenData("/board/add", values);
+
+        const formData = new FormData();
+        formData.append("title", values.title);
+        formData.append("content", values.content);
+        formData.append("categoryId", values.categoryId);
+
+        // 여러 파일을 FormData에 추가
+        if (values.file && values.file.length > 0) {
+            values.file.forEach((file, index) => {
+                formData.append(`file${index}`, file); // 각 파일을 개별적으로 추가
+            });
+        }
+
+        try {
+            await postTokenData("/board/add", formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+            console.log('데이터 전송 성공');
+            console.log(formData)
+        } catch (error) {
+            console.error('데이터 전송 실패:', error);
+        }
     };
     return (
         <div>
