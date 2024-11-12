@@ -45,7 +45,7 @@ function Menu (){
     return(
         <MenuUl>
             <li>
-                <Link to={"/boards"}>운동</Link>
+                <Link to={"/board"}>운동</Link>
             </li>
             <li>자유</li>
             <li>모집</li>
