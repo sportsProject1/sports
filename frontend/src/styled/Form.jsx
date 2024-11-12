@@ -1,60 +1,57 @@
 import styled from "styled-components";
+import {Form} from "formik";
 
-export const Form = styled.form`
-    width: 50%;
-    margin: auto;
-    display: flex;
-    flex-direction: column;
-    >input,select{
-        padding:15px;
-        margin:15px 0;
-    }
-`
 
-export const DetailForm = styled.form`
-    width: 100%;
-    
-`
+export const StyledForm = styled(Form)` // Formik의 Form을 styled-components로 래핑
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+`;
 
-export const FormWrap = styled.div`
-    width: 50%;
-    margin:auto;
-    border:1px solid black;
-    display: flex;
-    box-sizing: border-box;
-`
+export const FormGroup = styled.div`
+  margin-bottom: 1rem;
+`;
 
-export const UserForm = styled.form`
-    display: flex;
-    margin: auto;
-    padding: 20px;
-    width: 100%;
-    >div{
-        width:50%;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-    img{
-        width: 150px;
-        height: 150px;
-        border-radius: 50%;
-    }
-    > button{
-        width: 100px;
-        padding:10px;
-        margin: auto;
-    }
-    >#profileImg{
-        text-align: center;
-        margin: 10px 0px;
-    }
-    div >label{
-        display: flex;
-        flex-direction: column;
-    }
-    input {
-        padding: 10px;
-        margin:5px;
-    }
+export const CreateLabel = styled.label`
+  display: block;
+  margin-bottom: 0.5rem;
+`;
+
+export const CreateInput = styled.input`
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+`;
+
+export const CreateSelect = styled.select`
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+`;
+
+export const CreateTextarea = styled.textarea`
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+`;
+
+export const CreateSubmitButton = styled.button`
+  padding: 0.75rem 1.5rem;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 100%;
+`;
+
+export const CreatePreviewImage = styled.img`
+    width:100px;
+    height: 100px;
+    border-radius: 15px;
 `

@@ -13,6 +13,7 @@ import MyPage from "./Page/user/MyPage";
 import ShopCart from "./Page/shop/ShopCart";
 import OAuth2RedirectHandler from "./Utils/OAuth2RedirectHandler";
 import Payment from "./Page/shop/Payment";
+import BoardAdd from "./Page/Board/BoardAdd";
 
 const Routes = createBrowserRouter([
     {
@@ -21,11 +22,12 @@ const Routes = createBrowserRouter([
             { path: '/', element: <Home/> },
             { path: '/login', element: <Login/> },
             { path: '/register', element: <Register/> },
-            { path: '/sports', element: <Board/>,
+            { path: '/boards', element: <Board/>,
                 children:[{
-                    path: '/sports/:sport', element: <SportsChild/>
+                    path: '/boards/:sport', element: <SportsChild/>
                 }]
             },
+            { path: '/board/add', element: <BoardAdd /> },
             { path: '/shop', element: <Shop/> },
             { path: '/shop/detail/:id', element:<ShopDetail/>},
             { path: '/shop/update/:id', element:<ShopAdd/>},

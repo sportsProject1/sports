@@ -25,7 +25,7 @@ public class PaymentService {
     private final UserContextService userContextService;
     private final ItemRepository itemRepository;  // 아이템 리포지토리 추가
 
-    public PaymentDTO processPayment(Long userId, String paymentMethod) {
+    public PaymentDTO processPayment(Long userId, String paymentMethod, String deliveryAddress) {
         // 1. 유저 정보와 체크된 장바구니 항목들을 가져옵니다.
         User user = userContextService.findById(userId); // userId로 User 객체를 찾음
         List<Cart> cartItems = cartService.getAvailableCartEntities(userId);
@@ -38,7 +38,8 @@ public class PaymentService {
         // 2. Payment 객체 생성 및 설정
         Payment payment = new Payment();
         payment.setPaymentMethod(paymentMethod);
-        payment.setUserId(userId);  // 'setUser' 대신 'setUserId' 사용
+        payment.setUserId(userId);
+        payment.setDeliveryAddress(deliveryAddress);
 
         long totalPrice = 0;
         List<PaymentDetail> paymentDetails = new ArrayList<>();
@@ -51,6 +52,7 @@ public class PaymentService {
                 paymentDetail.setItemPrice(cart.getItem().getPrice());
                 paymentDetail.setItemCount(cart.getCount());
                 paymentDetail.setItemId(cart.getItem().getId());
+                paymentDetail.setItemUrl(cart.getItem().getImgurl());
 
                 // 총 금액을 계산
                 totalPrice += (long) cart.getItem().getPrice() * (long) cart.getCount();
@@ -113,7 +115,8 @@ public class PaymentService {
                 payment.getPaymentTime(),
                 payment.getTotalPrice(),
                 paymentDetailDTOs,
-                paymentStatusMessage
+                paymentStatusMessage,
+                payment.getDeliveryAddress()
         );
     }
 
@@ -126,7 +129,8 @@ public class PaymentService {
                     PaymentDetailDTO detailDTO = new PaymentDetailDTO(
                             paymentDetail.getItemTitle(),
                             paymentDetail.getItemPrice(),
-                            paymentDetail.getItemCount()
+                            paymentDetail.getItemCount(),
+                            paymentDetail.getItemUrl()
                     );
                     paymentDetailDTOs.add(detailDTO);
                 }

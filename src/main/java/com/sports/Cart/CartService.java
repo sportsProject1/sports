@@ -3,11 +3,11 @@ package com.sports.Cart;
 import com.sports.Item.Item;
 import com.sports.Item.ItemService;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-
 import com.sports.user.entito.User;
 import com.sports.user.service.UserContextService;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -108,14 +108,6 @@ public class CartService {
         }
 
         cartRepository.deleteAll(checkedItems);
-    }
-
-    // 결제대기 항목 조회 메서드
-    public List<CartDTO> getCheckedCartItems(Long userId) {
-        List<Cart> checkedItems = cartRepository.findByUserIdAndIsChecked(userId, true);
-        return checkedItems.stream()
-                .map(this::convertToDto)
-                .collect(Collectors.toList());
     }
 
     // 장바구니에서 결제되지 않은 항목 조회
