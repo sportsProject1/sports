@@ -25,6 +25,4 @@ public class Likes {
     private Long targetId; // 좋아요 대상 ID
 
     private String targetType; // 좋아요 대상 테이블 (예: "Board", "Item")
-
-    private LocalDateTime createdAt;
 }
