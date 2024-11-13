@@ -28,6 +28,9 @@ public class Item {
     @Column(name = "item_stock", nullable = false)
     private Integer stock = 0;
 
+    @Column(nullable = false)
+    private int likes;             // 좋아요
+
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
