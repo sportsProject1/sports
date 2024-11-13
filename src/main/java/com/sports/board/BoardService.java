@@ -124,6 +124,7 @@ public class BoardService {
                 .views(board.getViews())
                 .createdAt(board.getCreatedAt())
                 .updatedAt(board.getUpdatedAt())
+                .imgUrl(board.getImgUrl())
                 .build();
     }
 
