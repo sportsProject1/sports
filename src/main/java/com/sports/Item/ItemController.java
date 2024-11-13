@@ -3,6 +3,8 @@ package com.sports.Item;
 import com.sports.Category.Category;
 import com.sports.Category.CategoryDTO;
 import com.sports.Category.CategoryService;
+import com.sports.Item.DTO.ItemDTO;
+import com.sports.Item.DTO.ItemResponseDTO;
 import com.sports.user.entito.User;
 import com.sports.user.service.UserContextService;
 import io.jsonwebtoken.MalformedJwtException;

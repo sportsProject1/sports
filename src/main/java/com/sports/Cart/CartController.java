@@ -1,8 +1,9 @@
 package com.sports.Cart;
 
+import com.sports.Cart.DTO.CartDTO;
+import com.sports.Cart.DTO.CartResponseDTO;
 import com.sports.Item.Item;
 import com.sports.Item.ItemService;
-import com.sports.Security.jwt.JwtTokenProvider;
 import com.sports.user.entito.User;
 import com.sports.user.service.UserContextService;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -19,52 +21,55 @@ import java.util.Map;
 @CrossOrigin(origins = "http://localhost:3000")
 public class CartController {
 
-    private final JwtTokenProvider jwtTokenProvider;
     private final CartService cartService;
     private final ItemService itemService;
     private final UserContextService userContextService;
 
+    // 장바구니 항목 조회
     @GetMapping("")
-    public ResponseEntity<List<CartDTO>> getCartItems() {
-        // 현재 사용자 가져오기
-        User user = userContextService.getCurrentUser();
-        Long userId = user.getId();  // userId는 Long 타입으로 처리
+    public ResponseEntity<CartResponseDTO> getCartItemsByUserId() {
+        User user = userContextService.getCurrentUser();  // 로그인된 사용자 정보 가져오기
+        Long userId = user.getId();  // 현재 로그인된 사용자의 ID
 
-        // 장바구니 항목 조회
-        List<CartDTO> cartItems = cartService.getCartItemsByUserId(userId);
-        return ResponseEntity.ok(cartItems);
+        List<CartDTO> cartItems = cartService.getCartItemsByUserId(userId);  // userId를 넘겨줍니다
+
+        CartResponseDTO response = new CartResponseDTO("장바구니 조회 성공", cartItems);
+        return ResponseEntity.ok(response);
     }
 
+    // 장바구니 항목 추가
     @PostMapping("/add")
     public ResponseEntity<CartDTO> addToCart(
             @RequestParam("cartCount") Integer count,
             @RequestParam("itemId") Long itemId) {
 
-        User user = userContextService.getCurrentUser();
-        Long userId = user.getId();  // userId는 Long 타입으로 처리
+        User user = userContextService.getCurrentUser();  // 로그인된 사용자 정보 가져오기
+        Long userId = user.getId();  // 현재 로그인된 사용자의 ID
 
-        // 장바구니 항목 생성
         CartDTO cartDTO = new CartDTO();
         cartDTO.setCount(count);
         Item item = itemService.findById(itemId);
-        cartDTO.setItem(item);
+
+        cartDTO.setItemId(item.getId());
+        cartDTO.setItemTitle(item.getTitle());
+        cartDTO.setItemPrice(item.getPrice());
+        cartDTO.setItemImgUrl(item.getImgurl());
         cartDTO.setUserId(userId);
 
-        // 장바구니 항목 추가
-        CartDTO addedCartItem = cartService.addCartItem(cartDTO, userId);
+        CartDTO addedCartItem = cartService.addCartItem(cartDTO);  // `userId`를 넘기지 않음
         return ResponseEntity.ok(addedCartItem);
     }
 
     // 장바구니 체크박스 업데이트
-    @PutMapping("/update/checkbox/{itemId}")
-    public ResponseEntity<?> updateCartCheckbox(@PathVariable Long itemId, @RequestBody Map<String, Boolean> body) {
-        User user = userContextService.getCurrentUser();
-        Long userId = user.getId();  // userId는 Long 타입으로 처리
+    @PutMapping("/update/checkbox/{cartId}")
+    public ResponseEntity<?> updateCartCheckbox(@PathVariable Long cartId, @RequestBody Map<String, Boolean> body) {
+        User user = userContextService.getCurrentUser();  // 로그인된 사용자 정보 가져오기
+        Long userId = user.getId();  // 현재 로그인된 사용자의 ID
 
         boolean isChecked = body.get("isChecked");
 
         try {
-            cartService.updateIsChecked(itemId, isChecked, userId);
+            cartService.updateIsChecked(cartId, isChecked, userId);
             return ResponseEntity.ok("체크박스 상태가 업데이트되었습니다.");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("체크박스 상태 업데이트 실패");
@@ -72,46 +77,46 @@ public class CartController {
     }
 
     // 장바구니 수량 업데이트
-    @PutMapping("/update/count/{itemId}")
-    public ResponseEntity<CartResponseDTO> updateCartCount(@PathVariable Long itemId, @RequestBody Map<String, Integer> body) {
-        User user = userContextService.getCurrentUser();
-        Long userId = user.getId();  // userId는 Long 타입으로 처리
+    @PutMapping("/update/count/{cartId}")
+    public ResponseEntity<CartResponseDTO> updateCartCount(@PathVariable Long cartId, @RequestBody Map<String, Integer> body) {
+        User user = userContextService.getCurrentUser();  // 로그인된 사용자 정보 가져오기
+        Long userId = user.getId();  // 현재 로그인된 사용자의 ID
 
         int count = body.get("count");
 
         try {
-            cartService.updateCount(itemId, count, userId);
+            cartService.updateCount(cartId, count, userId);
             List<CartDTO> updatedCartItems = cartService.getCartItemsByUserId(userId);
             CartResponseDTO response = new CartResponseDTO("수량이 업데이트되었습니다.", updatedCartItems);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            CartResponseDTO response = new CartResponseDTO("수량 업데이트 실패", null);
+            CartResponseDTO response = new CartResponseDTO("수량 업데이트 실패", new ArrayList<>());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
 
-    // 개별 항목 삭제 메서드
-    @DeleteMapping("/delete/{itemId}")
-    public ResponseEntity<CartResponseDTO> deleteCartItem(@PathVariable Long itemId) {
-        User user = userContextService.getCurrentUser();
-        Long userId = user.getId();  // userId는 Long 타입으로 처리
+    // 개별 항목 삭제
+    @DeleteMapping("/delete/{cartId}")
+    public ResponseEntity<CartResponseDTO> deleteCartItem(@PathVariable Long cartId) {
+        User user = userContextService.getCurrentUser();  // 로그인된 사용자 정보 가져오기
+        Long userId = user.getId();  // 현재 로그인된 사용자의 ID
 
         try {
-            cartService.deleteCartItem(itemId, userId);
+            cartService.deleteCartItem(cartId, userId);
             List<CartDTO> updatedCartItems = cartService.getCartItemsByUserId(userId);
             CartResponseDTO response = new CartResponseDTO("장바구니 항목이 삭제되었습니다.", updatedCartItems);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            CartResponseDTO response = new CartResponseDTO("장바구니 항목 삭제 실패", null);
+            CartResponseDTO response = new CartResponseDTO("장바구니 항목 삭제 실패", new ArrayList<>());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
 
-    // 체크된 항목 삭제 메서드
+    // 체크된 항목 삭제
     @DeleteMapping("/delete/checked")
     public ResponseEntity<CartResponseDTO> deleteCheckedItems() {
-        User user = userContextService.getCurrentUser();
-        Long userId = user.getId();  // userId는 Long 타입으로 처리
+        User user = userContextService.getCurrentUser();  // 로그인된 사용자 정보 가져오기
+        Long userId = user.getId();  // 현재 로그인된 사용자의 ID
 
         try {
             cartService.deleteCheckedItems(userId);
@@ -119,7 +124,7 @@ public class CartController {
             CartResponseDTO response = new CartResponseDTO("선택한 항목이 삭제되었습니다.", updatedCartItems);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            CartResponseDTO response = new CartResponseDTO("선택한 항목 삭제 실패", null);
+            CartResponseDTO response = new CartResponseDTO("선택한 항목 삭제 실패", new ArrayList<>());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
@@ -127,15 +132,15 @@ public class CartController {
     // 결제대기 항목 조회
     @GetMapping("/checkout")
     public ResponseEntity<CartResponseDTO> getCheckedItemsForCheckout() {
-        User user = userContextService.getCurrentUser();
-        Long userId = user.getId();
+        User user = userContextService.getCurrentUser();  // 로그인된 사용자 정보 가져오기
+        Long userId = user.getId();  // 현재 로그인된 사용자의 ID
 
         List<CartDTO> checkedItems = cartService.getAvailableCartItems(userId);
         String deliveryAddress = user.getAddress();
         String phoneNumber = user.getPhone();
         String name = user.getNickname();
 
-        CartResponseDTO response = new CartResponseDTO("결제대기 항목 조회 성공", checkedItems, deliveryAddress, phoneNumber, name);
+        CartResponseDTO response = new CartResponseDTO("결제대기 항목 조회 성공", checkedItems, deliveryAddress, phoneNumber, name, null);
         return ResponseEntity.ok(response);
     }
 }

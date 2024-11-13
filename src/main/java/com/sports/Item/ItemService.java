@@ -2,6 +2,7 @@ package com.sports.Item;
 
 import com.sports.Category.Category;
 import com.sports.Category.CategoryService;
+import com.sports.Item.DTO.ItemDTO;
 import com.sports.user.entito.User;
 import com.sports.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
