@@ -1,4 +1,4 @@
-package com.sports.Item;
+package com.sports.Item.DTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
