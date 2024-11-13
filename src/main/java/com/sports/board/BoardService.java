@@ -3,6 +3,7 @@ package com.sports.board;
 import com.sports.Category.Category;
 import com.sports.Category.CategoryRepository;
 import com.sports.Item.S3Service;
+import com.sports.like.LikeRepository;
 import com.sports.user.entito.User;
 import com.sports.user.repository.UserRepository;
 import com.sports.user.service.UserContextService;
@@ -26,6 +27,7 @@ public class BoardService {
     private final CategoryRepository categoryRepository;
     private final UserContextService userContextService;
     private final S3Service s3Service;
+    private final LikeRepository likeRepository;
 
     // 게시판 전체 데이터 조회
     public List<BoardResponseDTO> getAllBoards() {
@@ -119,15 +121,6 @@ public class BoardService {
         boardRepository.delete(board);
     }
 
-    // 좋아요 토글
-    @Transactional
-    public void toggleLike(Long id) {
-        Board board = boardRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
-        board.setLikes(board.getLikes() > 0 ? board.getLikes() - 1 : board.getLikes() + 1);
-        boardRepository.save(board);
-    }
-
     // DTO 변환 메서드
     private BoardResponseDTO toResponseDTO(Board board) {
         return BoardResponseDTO.builder()
@@ -144,6 +137,7 @@ public class BoardService {
                 .build();
     }
 
+    // Entity 변환 메서드
     private Board toEntity(BoardRequestDTO dto, User author, Category category) {
         return Board.builder()
                 .title(dto.getTitle())
