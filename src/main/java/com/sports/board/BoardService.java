@@ -76,24 +76,27 @@ public class BoardService {
     // 글 수정
     @Transactional
     @PreAuthorize("#board.author.username == authentication.name or hasRole('ROLE_MANAGER')")
-    // authentication에 접근 권한이 없는 경우(작성자가 아님 & ROLE_MANAGER 아님) 403 Forbidden 오류 발생
-    public BoardResponseDTO updateBoard(@P("board") Board board, BoardRequestDTO boardRequestDTO) throws IOException {
+    // authentication에 접근 권한이 없는 경우(작성자가 아님 or ROLE_MANAGER 아님) 403 Forbidden
+    public void updateBoard(@P("board") Board board, BoardRequestDTO boardRequestDTO) throws IOException {
 
-        // 이미지 처리
-        String imgURL = processImages(boardRequestDTO.getFile());
-        board.setImgUrl(imgURL);
+        // 이미지가 있으면 processImages실행하여 저장
+        List<MultipartFile> files = boardRequestDTO.getFile();
+
+        if (files != null && !files.isEmpty()) {
+            String imgURL = processImages(files);
+            board.setImgUrl(imgURL);
+        }
 
         // 카테고리 변경
         Category category = categoryRepository.findById(boardRequestDTO.getCategoryId())
-                .orElseThrow(() -> new RuntimeException("해당 카테고리를 찾을 수 없습니다."));
+                .orElseThrow(() -> new RuntimeException("존재하지 않는 카테고리입니다."));
         board.setCategory(category);
 
         // 제목 및 내용 변경
         board.setTitle(boardRequestDTO.getTitle());
         board.setContent(boardRequestDTO.getContent());
 
-        Board updatedBoard = boardRepository.save(board);
-        return toResponseDTO(updatedBoard);
+        boardRepository.save(board);
     }
 
     // 글 삭제

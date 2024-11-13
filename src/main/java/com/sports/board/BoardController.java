@@ -2,6 +2,7 @@ package com.sports.board;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -37,11 +38,13 @@ public class BoardController {
 
     // 글 수정
     @PutMapping("/{id}")
-    public ResponseEntity<BoardResponseDTO> updateBoard(@PathVariable Long id,
-                                                        @ModelAttribute BoardRequestDTO boardRequestDTO) throws IOException {
+    public ResponseEntity<String> updateBoard(@PathVariable Long id,
+                                              @ModelAttribute BoardRequestDTO boardRequestDTO) throws IOException {
 
         Board board = boardService.getBoardEntityById(id);
-        return ResponseEntity.ok(boardService.updateBoard(board, boardRequestDTO));
+        boardService.updateBoard(board, boardRequestDTO);
+
+        return ResponseEntity.ok("게시판이 수정되었습니다.");
     }
 
     // 글 삭제
