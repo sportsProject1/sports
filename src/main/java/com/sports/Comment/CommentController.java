@@ -22,6 +22,7 @@ public class CommentController {
     private final CommentService commentService;
     private final UserContextService userContextService;
 
+    //댓글 추가
     @PostMapping("/add/{target}/{id}")
     public ResponseEntity<CommentResponseDTO> addComment(
             @PathVariable String target,
@@ -29,15 +30,52 @@ public class CommentController {
             @RequestBody CommentDTO commentDTO
     ) {
         try {
-            // 현재 유저 정보 가져오기
             User user = userContextService.getCurrentUser();
-            Long userId = user.getId();  // 유저 ID 가져오기
+            Long userId = user.getId();
 
-            // 댓글 저장 서비스 호출
             CommentResponseDTO responseDTO = commentService.addComment(target, id, commentDTO, userId);
             return ResponseEntity.ok(responseDTO);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new CommentResponseDTO("댓글 추가 실패", null));
         }
+    }
+
+    //댓글 수정
+    @PutMapping("/update/{commentId}")
+    public ResponseEntity<CommentResponseDTO> updateComment(
+            @PathVariable Long commentId,
+            @RequestBody CommentDTO commentDTO) {
+
+        User user = userContextService.getCurrentUser();
+        Long userId = user.getId();
+
+        CommentResponseDTO response = commentService.updateComment(commentId, commentDTO, userId);
+
+        return ResponseEntity.ok(response);
+    }
+
+    //댓글 작성
+    @DeleteMapping("/delete/{commentId}")
+    public ResponseEntity<CommentResponseDTO> deleteComment(@PathVariable Long commentId) {
+        User user = userContextService.getCurrentUser();
+        Long userId = user.getId();
+
+        CommentResponseDTO response = commentService.deleteComment(commentId, userId);
+
+        return ResponseEntity.ok(response);
+    }
+
+    //대댓글 작성
+    @PostMapping("/add/reply/{commentId}")
+    public ResponseEntity<CommentResponseDTO> addReplyComment(
+            @PathVariable Long commentId,
+            @RequestBody CommentDTO commentDTO) {
+
+        User user = userContextService.getCurrentUser();
+        Long userId = user.getId();
+
+        CommentResponseDTO response = commentService.addReplyComment(commentId, commentDTO, userId);
+
+        return ResponseEntity.ok(response);
     }
 }
