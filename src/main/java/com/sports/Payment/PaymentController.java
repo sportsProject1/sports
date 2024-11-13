@@ -1,5 +1,7 @@
 package com.sports.Payment;
 
+import com.sports.Cart.DTO.CartDTO;
+import com.sports.Cart.DTO.CartResponseDTO;
 import com.sports.user.entito.User;
 import com.sports.user.service.UserContextService;
 import lombok.RequiredArgsConstructor;
@@ -20,25 +22,24 @@ public class PaymentController {
     private final UserContextService userContextService;
 
     @PostMapping("/process")
-    public ResponseEntity<PaymentDTO> processPayment(@RequestBody PaymentDTO paymentDTO) {
+    public ResponseEntity<PaymentDTO> processPayment(@RequestBody CartResponseDTO cartResponseDTO) {
         User user = userContextService.getCurrentUser();
 
-        // 결제 프로세스를 처리하고 결제 DTO 반환
+        // CartDTO 리스트로 받기
+        List<CartDTO> cartDTOs = cartResponseDTO.getCartItems();
+        String paymentMethod = cartResponseDTO.getPaymentMethod();
+        String deliveryAddress = cartResponseDTO.getDeliveryAddress();
+        String phoneNumber = cartResponseDTO.getPhoneNumber();
+        String name = cartResponseDTO.getName();
+
         try {
-            PaymentDTO paymentResponseDTO = paymentService.processPayment(
-                    user.getId(),
-                    paymentDTO.getPaymentMethod(),
-                    paymentDTO.getDeliveryAddress(),
-                    paymentDTO.getPhoneNumber(),
-                    paymentDTO.getName()
-            );
-            return ResponseEntity.ok(paymentResponseDTO); // 성공적으로 결제 처리
+            // PaymentDTO를 반환받고 바로 반환
+            PaymentDTO paymentDTO = paymentService.processPayment(user.getId(), cartDTOs, paymentMethod, deliveryAddress, phoneNumber, name);
+            return ResponseEntity.ok(paymentDTO); // 결제 성공 후 응답
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(null); // 예외 발생 시 서버 에러로 응답 (500 Internal Server Error)
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null); // 예외 처리
         }
     }
-
 
     @GetMapping("/history")
     public ResponseEntity<List<PaymentDTO>> getPaymentHistory() {

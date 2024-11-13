@@ -17,7 +17,7 @@ public class Cart {
     @Column(name = "cart_count", nullable = false)
     private Integer count;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "item_id", nullable = false)
     private Item item;
 
