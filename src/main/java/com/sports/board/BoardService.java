@@ -27,7 +27,6 @@ public class BoardService {
     private final CategoryRepository categoryRepository;
     private final UserContextService userContextService;
     private final S3Service s3Service;
-    private final LikeRepository likeRepository;
 
     // 게시판 전체 데이터 조회
     public List<BoardResponseDTO> getAllBoards() {
