@@ -58,7 +58,7 @@ public class BoardController {
     // 좋아요 토글
     @PostMapping("/{id}/like")
     public ResponseEntity<Map<String, Object>> toggleLike(@PathVariable Long id) {
-        Map<String, Object> response = likeService.toggleLikeWithResponse("Board", id); // 좋아요 상태와 좋아요 수 반환
+        Map<String, Object> response = likeService.toggleBoardLike(id); // 좋아요 상태와 좋아요 수 반환
         return ResponseEntity.ok(response);
     }
 
