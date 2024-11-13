@@ -1,16 +1,14 @@
 package com.sports.like;
 
+import com.sports.Item.ItemRepository;
 import com.sports.board.Board;
 import com.sports.board.BoardRepository;
 import com.sports.user.entito.User;
 import com.sports.user.service.UserContextService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -19,9 +17,10 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class LikeService {
 
+    private final UserContextService userContextService;
     private final LikeRepository likeRepository;
     private final BoardRepository boardRepository;
-    private final UserContextService userContextService;
+    private final ItemRepository itemRepository;
 
     @Transactional
     public Map<String, Object> toggleLikeWithResponse(String targetType, Long targetId) {

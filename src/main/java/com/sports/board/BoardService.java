@@ -22,11 +22,11 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class BoardService {
 
+    private final UserContextService userContextService;
+    private final S3Service s3Service;
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
-    private final UserContextService userContextService;
-    private final S3Service s3Service;
 
     // 게시판 전체 데이터 조회
     public List<BoardResponseDTO> getAllBoards() {
