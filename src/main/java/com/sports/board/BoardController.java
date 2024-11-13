@@ -44,7 +44,7 @@ public class BoardController {
         Board board = boardService.getBoardEntityById(id);
         boardService.updateBoard(board, boardRequestDTO);
 
-        return ResponseEntity.ok("게시판이 수정되었습니다.");
+        return ResponseEntity.ok("게시판 ID " + id + "가 성공적으로 수정되었습니다.");
     }
 
     // 글 삭제
