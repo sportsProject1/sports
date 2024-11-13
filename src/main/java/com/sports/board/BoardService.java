@@ -79,13 +79,26 @@ public class BoardService {
     // authentication에 접근 권한이 없는 경우(작성자가 아님 or ROLE_MANAGER 아님) 403 Forbidden
     public void updateBoard(@P("board") Board board, BoardRequestDTO boardRequestDTO) throws IOException {
 
-        // 이미지가 있으면 processImages실행하여 저장
-        List<MultipartFile> files = boardRequestDTO.getFile();
+        // 새로운 파일 처리 (없으면 null 반환)
+        String newFileUrls = processImagesAndNull(boardRequestDTO.getFile());
 
-        if (files != null && !files.isEmpty()) {
-            String imgURL = processImages(files);
-            board.setImgUrl(imgURL);
+        // 기존 이미지 처리
+        String existingImages = boardRequestDTO.getImgUrl();
+
+        // 새로운 파일과 기존 이미지를 병합
+        String combinedImageUrls;
+        if (existingImages != null && !existingImages.isEmpty()) {
+            // 기존 이미지가 있을 때
+            combinedImageUrls = (newFileUrls != null && !newFileUrls.isEmpty())
+                    ? existingImages + "," + newFileUrls // 기존 + 새로운 이미지 병합
+                    : existingImages; // 새로운 파일이 없으면 기존 이미지만
+        } else {
+            // 기존 이미지가 없을 때
+            combinedImageUrls = newFileUrls; // 새로운 파일만 저장 (null 가능)
         }
+
+        // 최종 URL 설정
+        board.setImgUrl(combinedImageUrls);
 
         // 카테고리 변경
         Category category = categoryRepository.findById(boardRequestDTO.getCategoryId())
