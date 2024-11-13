@@ -1,6 +1,7 @@
 package com.sports.board;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -11,10 +12,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/board")
 @RequiredArgsConstructor
+//@Slf4j // 테스트 로거
 public class BoardController {
 
     private final BoardService boardService;
-    private final BoardRepository boardRepository;
 
     // 게시판 전체 데이터 조회 (페이징 및 정렬 처리는 React에서)
     @GetMapping("/list")

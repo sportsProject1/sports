@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString
 public class BoardResponseDTO {
     private Long id;                    // 게시글 ID
     private String title;               // 제목

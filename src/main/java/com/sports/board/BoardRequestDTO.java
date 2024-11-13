@@ -10,6 +10,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString
 public class BoardRequestDTO {
     private String title;       // 제목
     private String content;     // 내용
