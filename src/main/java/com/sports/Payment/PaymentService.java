@@ -5,6 +5,7 @@ import com.sports.Cart.CartRepository;
 import com.sports.Cart.DTO.CartDTO;
 import com.sports.Item.Item;
 import com.sports.Item.ItemRepository;
+import com.sports.Payment.DTO.PaymentDTO;
 import com.sports.PaymentDetail.PaymentDetail;
 import com.sports.PaymentDetail.PaymentDetailDTO;
 import com.sports.PaymentDetail.PaymentDetailRepository;
@@ -17,6 +18,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.sports.Payment.DTO.PaymentResponseDTO;
+// 기타 필요한 import
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -28,7 +32,7 @@ public class PaymentService {
     private final ItemRepository itemRepository;
     private final CartRepository cartRepository;
 
-    public PaymentDTO processPayment(Long userId, List<CartDTO> cartDTOs, String paymentMethod, String deliveryAddress, String phoneNumber, String name) {
+    public PaymentResponseDTO processPayment(Long userId, List<CartDTO> cartDTOs, String paymentMethod, String deliveryAddress, String phoneNumber, String name) {
         // 유저 정보와 체크된 장바구니 항목들을 가져옵니다.
         User user = userContextService.findById(userId);
 
@@ -101,21 +105,39 @@ public class PaymentService {
             itemRepository.save(item);
         }
 
-        return convertToPaymentDTO(payment);
+        // PaymentDTO로 변환 후 PaymentResponseDTO로 래핑
+        PaymentDTO paymentDTO = convertToPaymentDTO(payment);
+        String paymentStatusMessage = "결제가 성공적으로 완료되었습니다.";  // 메시지 설정
+
+        // PaymentResponseDTO로 반환
+        return new PaymentResponseDTO(paymentDTO, paymentStatusMessage);
     }
 
-    // PaymentDetail 객체를 생성하는 메서드
-    private PaymentDetail createPaymentDetail(CartDTO cartDTO) {
-        PaymentDetail paymentDetail = new PaymentDetail();
-        paymentDetail.setItemTitle(cartDTO.getItemTitle());
-        paymentDetail.setItemPrice(cartDTO.getItemPrice());
-        paymentDetail.setItemCount(cartDTO.getCount());
-        paymentDetail.setItemId(cartDTO.getItemId());
-        paymentDetail.setItemUrl(cartDTO.getItemImgUrl());
-        return paymentDetail;
+    private void updateStockAndCartStatus(List<CartDTO> cartDTOs, List<PaymentDetail> paymentDetails) {
+        for (CartDTO cartDTO : cartDTOs) {
+            if (cartDTO.isChecked()) {
+                Long cartId = cartDTO.getCartId();
+                Cart cart = cartRepository.findById(cartId)
+                        .orElseThrow(() -> new RuntimeException("장바구니를 찾을 수 없습니다. cartId: " + cartId));
+                cart.setPaymentStatus(true);
+                cartRepository.save(cart);
+            }
+        }
+
+        for (PaymentDetail paymentDetail : paymentDetails) {
+            Long itemId = paymentDetail.getItemId();
+            int itemCount = paymentDetail.getItemCount();
+            Item item = itemRepository.findById(itemId)
+                    .orElseThrow(() -> new RuntimeException("아이템을 찾을 수 없습니다. itemId: " + itemId));
+            int newStock = item.getStock() - itemCount;
+            if (newStock < 0) {
+                throw new RuntimeException("재고가 부족합니다: " + item.getTitle());
+            }
+            item.setStock(newStock);
+            itemRepository.save(item);
+        }
     }
 
-    // Payment 객체를 PaymentDTO로 변환하는 메서드
     private PaymentDTO convertToPaymentDTO(Payment payment) {
         List<PaymentDetailDTO> paymentDetailDTOs = createPaymentDetailDTOs(payment.getPaymentDetails());
 
@@ -135,15 +157,23 @@ public class PaymentService {
         );
     }
 
-    // PaymentDetail 리스트를 PaymentDetailDTO 리스트로 변환하는 메서드
+    private PaymentDetail createPaymentDetail(CartDTO cartDTO) {
+        PaymentDetail paymentDetail = new PaymentDetail();
+        paymentDetail.setItemTitle(cartDTO.getItemTitle());
+        paymentDetail.setItemPrice(cartDTO.getItemPrice());
+        paymentDetail.setItemCount(cartDTO.getCount());
+        paymentDetail.setItemId(cartDTO.getItemId());
+        paymentDetail.setItemUrl(cartDTO.getItemImgUrl());
+        return paymentDetail;
+    }
+
     private List<PaymentDetailDTO> createPaymentDetailDTOs(List<PaymentDetail> paymentDetails) {
         List<PaymentDetailDTO> paymentDetailDTOs = new ArrayList<>();
-
         if (paymentDetails != null) {
             for (PaymentDetail paymentDetail : paymentDetails) {
                 if (paymentDetail != null) {
                     PaymentDetailDTO detailDTO = new PaymentDetailDTO(
-                            paymentDetail.getPayment().getId(),  // 결제 ID 추가
+                            paymentDetail.getPayment().getId(),
                             paymentDetail.getItemTitle(),
                             paymentDetail.getItemPrice(),
                             paymentDetail.getItemCount(),
@@ -153,19 +183,19 @@ public class PaymentService {
                 }
             }
         }
-
         return paymentDetailDTOs;
     }
 
-    // 사용자 ID에 따라 결제 내역을 가져오는 메서드
-    public List<PaymentDTO> getPaymentsByUser(Long userId) {
-        List<Payment> payments = paymentRepository.findByUserIdWithDetails(userId);  // 결제 내역과 결제 상세 정보 가져오기
+    public List<PaymentResponseDTO> getPaymentsByUser(Long userId) {
+        List<Payment> payments = paymentRepository.findByUserIdWithDetails(userId);
 
-        List<PaymentDTO> paymentDTOs = new ArrayList<>();
+        List<PaymentResponseDTO> paymentResponseDTOs = new ArrayList<>();
         for (Payment payment : payments) {
-            paymentDTOs.add(convertToPaymentDTO(payment)); // 엔티티 -> DTO 변환
+            PaymentDTO paymentDTO = convertToPaymentDTO(payment);
+            String message = "결제 내역 조회 성공";
+            paymentResponseDTOs.add(new PaymentResponseDTO(paymentDTO, message));
         }
 
-        return paymentDTOs;
+        return paymentResponseDTOs;
     }
 }

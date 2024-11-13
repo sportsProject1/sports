@@ -1,7 +1,5 @@
-package com.sports.comment;
+package com.sports.Comment;
 
-import com.sports.Item.Item;
-import com.sports.board.Board;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;

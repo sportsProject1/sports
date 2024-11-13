@@ -1,4 +1,4 @@
-package com.sports.Payment;
+package com.sports.Payment.DTO;
 
 import com.sports.Cart.DTO.CartResponseDTO;
 import com.sports.PaymentDetail.PaymentDetailDTO;
@@ -30,9 +30,8 @@ public class PaymentDTO {
         paymentDTO.setName(cartResponseDTO.getName());
         paymentDTO.setPhoneNumber(cartResponseDTO.getPhoneNumber());
         paymentDTO.setDeliveryAddress(cartResponseDTO.getDeliveryAddress());
-        paymentDTO.setPaymentStatusMessage(cartResponseDTO.getMessage());
-        paymentDTO.setPaymentWhether(false); // 기본값 설정. 실제 결제 여부는 처리 후 설정
-        paymentDTO.setTotalPrice(0L); // 실제 계산된 가격을 설정해야 함
+        paymentDTO.setPaymentWhether(false);
+        paymentDTO.setTotalPrice(0L);
         paymentDTO.setPaymentDetails(paymentDetails);
         return paymentDTO;
     }
