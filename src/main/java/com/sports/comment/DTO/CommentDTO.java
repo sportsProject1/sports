@@ -1,6 +1,6 @@
-package com.sports.Comment.DTO;
+package com.sports.comment.DTO;
 
-import com.sports.Comment.Comment;
+import com.sports.comment.Comment;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

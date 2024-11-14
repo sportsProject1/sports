@@ -20,7 +20,7 @@ const commonStyles = {
 export const lightTheme = {
     ...commonStyles,
     colors: {
-        primary: '#1B5E20', // dark green
+        primary: '#0C47C5', // 로고컬러
         secondary: '#2979FF', // blue
         background: '#F5F5F5',
         surface: '#FFFFFF',

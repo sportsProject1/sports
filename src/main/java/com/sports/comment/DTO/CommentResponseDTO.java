@@ -1,4 +1,4 @@
-package com.sports.Comment.DTO;
+package com.sports.comment.DTO;
 
 
 import lombok.AllArgsConstructor;
