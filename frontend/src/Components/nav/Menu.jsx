@@ -5,8 +5,9 @@ import styled from "styled-components";
 import {postTokenData, postTokenJsonData} from "../../Server/ApiService";
 
 const MenuUl = styled.ul`
+        margin: auto;
         display: flex;
-        align-items: center; 
+        align-items: center;
     li{
         list-style: none;
         margin:15px;

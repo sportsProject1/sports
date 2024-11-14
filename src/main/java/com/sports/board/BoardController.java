@@ -4,6 +4,7 @@ import com.sports.like.LikeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
@@ -34,6 +35,12 @@ public class BoardController {
     @PostMapping("/add")
     public ResponseEntity<Long> createBoard(@ModelAttribute BoardRequestDTO boardRequestDTO) throws IOException {
         return ResponseEntity.ok(boardService.createBoard(boardRequestDTO));
+    }
+
+    // 이미지만
+    @PostMapping("/fileAdd")
+    public ResponseEntity<String> responseUploadUrl(@RequestParam("file") MultipartFile file) throws IOException {
+        return ResponseEntity.ok(boardService.processImage(file));
     }
 
     // 글 수정
