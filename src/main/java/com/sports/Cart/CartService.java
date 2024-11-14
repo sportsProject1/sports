@@ -1,11 +1,9 @@
 package com.sports.Cart;
 
+import com.sports.Cart.DTO.CartDTO;
 import com.sports.Item.Item;
 import com.sports.Item.ItemService;
-
-import com.sports.user.entito.User;
 import com.sports.user.service.UserContextService;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -27,37 +25,35 @@ public class CartService {
         return cartItems.stream()
                 .filter(cart -> !cart.getItem().isDeleted())  // 삭제되지 않은 아이템만 필터링
                 .filter(cart -> !cart.isPaymentStatus())  // 결제되지 않은 아이템만 필터링
-                .map(this::convertToDto)
+                .map(this::convertToDto)  // CartDTO로 변환하여 반환
                 .collect(Collectors.toList());
     }
 
     // 장바구니 항목 추가
-    public CartDTO addCartItem(CartDTO cartDTO, Long userId) {
-        // Item을 cartDTO에서 가져오고, 이미 존재하는지 체크
-        Item item = itemService.findById(cartDTO.getItem().getId());
+    public CartDTO addCartItem(CartDTO cartDTO) {
+        Long currentUserId = userContextService.getCurrentUserId(); // 로그인된 사용자 ID 가져오기
+        Item item = itemService.findById(cartDTO.getItemId());  // itemId로 아이템을 찾기
 
-        // 1. 동일한 상품이 이미 장바구니에 있는지 확인 (결제 상태가 false인 항목만)
-        Cart existingCart = cartRepository.findByUserIdAndItemAndPaymentStatusFalse(userId, item);
-
+        // 이미 장바구니에 존재하는 아이템인지 확인
+        Cart existingCart = cartRepository.findByUserIdAndItemAndPaymentStatusFalse(currentUserId, item);
         if (existingCart != null) {
-            // 2. 이미 장바구니에 같은 상품이 존재하면 수량을 증가시킴
             existingCart.setCount(existingCart.getCount() + cartDTO.getCount());
-            cartRepository.save(existingCart);  // 장바구니 항목 업데이트
-            return convertToDto(existingCart);  // 업데이트된 장바구니 항목 반환
+            cartRepository.save(existingCart);
+            return convertToDto(existingCart);
         }
 
-        // 3. 상품이 존재하지 않으면 새 항목을 추가
+        // 새 항목 추가
         Cart cart = new Cart();
         cart.setCount(cartDTO.getCount());
         cart.setItem(item);
-        cart.setUserId(userId);  // userId 설정
+        cart.setUserId(currentUserId);
+
         Cart savedCart = cartRepository.save(cart);
-        return convertToDto(savedCart);  // 새로 추가된 장바구니 항목 반환
+        return convertToDto(savedCart);
     }
 
-
     // 수량 업데이트 메서드
-    public void updateCount(Long id, Integer count, Long userId) {
+    public CartDTO updateCount(Long id, Integer count, Long userId) {
         Cart cart = cartRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("장바구니 항목을 찾을 수 없습니다."));
 
@@ -67,7 +63,8 @@ public class CartService {
 
         // 수량 업데이트
         cart.setCount(count);
-        cartRepository.save(cart);
+        Cart updatedCart = cartRepository.save(cart);
+        return convertToDto(updatedCart);
     }
 
     // 체크박스 상태 업데이트 메서드
@@ -85,8 +82,8 @@ public class CartService {
     }
 
     // 장바구니 항목 삭제
-    public void deleteCartItem(Long itemId, Long userId) {
-        Cart cart = cartRepository.findById(itemId)
+    public void deleteCartItem(Long cartId, Long userId) {
+        Cart cart = cartRepository.findById(cartId)
                 .orElseThrow(() -> new RuntimeException("장바구니 항목을 찾을 수 없습니다."));
 
         if (!cart.getUserId().equals(userId)) {
@@ -101,6 +98,11 @@ public class CartService {
     public void deleteCheckedItems(Long userId) {
         List<Cart> checkedItems = cartRepository.findByUserIdAndIsChecked(userId, true);
 
+        if (checkedItems.isEmpty()) {
+            throw new RuntimeException("삭제할 체크된 항목이 없습니다.");
+        }
+
+        // 권한 확인 후 삭제
         for (Cart cart : checkedItems) {
             if (!cart.getUserId().equals(userId)) {
                 throw new RuntimeException("권한이 없습니다.");
@@ -118,25 +120,19 @@ public class CartService {
                 .collect(Collectors.toList());
     }
 
-    // 사용자의 결제되지 않고 체크된 장바구니 항목들을 반환
-    public List<Cart> getAvailableCartEntities(Long userId) {
-        return cartRepository.findByUserIdAndIsCheckedAndPaymentStatus(userId, true, false);
-    }
-
-    public void saveAll(List<Cart> carts) {
-        cartRepository.saveAll(carts);
-    }
-
     // Cart 엔티티 -> DTO 변환
     public CartDTO convertToDto(Cart cart) {
+        Item item = cart.getItem();
         return new CartDTO(
                 cart.getId(),
                 cart.getCount(),
-                cart.getItem(),
+                item.getId(),
+                item.getTitle(),
+                item.getPrice(),
+                item.getImgurl(),
                 cart.getUserId(),
                 cart.isPaymentStatus(),
                 cart.isChecked()
         );
     }
 }
-

@@ -3,6 +3,7 @@ package com.sports.board;
 import com.sports.Category.Category;
 import com.sports.Category.CategoryRepository;
 import com.sports.Item.S3Service;
+import com.sports.like.LikeRepository;
 import com.sports.user.entito.User;
 import com.sports.user.repository.UserRepository;
 import com.sports.user.service.UserContextService;
@@ -15,17 +16,18 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class BoardService {
 
+    private final UserContextService userContextService;
+    private final S3Service s3Service;
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
-    private final UserContextService userContextService;
-    private final S3Service s3Service;
 
     // 게시판 전체 데이터 조회
     public List<BoardResponseDTO> getAllBoards() {
@@ -72,28 +74,43 @@ public class BoardService {
         return boardRepository.save(board).getId();
     }
 
-
     // 글 수정
     @Transactional
     @PreAuthorize("#board.author.username == authentication.name or hasRole('ROLE_MANAGER')")
-    // authentication에 접근 권한이 없는 경우(작성자가 아님 & ROLE_MANAGER 아님) 403 Forbidden 오류 발생
-    public BoardResponseDTO updateBoard(@P("board") Board board, BoardRequestDTO boardRequestDTO) throws IOException {
+    // authentication에 접근 권한이 없는 경우(작성자가 아님 or ROLE_MANAGER 아님) 403 Forbidden
+    public void updateBoard(@P("board") Board board, BoardRequestDTO boardRequestDTO) throws IOException {
 
-        // 이미지 처리
-        String imgURL = processImages(boardRequestDTO.getFile());
-        board.setImgUrl(imgURL);
+        // 새로운 파일 처리 (없으면 null 반환)
+        String newFileUrls = processImagesAndNull(boardRequestDTO.getFile());
+
+        // 기존 이미지 처리
+        String existingImages = boardRequestDTO.getImgUrl();
+
+        // 새로운 파일과 기존 이미지를 병합
+        String combinedImageUrls;
+        if (existingImages != null && !existingImages.isEmpty()) {
+            // 기존 이미지가 있을 때
+            combinedImageUrls = (newFileUrls != null && !newFileUrls.isEmpty())
+                    ? existingImages + "," + newFileUrls // 기존 + 새로운 이미지 병합
+                    : existingImages; // 새로운 파일이 없으면 기존 이미지만
+        } else {
+            // 기존 이미지가 없을 때
+            combinedImageUrls = newFileUrls; // 새로운 파일만 저장 (null 가능)
+        }
+
+        // 최종 URL 설정
+        board.setImgUrl(combinedImageUrls);
 
         // 카테고리 변경
         Category category = categoryRepository.findById(boardRequestDTO.getCategoryId())
-                .orElseThrow(() -> new RuntimeException("해당 카테고리를 찾을 수 없습니다."));
+                .orElseThrow(() -> new RuntimeException("존재하지 않는 카테고리입니다."));
         board.setCategory(category);
 
         // 제목 및 내용 변경
         board.setTitle(boardRequestDTO.getTitle());
         board.setContent(boardRequestDTO.getContent());
 
-        Board updatedBoard = boardRepository.save(board);
-        return toResponseDTO(updatedBoard);
+        boardRepository.save(board);
     }
 
     // 글 삭제
@@ -101,15 +118,6 @@ public class BoardService {
     @PreAuthorize("#board.author.username == authentication.name or hasRole('ROLE_MANAGER')")
     public void deleteBoard(@P("board") Board board) {
         boardRepository.delete(board);
-    }
-
-    // 좋아요 토글
-    @Transactional
-    public void toggleLike(Long id) {
-        Board board = boardRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
-        board.setLikes(board.getLikes() > 0 ? board.getLikes() - 1 : board.getLikes() + 1);
-        boardRepository.save(board);
     }
 
     // DTO 변환 메서드
@@ -128,6 +136,7 @@ public class BoardService {
                 .build();
     }
 
+    // Entity 변환 메서드
     private Board toEntity(BoardRequestDTO dto, User author, Category category) {
         return Board.builder()
                 .title(dto.getTitle())
@@ -145,7 +154,7 @@ public class BoardService {
     }
 
     // 이미지 단일 처리 - 파일 안보내도 기본이미지 저장
-    private String processImage(MultipartFile file) throws IOException {
+    String processImage(MultipartFile file) throws IOException {
         if (file != null && !file.isEmpty()) {
             return s3Service.saveFile(file.getOriginalFilename(), file.getInputStream());
         }
