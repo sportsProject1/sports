@@ -43,7 +43,7 @@ function BoardDetail(){
 
                 {/* 본문 */}
                 <ContentSection>
-                    {detailBoard.content}
+                    <div dangerouslySetInnerHTML={{ __html: detailBoard.content }}></div>
                     <InteractionSection>
                         <LikeButton>좋아요 {detailBoard.likes}</LikeButton>
                         <div>

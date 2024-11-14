@@ -1,231 +1,180 @@
-import React, { useState, useRef, useEffect } from 'react';
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css'; // 기본 스타일
-import axios from 'axios';
+import '@toast-ui/editor/dist/toastui-editor.css';
+import { Editor } from '@toast-ui/react-editor';
+import {useEffect, useRef, useState} from 'react';
 import styled from 'styled-components';
-import { postTokenData } from "../../Server/ApiService";
+import {postTokenData} from "../../Server/ApiService";
+import {fetchData} from "../../Server/ApiServiceNoToken";
 
-const FormContainer = styled.div`
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
+const StyledContainer = styled.div`
+    .toastui-editor-contents {
+        font-family: 'Noto Sans', sans-serif;
+        line-height: 1.8;
+    }
+
+    .toastui-editor-toolbar {
+        border-radius: 5px;
+        background-color: #f9f9f9;
+        border: 1px solid #ddd;
+    }
+
+    .toastui-editor {
+        border-radius: 8px;
+        border: 1px solid #ccc;
+    }
 `;
 
-const EditorWrapper = styled.div`
-    width: 48%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+const StyledInput = styled.input`
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+  outline: none;
+  font-family: 'Noto Sans', sans-serif;
+
+  &:focus {
+    border-color: #333;
+    box-shadow: 0 0 5px rgba(51, 51, 51, 0.3);
+  }
 `;
 
-const PreviewWrapper = styled.div`
-    width: 48%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    background-color: #f9f9f9;
+const PreviewContainer = styled.div`
+  margin-top: 30px;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+
+  h1 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+  }
+
+  .preview-content {
+    white-space: pre-wrap;
+    font-family: 'Noto Sans', sans-serif;
+    line-height: 1.8;
+  }
 `;
 
-const TitleInput = styled.input`
-    padding: 8px;
-    margin-bottom: 20px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-`;
-
-const CategoryInput = styled.input`
-    padding: 8px;
-    margin-bottom: 20px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-`;
-
-const SubmitButton = styled.button`
-    padding: 10px 20px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-top: 20px;
-`;
-
-function CreateForm() {
+function CreateForm({ onUploadImage }) {
+    const editorRef = useRef();
     const [title, setTitle] = useState('');
-    const [categoryId, setCategoryId] = useState('');
-    const [content, setContent] = useState('');
-    const [imageUrls, setImageUrls] = useState([]);
-    const quillRef = useRef(null);
+    const [categoryId,setCategoryId] = useState('');
 
-    // 이미지 업로드 핸들러
-    const handleImageUpload = async (file) => {
-        const formData = new FormData();
-        formData.append('file', file);
+    const [category,setCategory] = useState();
 
-        try {
-            const response = await postTokenData('/board/add', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            });
-            return response.data.url;  // 서버에서 반환된 이미지 URL
-        } catch (error) {
-            console.error('이미지 업로드 실패:', error);
-            return null;
-        }
-    };
-
-    // 이미지 삽입 핸들러 (Markdown 형식으로 삽입)
-    const imageHandler = () => {
-        const input = document.createElement('input');
-        input.setAttribute('type', 'file');
-        input.setAttribute('accept', 'image/*');
-        input.click();
-
-        input.onchange = async () => {
-            const file = input.files[0];
-            const imageUrl = await handleImageUpload(file);
-            if (imageUrl) {
-                const quill = quillRef.current.getEditor();
-                const range = quill.getSelection();
-
-                // ![](image_url) 형식으로 Markdown 삽입
-                const markdownImage = `![](${imageUrl})`;
-                quill.insertText(range.index, markdownImage);
-
-                // 이미지 URL을 실시간으로 상태에 추가
-                setImageUrls((prevUrls) => [...prevUrls, imageUrl]);
-            }
-        };
-    };
-
-    // 퀼 에디터의 툴바 설정
-    const modules = {
-        toolbar: {
-            container: [
-                [{ 'header': '1' }, { 'header': '2' }, { 'font': [] }],
-                [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-                [{ 'align': [] }],
-                ['bold', 'italic', 'underline'],
-                ['link'],
-                ['image'], // 이미지 업로드 버튼 추가
-                ['blockquote', 'code-block'],
-            ],
-            handlers: {
-                image: imageHandler, // 툴바의 이미지 버튼 클릭 시 imageHandler 실행
-            }
-        }
-    };
-
-    // 본문 내용 변경 시 실시간으로 HTML로 변환
     useEffect(() => {
-        const quill = quillRef.current.getEditor();
-        quill.on('text-change', () => {
-            setContent(quill.root.innerHTML); // 퀼 에디터에서 HTML 형식으로 본문 내용 저장
-        });
-    }, []);
+        // 제목을 미리보기 영역에 추가하는 로직
 
-    // 폼 제출 처리
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+        fetchData("/category/get").then((res)=>{
+            setCategory(res.data)
+        })
 
-        const formData = new FormData();  // FormData 객체 생성
-        const quill = quillRef.current.getEditor();
-        const delta = quill.getContents();  // 본문 내용
+        const previewElement = document.querySelector('.toastui-editor-md-preview');
+        if (previewElement) {
+            const titleElement = document.createElement('h1');
+            titleElement.textContent = title || '제목 미리보기';
+            titleElement.style.marginBottom = '10px';
+            titleElement.style.fontSize = '2rem';
 
-        // 본문 내용과 제목, 카테고리 추가
-        formData.append('title', title);
-        formData.append('categoryId', categoryId);
-        formData.append('content', JSON.stringify(delta));  // delta 형태로 본문 내용 추가
-
-        // 이미지 URL 추출하여 formData에 추가
-        const ops = delta.ops || [];
-        const imgUrls = [];
-        ops.forEach((op) => {
-            if (op.insert && op.insert.image) {
-                imgUrls.push(op.insert.image);
+            // 기존에 제목이 있다면 제거 후 다시 추가
+            const existingTitle = previewElement.querySelector('h1');
+            if (existingTitle) {
+                previewElement.removeChild(existingTitle);
             }
-        });
+            previewElement.insertBefore(titleElement, previewElement.firstChild);
+        }
+    }, [title]);
 
-        // 이미지 URL을 하나씩 formData에 추가 (files 필드에)
-        imgUrls.forEach((url, index) => {
-            formData.append(`files[${index}]`, url);
-        });
+    const handleSubmit = async (e) => {
+        e.preventDefault(); // 폼의 기본 동작 방지
 
         try {
-            // 게시글 작성 시 데이터를 formData로 서버로 전송
-            const response = await postTokenData('/board/add', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',  // multipart/form-data 헤더 설정
-                },
-            });
-            console.log('게시글 작성 성공:', response.data);
+            const formData = new FormData();
+            formData.append('title', title);
+            formData.append('categoryId',categoryId)
+
+            const htmlContent = editorRef.current.getInstance().getHTML();
+            formData.append('content', htmlContent);
+
+            // POST 요청 전송
+            const response = await postTokenData('/board/add', formData);
+            if (response.success) {
+                alert('게시물이 성공적으로 등록되었습니다.');
+                // 필요 시 페이지 이동 또는 폼 초기화
+            } else {
+                alert('게시물 등록에 실패했습니다.');
+            }
         } catch (error) {
-            console.error('게시글 작성 실패:', error);
+            console.error('게시물 전송 중 오류 발생:', error);
+            alert('게시물 전송에 실패했습니다.');
         }
     };
 
-
-    // Markdown 형식의 이미지를 HTML로 변환하여 미리보기
-    const renderContentWithMarkdownImages = (htmlContent) => {
-        return htmlContent.replace(/!\[\]\((.*?)\)/g, (match, url) => {
-            return `<img src="${url}" alt="image" />`;
-        });
-    };
+    const toolbarItems = [
+        ['heading', 'bold', 'italic', 'strike'],
+        ['hr', 'quote'],
+        ['ul', 'ol', 'task', 'indent', 'outdent'],
+        ['table', 'link'],
+        ['image', 'code', 'codeblock'],
+        ['scrollSync'],
+    ];
 
     return (
-        <FormContainer>
-            <div style={{ width: '100%', display: 'flex', flexDirection: 'column' }}>
-                <h1>Create Post</h1>
-                <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column' }}>
+        <StyledContainer>
+            <form onSubmit={handleSubmit}>
+                <StyledInput
+                    type="text"
+                    placeholder="제목을 입력하세요"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    id="title-input"
+                />
+                <select onChange={(e) => setCategoryId(e.target.value)}>
+                    {category?.map((item) => {
+                        return (
+                            <option key={item.id} value={item.id}>
+                                {item.name}
+                            </option>
+                        );
+                    })}
+                </select>
+                <Editor
+                    ref={editorRef}
+                    initialValue="여기에 내용을 작성하세요."
+                    previewStyle="vertical"
+                    height="600px"
+                    initialEditType="markdown"
+                    useCommandShortcut={true}
+                    toolbarItems={toolbarItems}
+                    hooks={{
+                        addImageBlobHook: async (blob, callback) => {
+                            try {
+                                // 서버에 이미지 업로드 후 경로 반환
+                                const formData = new FormData();
+                                formData.append('file', blob);
+                                console.log(blob);
 
-                    <label>Title:</label>
-                    <TitleInput
-                        type="text"
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
-                        required
-                    />
+                                // postTokenData 함수가 response.data를 반환
+                                const fullPath = await postTokenData('/board/fileAdd', formData);
+                                console.log(fullPath);
 
-                    <label>Category:</label>
-                    <CategoryInput
-                        type="text"
-                        value={categoryId}
-                        onChange={(e) => setCategoryId(e.target.value)}
-                        required
-                    />
+                                // 미리보기에서는 전체 URL 사용
+                                callback(fullPath, '이미지 설명');
+                            } catch (error) {
+                                console.error('이미지 업로드 중 오류 발생:', error);
+                                alert('이미지 업로드에 실패했습니다.');
+                            }
+                        },
+                    }}
+                />
 
-                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <EditorWrapper>
-                            <ReactQuill
-                                ref={quillRef}
-                                value={content}
-                                onChange={setContent}
-                                modules={modules}
-                                formats={['bold', 'italic', 'underline', 'header', 'list', 'link', 'image']}
-                                placeholder="Write your post here..."
-                                theme="snow"
-                            />
-                        </EditorWrapper>
-
-                        <PreviewWrapper>
-                            <h3>Live Preview (Markdown Format)</h3>
-                            {/* 본문 내용에서 Markdown 형식의 이미지를 HTML로 변환해서 미리보기 */}
-                            <div dangerouslySetInnerHTML={{ __html: renderContentWithMarkdownImages(content) }} />
-                        </PreviewWrapper>
-                    </div>
-
-                    <SubmitButton type="submit">
-                        Submit
-                    </SubmitButton>
-                </form>
-            </div>
-        </FormContainer>
+                <button type="submit">게시물 등록</button>
+            </form>
+        </StyledContainer>
     );
 }
 

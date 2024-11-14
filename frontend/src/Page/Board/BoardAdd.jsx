@@ -32,6 +32,7 @@ function BoardAdd() {
         }
 
     }, []);
+    console.log(testData)
 
     const handleSubmit = async (values) => {
         console.log('제출된 값:', values); // 확인용
