@@ -5,6 +5,7 @@ import com.sports.Category.CategoryDTO;
 import com.sports.Category.CategoryService;
 import com.sports.Item.DTO.ItemDTO;
 import com.sports.Item.DTO.ItemResponseDTO;
+import com.sports.like.LikeService;
 import com.sports.user.entito.User;
 import com.sports.user.service.UserContextService;
 import io.jsonwebtoken.MalformedJwtException;
@@ -16,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -28,6 +30,7 @@ public class ItemController {
     private final ItemService itemService;
     private final S3Service s3Service;
     private final UserContextService userContextService;
+    private final LikeService likeService;
 
     // 상품 목록 조회
     @GetMapping("/list")
@@ -41,7 +44,9 @@ public class ItemController {
                         item.getDesc(),
                         item.getImgurl(),
                         item.getStock(),
-                        item.getCategory() != null ? item.getCategory().getId() : null))
+                        item.getCategory() != null ? item.getCategory().getId() : null,
+                        item.getLikes()
+                ))
                 .collect(Collectors.toList());
 
         // 성공 시 message와 items만 반환
@@ -98,8 +103,8 @@ public class ItemController {
     public ResponseEntity<ItemResponseDTO> detailItem(@PathVariable(name = "id") Long id) {
         try {
             ItemDTO itemDTO = itemService.getItemDetail(id);
-            // 성공 시 message와 item 반환
-            ItemResponseDTO response = new ItemResponseDTO("상품 조회 성공", List.of(itemDTO));
+            // 단일 ItemDTO를 사용하여 response 생성
+            ItemResponseDTO response = new ItemResponseDTO("상품 조회 성공", itemDTO);
             return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
             // 상품을 찾을 수 없는 경우
@@ -166,6 +171,29 @@ public class ItemController {
             // 일반적인 오류
             ItemResponseDTO response = new ItemResponseDTO("상품 삭제에 실패했습니다.");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
+    @PostMapping("/like/{itemId}")
+    public ResponseEntity<ItemDTO> toggleItemLike(@PathVariable Long itemId) {
+        try {
+            // 상품 좋아요 토글 서비스 호출
+            Map<String, Object> response = likeService.toggleItemLike(itemId);
+
+            // 응답에서 좋아요 상태 및 카운트 가져오기
+            boolean isLiked = (boolean) response.get("isLiked");
+            int likeCount = (int) response.get("likeCount");
+
+            // ItemDTO로 응답 반환
+            ItemDTO itemDTO = itemService.getItemDetail(itemId);  // 상품 상세 정보 가져오기
+            itemDTO.setLikes(likeCount);  // 새로운 좋아요 수 설정
+
+            return ResponseEntity.ok(itemDTO);
+        } catch (RuntimeException e) {
+            // 상품을 찾을 수 없는 경우
+            ItemDTO response = new ItemDTO();
+            response.setTitle("상품을 찾을 수 없습니다.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
     }
 }

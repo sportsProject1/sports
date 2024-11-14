@@ -34,7 +34,16 @@ public class ItemDTO {
     private Long categoryId;
     private List<MultipartFile> files;
 
-    public ItemDTO(Long id, String title, Integer price, String desc, String imgurl, Integer stock, Long categoryId) {
-        this(id, title, price, desc, imgurl, stock, categoryId, null); //
+    private int likes;
+
+    public ItemDTO(Long id, String title, Integer price, String desc, String imgurl, Integer stock, Long categoryId, int likes) {
+        this.id = id;
+        this.title = title;
+        this.price = price;
+        this.desc = desc;
+        this.imgurl = imgurl;
+        this.stock = stock;
+        this.categoryId = categoryId;
+        this.likes = likes;
     }
 }
