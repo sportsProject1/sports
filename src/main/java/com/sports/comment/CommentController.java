@@ -1,7 +1,7 @@
-package com.sports.Comment;
+package com.sports.comment;
 
-import com.sports.Comment.DTO.CommentDTO;
-import com.sports.Comment.DTO.CommentResponseDTO;
+import com.sports.comment.DTO.CommentDTO;
+import com.sports.comment.DTO.CommentResponseDTO;
 import com.sports.like.LikeService;
 import com.sports.user.entito.User;
 import com.sports.user.service.UserContextService;
@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor

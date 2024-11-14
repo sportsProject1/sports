@@ -1,7 +1,7 @@
 package com.sports.like;
 
-import com.sports.Comment.Comment;
-import com.sports.Comment.CommentRepository;
+import com.sports.comment.Comment;
+import com.sports.comment.CommentRepository;
 import com.sports.Item.Item;
 import com.sports.Item.ItemRepository;
 import com.sports.board.Board;
