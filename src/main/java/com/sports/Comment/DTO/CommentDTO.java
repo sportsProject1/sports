@@ -9,23 +9,25 @@ import java.sql.Timestamp;
 
 
 @Data
-@AllArgsConstructor  // 모든 필드를 포함하는 생성자 자동 생성
+@AllArgsConstructor
 @NoArgsConstructor
 public class CommentDTO {
     private Long id;
     private String content;
     private Long userId;
+    private String username;
     private Long itemId;  // 상품에 달린 댓글
     private Long boardId; // 게시판에 달린 댓글
     private Long parentId;
     private Timestamp createdAt;
     private int likes;
 
-    public static CommentDTO fromCommentResponse(Comment comment) {
+    public static CommentDTO fromCommentResponse(Comment comment, String username) {
         return new CommentDTO(
                 comment.getId(),
                 comment.getContent(),
                 comment.getUserId(),
+                username,
                 comment.getItemId(),
                 comment.getBoardId(),
                 comment.getParentId(),
