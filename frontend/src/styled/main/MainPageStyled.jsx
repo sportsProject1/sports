@@ -89,6 +89,7 @@ export const PostCard = styled.div`
     border: 1px solid #e0e0e0;
     position: relative;
     margin: 10px;
+    cursor: pointer;
 `;
 
 // 카테고리 태그 스타일

@@ -12,6 +12,7 @@ const CreateInputFields = ({ handleChange, handleBlur, handleCategoryChange, val
                 placeholder="제목을 입력하세요"
                 onChange={handleChange}
                 onBlur={handleBlur}
+                value={values.title}
             />
         </FormGroup>
 
@@ -22,6 +23,7 @@ const CreateInputFields = ({ handleChange, handleBlur, handleCategoryChange, val
                 name="categoryId"
                 onChange={handleCategoryChange}
                 onBlur={handleBlur}
+                value={values.categoryId}
             >
                 <option value="4">클라이밍</option>
                 <option value="1">축구</option>
@@ -34,6 +36,7 @@ const CreateInputFields = ({ handleChange, handleBlur, handleCategoryChange, val
         <FormGroup>
             <CreateLabel htmlFor="content">본문:</CreateLabel>
             <CreateTextarea
+                value={values.content}
                 name="content"
                 rows="5"
                 placeholder="본문을 작성하세요"

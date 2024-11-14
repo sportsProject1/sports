@@ -8,16 +8,19 @@ export const fetchTokenData = async (url)=>{
     }
 }
 
-export const postTokenData = async (url,formData)=>{
-    try{
-        const response = await api.post(url, formData,{
-            headers:{
+export const postTokenData = async (url, formData) => {
+    try {
+        const response = await api.post(url, formData, {
+            headers: {
                 "Content-Type": "multipart/form-data",
             }
-        })
-    }catch(error){
+        });
+        return response.data;  // 응답 데이터를 반환
+    } catch (error) {
+        console.error('API 요청 실패:', error);
+        throw error;  // 실패 시 예외를 throw
     }
-}
+};
 
 export const deleteTokenData = async (url)=>{
     try{
