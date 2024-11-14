@@ -2,13 +2,13 @@ import React, { useState, useEffect } from 'react';
 import {handleNextSlide, handlePrevSlide} from "../../Utils/MainItemSlide";
 import {Banner, BannerContainer, BannerInfo, BannerWrapper, NavButton} from "../../styled/main/MainPageStyled";
 
+import banner1 from '../../assets/banner4.webp';
+import banner2 from '../../assets/banner2.webp';
+import banner3 from '../../assets/banner6.webp';
+
 function MainBanner() {
     const [bannerIndex, setBannerIndex] = useState(0);
-    const banners = [
-        'https://via.placeholder.com/1200x700?text=Banner+1',
-        'https://via.placeholder.com/1200x700?text=Banner+2',
-        'https://via.placeholder.com/1200x700?text=Banner+3',
-    ];
+    const banners = [banner1, banner2, banner3];
 
 
     useEffect(() => {

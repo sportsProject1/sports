@@ -26,9 +26,14 @@ export const Banner = styled.div`
     height: 700px;
     background-image: url('https://via.placeholder.com/300');
     background-size: cover;
-    background-position: center;
+    background-repeat: no-repeat;
+    background-position: center 70%;
     transition: transform 0.5s ease-in-out; // 슬라이드 애니메이션
-    position: relative; 
+    position: relative;
+
+    max-height: 700px;
+    min-width: 100%;
+    max-width: 100%;
 `;
 export const BannerInfo = styled.div`
     width: 400px;

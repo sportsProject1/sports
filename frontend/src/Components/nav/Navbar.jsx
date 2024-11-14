@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import Menu from "./Menu";
+import Logo from "./Logo";
 import {useEffect, useState} from "react";
 
 const NavContainer = styled.nav`
@@ -58,6 +59,7 @@ function Navbar(){
     return(
         <NavContainer>
             <NavBox showNavbar={showNavbar}>
+                <Logo />
                 <Menu/>
             </NavBox>
         </NavContainer>
