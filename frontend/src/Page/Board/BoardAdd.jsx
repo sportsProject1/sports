@@ -1,14 +1,37 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import CreateForm from "../../Components/CreateForm/CreateForm";
-import {postTokenData} from "../../Server/ApiService";
+import {fetchTokenData, postTokenData} from "../../Server/ApiService";
+import {useNavigate, useParams} from "react-router-dom";
 
 function BoardAdd() {
-    const initialValues = {
+    const [initialValues,setInitialValues] = useState({
         title: '',
         content: '',
         categoryId:'4',
         file: null
-    };
+    });
+    const navigate = useNavigate();
+
+    const {id} = useParams();
+    const [testData, setTestData] = useState({});
+    const [imageArray,setImageArray] = useState();
+
+    useEffect(() => {
+        if(id){
+            fetchTokenData(`/board/${id}`).then((res)=>{
+                setTestData(res.data);
+                const data = res.data;
+                setImageArray(data.imgUrl ? data.imgUrl.split(',').map(img => img.trim()) : [])
+                setInitialValues({
+                    title: data.title,
+                    content: data.content,
+                    categoryId:data.id,
+                    file:null
+                })
+            })
+        }
+
+    }, []);
 
     const handleSubmit = async (values) => {
         console.log('제출된 값:', values); // 확인용
@@ -28,20 +51,29 @@ function BoardAdd() {
         }
 
         try {
-            await postTokenData("/board/add", formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            });
+            if(id){
+                console.log(formData);
+            }else{
+                await postTokenData("/board/add", formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                });
+            }
+
+            // navigate('/board')
         } catch (error) {
         }
     };
     return (
         <div>
+            <button onClick={()=>console.log(imageArray)}>이미지테스트</button>
             <h1>글 생성</h1>
             <CreateForm
                 initialValues={initialValues}
                 onSubmit={handleSubmit}
+                imageArray={imageArray}
+                setImageArray={setImageArray}
                 submitButtonText={"작성하기"}/>
         </div>
     );

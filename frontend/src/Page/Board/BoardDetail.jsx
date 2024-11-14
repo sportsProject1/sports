@@ -10,18 +10,19 @@ import {
     TitleSection, ViewsText
 } from "../../styled/Board/BoardPageStyled";
 import {fetchData} from "../../Server/ApiServiceNoToken";
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 
 function BoardDetail(){
     const [detailBoard,setDetailBoard] = useState(null);
     const {id} = useParams()
+    const navigate = useNavigate();
     useEffect(() => {
         fetchData(`/board/${id}`).then((res)=>{
             setDetailBoard(res.data);
         })
     }, []);
-    console.log(detailBoard);
     const formattedDate = detailBoard?.createdAt.split('T')[0].substring(2);
+    console.log(detailBoard)
     if(detailBoard === null){
         return(
             <div>로딩중</div>
@@ -45,7 +46,12 @@ function BoardDetail(){
                     {detailBoard.content}
                     <InteractionSection>
                         <LikeButton>좋아요 {detailBoard.likes}</LikeButton>
-                        <ViewsText>조회수: {detailBoard.views}</ViewsText>
+                        <div>
+                            <LikeButton
+                            onClick={()=>navigate(`/board/update/${id}`)}>수정하기</LikeButton>
+                            <LikeButton>삭제하기</LikeButton>
+                            <ViewsText>조회수: {detailBoard.views}</ViewsText>
+                        </div>
                     </InteractionSection>
                 </ContentSection>
 

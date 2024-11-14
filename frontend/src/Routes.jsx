@@ -1,11 +1,10 @@
 import Home from "./Page/Main/Home";
 import Login from "./Page/user/Login";
 import Layout from "./Page/Layout";
-import { createBrowserRouter } from "react-router-dom";
+import {createBrowserRouter} from "react-router-dom";
 import Register from "./Page/user/Register";
 import React from "react";
 import Board from "./Page/Board/Board";
-import SportsChild from "./Page/Board/SportsChild";
 import Shop from "./Page/shop/Shop";
 import ShopAdd from "./Page/shop/ShopAdd";
 import ShopDetail from "./Page/shop/ShopDetail";
@@ -23,13 +22,10 @@ const Routes = createBrowserRouter([
             { path: '/', element: <Home/> },
             { path: '/login', element: <Login/> },
             { path: '/register', element: <Register/> },
-            { path: '/board', element: <Board/>,
-                children:[{
-                    path: '/board/:sport', element: <SportsChild/>
-                }]
-            },
+            { path: '/board', element: <Board/>,},
             { path: '/board/add', element: <BoardAdd /> },
             { path: '/board/detail/:id', element: <BoardDetail/> },
+            { path: '/board/update/:id', element: <BoardAdd/>},
 
             { path: '/shop', element: <Shop/> },
             { path: '/shop/detail/:id', element:<ShopDetail/>},
