@@ -1,4 +1,4 @@
-package com.sports.Comment;
+package com.sports.comment;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

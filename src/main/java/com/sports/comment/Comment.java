@@ -1,4 +1,4 @@
-package com.sports.Comment;
+package com.sports.comment;
 
 import jakarta.persistence.*;
 import lombok.Data;
