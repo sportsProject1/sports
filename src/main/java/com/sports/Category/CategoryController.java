@@ -21,7 +21,7 @@ public class CategoryController {
     public List<CategoryDTO> getCategories() {
         List<Category> categories = categoryService.getAllCategories();
         return categories.stream()
-                .map(category -> new CategoryDTO(category.getId(), category.getName()))
+                .map(category -> new CategoryDTO(category.getId(), category.getName(), category.getEnName()))
                 .collect(Collectors.toList());
     }
 }
