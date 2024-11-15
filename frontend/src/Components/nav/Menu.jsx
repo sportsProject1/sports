@@ -13,7 +13,6 @@ const MenuUl = styled.ul`
         margin:15px;
         padding:15px;
         cursor: pointer;
-        font-weight: bolder;
     }
     > div > ul li:hover{
         border-bottom: 1px solid #ccc;
