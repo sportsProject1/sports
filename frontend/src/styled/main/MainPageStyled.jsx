@@ -12,6 +12,7 @@ export const BannerContainer = styled.div`
     display: flex;
     overflow: hidden;
     position: relative;
+    background-color: #000;
 `;
 
 export const Banner = styled.div`
@@ -20,9 +21,10 @@ export const Banner = styled.div`
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
-    transition: filter 0.5s ease-in-out;
+    transition: transform 0.5s ease, filter 0.5s ease;
+
     &:hover {
-        filter: blur(5px);
+        filter: brightness(0.8);
         transform: scale(1.1);
     }
 `;
@@ -32,40 +34,39 @@ export const BannerWrapper = styled.div`
     width: 300%;
     transform: translateX(${(props) => props.$translateX}%);
     transition: transform 1s ease-in-out;
-
-    /* BannerContainer hover 상태에서 배너 블러 처리 */
-    ${BannerContainer}:hover ${Banner} {
-        filter: blur(5px);
-    }
 `;
 
 export const BannerInfo = styled.div`
     width: max-content;
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    color: rgba(255, 255, 255, 0.7);
-    padding: 20px 40px;
-    border-radius: 5px;
-    font-size: 1.5rem;
-    font-weight: bold;
-    text-align: center;
-    line-height: 1.4;
+    bottom: 5%;
+    left: 5%;
+    text-align: left;
     z-index: 10;
-    background-color: transparent;
-    opacity: 1;
-    transition:
-        opacity 0.5s ease-in-out,
-        transform 0.5s ease-in-out,
-        background-color 0.5s ease-in-out,
-        color 0.5s ease-in-out,
-        box-shadow 0.5s ease-in-out;
+
+    .small-text {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 3.5rem;
+        font-weight: 500;
+    }
+
+    .large-text {
+        color: white;
+        font-size: 5rem;
+        font-weight: bold;
+    }
+
+    line-height: 1.6;
+    white-space: pre-line;
+    transform: text-shadow 1s ease;
+    line-height: 1.15;
 
     ${BannerContainer}:hover & {
-        background-color: rgba(255, 255, 255, 0.3);
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-        color: black;
+    text-shadow:
+        -2px -2px 2px rgba(0, 0, 0, 0.3),
+        2px -2px 2px rgba(0, 0, 0, 0.3),
+        -2px 2px 2px rgba(0, 0, 0, 0.3),
+        2px 2px 2px rgba(0, 0, 0, 0.3);
     }
 `;
 
@@ -140,10 +141,12 @@ export const PostImage = styled.div`
     position: relative;
 `;
 
-// 이미지 아이콘 (없을 경우 보여줄 아이콘)
-export const PlaceholderIcon = styled.div`
-    font-size: 48px;
-    color: #adb5bd;
+// 기본 이미지 (없을 경우 보여줄 이미지)
+export const PlaceholderImg = styled.img`
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
 `;
 
 // 콘텐츠 영역 스타일
