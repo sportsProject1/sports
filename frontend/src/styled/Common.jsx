@@ -155,7 +155,7 @@ export const CreateButtonContainer = styled.div`
 `;
 
 export const CreateButton = styled.button`
-    background-color: #4CAF50;
+    background-color: #0C48C5;
     color: white;
     border: none;
     padding: 10px 20px;
@@ -166,7 +166,7 @@ export const CreateButton = styled.button`
     margin-right: 25px;
 
     &:hover {
-        background-color: #45a049;
+        background-color: royalblue;
     }
 `;
 
