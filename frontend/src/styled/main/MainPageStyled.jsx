@@ -81,7 +81,7 @@ export const NavButton = styled.button`
     border-radius: 50%;
     padding: 5px 10px 10px 10px;
     cursor: pointer;
-    font-size: 30px;
+    font-size: 26px;
     ${({ $left }) => ($left ? 'left: 30px' : 'right: 30px')};
     z-index: 1;
 `;

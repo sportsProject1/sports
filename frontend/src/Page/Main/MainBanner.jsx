@@ -11,15 +11,15 @@ function MainBanner() {
     const banners = [
         {
             image: banner1,
-            text: `<span class="small-text">나만의 운동 메이트를 만나고,</span><br><span class="large-text">더 나은 나를 만들어 보세요!</span>`
+            text: `<span class="small-text">운동 친구를 만나고,</span><br><span class="large-text">모두의 건강한 변화를</span>`
         },
         {
             image: banner2,
-            text: `<span class="small-text">함께 하는 힘,</span><br><span class="large-text">혼자서는 느낄 수 없는<br>성취감을 경험하세요.</span>`
+            text: `<span class="small-text">함께라서 더 즐거운,</span><br><span class="large-text">성장의 기쁨을</span>`
         },
         {
             image: banner3,
-            text: `<span class="small-text">건강한 라이프스타일의 시작,</span><br><span class="large-text">Movo가 여러분과 함께합니다.</span>`
+            text: `<span class="small-text">더 건강한 삶을,</span><br><span class="large-text">Movo와 함께 만들어가요</span>`
         }
     ];
 

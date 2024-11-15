@@ -43,7 +43,7 @@ function BoardWrapper({boardItem}){
                 {currentPosts.map((post, index) => (
                     <PostCard onClick={()=>{navigate(`/board/detail/${post.id}`)}} key={post.id + index}>
                         <PostImage>
-                            <PlaceholderImg>📷</PlaceholderImg>
+                            <PlaceholderImg></PlaceholderImg>
                             <CategoryTag>{post.category}</CategoryTag>
                         </PostImage>
                         <PostContent>
