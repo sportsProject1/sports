@@ -39,9 +39,10 @@ export const BannerWrapper = styled.div`
 export const BannerInfo = styled.div`
     width: max-content;
     position: absolute;
-    bottom: 5%;
-    left: 5%;
-    text-align: left;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
     z-index: 10;
 
     .small-text {
@@ -77,10 +78,11 @@ export const NavButton = styled.button`
     background: rgba(0, 0, 0, 0.5);
     color: white;
     border: none;
-    padding: 10px;
+    border-radius: 50%;
+    padding: 5px 10px 10px 10px;
     cursor: pointer;
-    font-size: 24px;
-    ${({ $left }) => ($left ? 'left: 10px' : 'right: 10px')};
+    font-size: 30px;
+    ${({ $left }) => ($left ? 'left: 30px' : 'right: 30px')};
     z-index: 1;
 `;
 
