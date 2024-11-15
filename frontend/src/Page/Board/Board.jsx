@@ -31,10 +31,12 @@ function Board() {
         })
         : boardItem; // sport 값이 없으면 모든 아이템을 보여줌
 
+    const sportCategories = category?.filter(cat => cat.tag === 'sport');
+
     if(boardItem){
         return (
             <BoardContainer>
-                <SideMenu category={category} />
+                <SideMenu category={sportCategories} />
                 <BoardWrapper boardItem={filteredBoardItems} />
             </BoardContainer>
         );
