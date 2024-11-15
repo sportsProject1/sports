@@ -6,6 +6,9 @@ import {postTokenData, putTokenData} from "../../Server/ApiService";
 import { fetchData } from "../../Server/ApiServiceNoToken";
 
 const StyledContainer = styled.div`
+    .toastui-editor-defaultUI .toastui-editor-mode-switch {
+        display: none !important; /* 강제적으로 숨기기 */
+    }
     .toastui-editor-contents {
         font-family: 'Noto Sans', sans-serif;
         line-height: 1.8;
@@ -48,17 +51,27 @@ function CreateForm({ updateData,updateId }) {
 
     useEffect(() => {
         // updateData가 있으면 초기값 설정
+        // updateData가 있으면 초기값 설정
         if (updateData) {
             setTitle(updateData.title);
-            setCategoryId(updateData.categoryId);
             if (editorRef.current) {
                 editorRef.current.getInstance().setHTML(updateData.content); // 에디터에 초기 content 설정
+            }
+
+            // category 데이터가 로드된 후에 categoryId 설정
+            if (updateData.category && category) {
+                const matchedCategory = category.find(item => item.name === updateData.category);
+                if (matchedCategory) {
+                    setCategoryId(matchedCategory.id); // 일치하는 카테고리 ID 설정
+                }
             }
         }
 
         fetchData("/category/get").then((res) => {
             setCategory(res.data);
         });
+
+
     }, [updateData]);
 
     const handleSubmit = async (e) => {
@@ -106,10 +119,7 @@ function CreateForm({ updateData,updateId }) {
     const toolbarItems = [
         ['heading', 'bold', 'italic', 'strike'],
         ['hr', 'quote'],
-        ['ul', 'ol', 'task', 'indent', 'outdent'],
-        ['table', 'link'],
-        ['image', 'code', 'codeblock'],
-        ['scrollSync'],
+        ['image'],
     ];
 
     return (

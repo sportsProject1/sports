@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import {Link} from "react-router-dom";
+import {fetchData} from "../../Server/ApiServiceNoToken";
+import LoadingPage from "../LoadingPage";
 
 // 전체 사이드바 컨테이너
 export const SidebarContainer = styled.div`
@@ -60,7 +62,15 @@ function SideMenu() {
     const [scrollDirection, setScrollDirection] = useState('up');
     const [lastScrollY, setLastScrollY] = useState(0);
 
+    const [category,setCategory] = useState()
+
     useEffect(() => {
+        fetchData('/category/get').then((res) => {
+            setCategory(res.data);
+        }).catch((e)=>{
+            console.log(e)
+        })
+
         const handleScroll = () => {
             if (window.scrollY > lastScrollY) {
                 setScrollDirection('down');
@@ -74,29 +84,46 @@ function SideMenu() {
         return () => {
             window.removeEventListener('scroll', handleScroll);
         };
+
+
     }, [lastScrollY]);
 
-    return (
-        <SidebarContainer>
-            <SidebarFixed scrollDirection={scrollDirection}>
+    if(category){
+        return (
+            <SidebarContainer>
+                <SidebarFixed scrollDirection={scrollDirection}>
 
-                <CategorySection>
-                    <SectionTitle>Category 1</SectionTitle>
-                    <Link to={"/board"}>모두 보기</Link>
-                    <Link to={"soccer"}>축구</Link>
-                    <Link to={"basketball"}>농구</Link>
-                </CategorySection>
+                    <CategorySection>
+                        <SectionTitle>Category 1</SectionTitle>
+                        <Link to={"/board"}>모두 보기</Link>
+                        {/*{category.map((item)=>{*/}
+                        {/*    return (*/}
+                        {/*        <Link key={item.id} to={`${category}`}>{category}</Link>*/}
+                        {/*    )*/}
+                        {/*})}*/}
 
-                <CategorySection>
-                    <SectionTitle>Category 1</SectionTitle>
-                    <Label>Label Description</Label>
-                    <Label>Label Description</Label>
-                    <Label>Label Description</Label>
-                </CategorySection>
 
-            </SidebarFixed>
-        </SidebarContainer>
-    );
+                        <Link to={"soccer"}>축구</Link>
+                        <Link to={"basketball"}>농구</Link>
+                    </CategorySection>
+
+                    <CategorySection>
+                        <SectionTitle>Category 1</SectionTitle>
+                        <Label>Label Description</Label>
+                        <Label>Label Description</Label>
+                        <Label>Label Description</Label>
+                    </CategorySection>
+
+                </SidebarFixed>
+            </SidebarContainer>
+        );
+    }else{
+        return (
+            <LoadingPage/>
+        )
+    }
+
+
 }
 
 export default SideMenu;
