@@ -11,7 +11,7 @@ function MainBanner() {
     const banners = [
         {
             image: banner1,
-            text: `<span class="small-text">나만의<br>운동 메이트를 만나고,</span><br><span class="large-text">더 나은 나를<br>만들어 보세요!</span>`
+            text: `<span class="small-text">나만의 운동 메이트를 만나고,</span><br><span class="large-text">더 나은 나를 만들어 보세요!</span>`
         },
         {
             image: banner2,
@@ -19,7 +19,7 @@ function MainBanner() {
         },
         {
             image: banner3,
-            text: `<span class="small-text">건강한<br>라이프스타일의 시작,</span><br><span class="large-text">Movo가<br>여러분과 함께합니다.</span>`
+            text: `<span class="small-text">건강한 라이프스타일의 시작,</span><br><span class="large-text">Movo가 여러분과 함께합니다.</span>`
         }
     ];
 
