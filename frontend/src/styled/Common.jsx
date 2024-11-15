@@ -88,7 +88,7 @@ export const GoogleLogin = styled.button`
 export const Divider = styled.div`
     width: 250px;
     height: 4px;
-    margin: 30px auto;
+    margin: 50px auto;
     background-color: #cccccc;
     border-radius: 2px;
 `;
@@ -155,7 +155,7 @@ export const CreateButtonContainer = styled.div`
 `;
 
 export const CreateButton = styled.button`
-    background-color: #4CAF50;
+    background-color: #0C48C5;
     color: white;
     border: none;
     padding: 10px 20px;
@@ -166,7 +166,7 @@ export const CreateButton = styled.button`
     margin-right: 25px;
 
     &:hover {
-        background-color: #45a049;
+        background-color: royalblue;
     }
 `;
 
@@ -176,7 +176,7 @@ export const CreateButton = styled.button`
 export const FooterContainer = styled.footer`
     width: 100%;
     padding: 10px 0;
-    margin: 20px 0 0 0;
+    margin: 100px 0 0 0;
     background-color: #2c2c2c;
     color: #ffffff;
 `;
