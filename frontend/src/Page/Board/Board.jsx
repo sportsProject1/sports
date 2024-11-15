@@ -31,7 +31,8 @@ function Board() {
         })
         : boardItem; // sport 값이 없으면 모든 아이템을 보여줌
 
-    const sportCategories = category?.filter(cat => cat.tag === 'sport');
+    const sportCategories = category?.filter(item => item.tag === 'sports');
+    console.log(sportCategories)
 
     if(boardItem){
         return (
