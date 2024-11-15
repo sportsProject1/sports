@@ -176,5 +176,48 @@ export const CreateButton = styled.button`
 export const FooterContainer = styled.footer`
     width:100%;
     height: 150px;
-    background-color: green;
-`
+    background-color: none;
+`;
+
+export const FooterContent = styled.div`
+    display: flex;
+    justify-content: space-around;
+    padding: 20px 0;
+    margin: 0 10% 0 10%;
+`;
+
+export const Section = styled.div`
+    flex: 4;
+    text-align: left;
+`;
+
+export const FooterSection = styled.div`
+    flex: 1;
+    text-align: center;
+`;
+
+export const InquirySection = styled.div`
+    display: inline;
+    text-align: center;
+`;
+
+export const FooterSectionTitle = styled.h4`
+    font-weight: bold;
+    margin-bottom: 10px;
+`;
+
+export const SocialIcons = styled.div`
+    margin: 15px 0 15px 0;
+    text-align: center;
+    a {
+        margin-right: 10px;
+        text-decoration: none;
+    }
+`;
+
+export const Copyright = styled.div`
+    text-align: center;
+    padding: 10px;
+    font-size: 0.8rem;
+    color: #777;
+`;

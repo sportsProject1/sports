@@ -58,18 +58,11 @@ export const KeywordTag = styled.div`
     margin-right: 5px;
 `;
 
-function SideMenu() {
+function SideMenu({category}) {
     const [scrollDirection, setScrollDirection] = useState('up');
     const [lastScrollY, setLastScrollY] = useState(0);
 
-    const [category,setCategory] = useState()
-
     useEffect(() => {
-        fetchData('/category/get').then((res) => {
-            setCategory(res.data);
-        }).catch((e)=>{
-            console.log(e)
-        })
 
         const handleScroll = () => {
             if (window.scrollY > lastScrollY) {
@@ -96,15 +89,11 @@ function SideMenu() {
                     <CategorySection>
                         <SectionTitle>Category 1</SectionTitle>
                         <Link to={"/board"}>모두 보기</Link>
-                        {/*{category.map((item)=>{*/}
-                        {/*    return (*/}
-                        {/*        <Link key={item.id} to={`${category}`}>{category}</Link>*/}
-                        {/*    )*/}
-                        {/*})}*/}
-
-
-                        <Link to={"soccer"}>축구</Link>
-                        <Link to={"basketball"}>농구</Link>
+                        {category.map((item)=>{
+                            return (
+                                <Link key={item.id} to={`/board/${item.enName}`}>{item.name}</Link>
+                            )
+                        })}
                     </CategorySection>
 
                     <CategorySection>
