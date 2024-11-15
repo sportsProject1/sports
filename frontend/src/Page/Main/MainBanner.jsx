@@ -2,14 +2,26 @@ import React, { useState, useEffect } from 'react';
 import {handleNextSlide, handlePrevSlide} from "../../Utils/MainItemSlide";
 import {Banner, BannerContainer, BannerInfo, BannerWrapper, NavButton} from "../../styled/main/MainPageStyled";
 
-import banner1 from '../../assets/banner4.webp';
-import banner2 from '../../assets/banner2.webp';
-import banner3 from '../../assets/banner6.webp';
+import banner1 from '../../assets/banner1.jpg';
+import banner2 from '../../assets/banner2.jpg';
+import banner3 from '../../assets/banner3.jpg';
 
 function MainBanner() {
     const [bannerIndex, setBannerIndex] = useState(0);
-    const banners = [banner1, banner2, banner3];
-
+    const banners = [
+        {
+            image: banner1,
+            text: "나만의 운동 메이트를 만나고, 더 나은 나를 만들어 보세요!"
+        },
+        {
+            image: banner2,
+            text: "함께 하는 힘, 혼자서는 느낄 수 없는 성취감을 경험하세요."
+        },
+        {
+            image: banner3,
+            text: "건강한 라이프스타일의 시작, Movo가 여러분과 함께합니다."
+        }
+    ];
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -29,9 +41,9 @@ function MainBanner() {
     return (
         <BannerContainer>
             <BannerWrapper $translateX={-bannerIndex * 100}>
-                {banners.map((url, idx) => (
-                    <Banner key={idx} style={{ backgroundImage: `url(${url})` }}>
-                        <BannerInfo>소개문구</BannerInfo>
+                {banners.map((banner, idx) => (
+                    <Banner key={idx} style={{ backgroundImage: `url(${banner.image})` }}>
+                        <BannerInfo>{banner.text}</BannerInfo>
                     </Banner>
                 ))}
             </BannerWrapper>

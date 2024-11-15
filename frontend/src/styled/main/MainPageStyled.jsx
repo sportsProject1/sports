@@ -27,23 +27,36 @@ export const Banner = styled.div`
     background-image: url('https://via.placeholder.com/300');
     background-size: cover;
     background-repeat: no-repeat;
-    background-position: center 70%;
+    background-position: center;
     transition: transform 0.5s ease-in-out; // 슬라이드 애니메이션
     position: relative;
+    overflow: hidden;
+    transition: transform 0.5s ease-in-out;
+    filter: blur(3px);
 
-    max-height: 700px;
-    min-width: 100%;
-    max-width: 100%;
+    &:hover {
+        transform: scale(1.1);
+        filter: blur(1px);
+    }
 `;
+
 export const BannerInfo = styled.div`
-    width: 400px;
-    height: 200px;
-    background-color: mediumaquamarine;
     position: absolute;
-    left: 10%;
-    bottom:5%;
-    
-`
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    padding: 20px 40px;
+    border-radius: 8px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-align: center;
+    line-height: 1.4;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+`;
+
 export const NavButton = styled.button`
     position: absolute;
     top: 50%;
