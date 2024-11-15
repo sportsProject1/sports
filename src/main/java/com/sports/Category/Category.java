@@ -15,4 +15,6 @@ public class Category {
 
     @Column(name = "english_name")
     private String enName;
+
+    private String tag;
 }
