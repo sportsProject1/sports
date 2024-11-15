@@ -11,6 +11,7 @@ import {
 } from "../../styled/Board/BoardPageStyled";
 import {fetchData} from "../../Server/ApiServiceNoToken";
 import {useNavigate, useParams} from "react-router-dom";
+import {deleteTokenData} from "../../Server/ApiService";
 
 function BoardDetail(){
     const [detailBoard,setDetailBoard] = useState(null);
@@ -22,7 +23,17 @@ function BoardDetail(){
         })
     }, []);
     const formattedDate = detailBoard?.createdAt.split('T')[0].substring(2);
-    console.log(detailBoard)
+
+    const onDelete = async () =>{
+        try{
+            await deleteTokenData(`/board/${id}`).then((res)=>{
+                navigate('/board')
+            })
+        }catch(e){
+            console.log(e)
+        }
+    }
+
     if(detailBoard === null){
         return(
             <div>로딩중</div>
@@ -49,7 +60,7 @@ function BoardDetail(){
                         <div>
                             <LikeButton
                             onClick={()=>navigate(`/board/update/${id}`)}>수정하기</LikeButton>
-                            <LikeButton>삭제하기</LikeButton>
+                            <LikeButton onClick={onDelete}>삭제하기</LikeButton>
                             <ViewsText>조회수: {detailBoard.views}</ViewsText>
                         </div>
                     </InteractionSection>

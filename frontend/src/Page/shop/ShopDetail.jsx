@@ -33,7 +33,7 @@ function ShopDetail() {
 
     useEffect(() => {
         fetchData(`/shop/detail/${id}`).then((res)=>{
-            setFetchItem(res.data)
+            setFetchItem(res.data.item)
         });
     }, [id]);
 
