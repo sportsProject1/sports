@@ -174,26 +174,38 @@ export const CreateButton = styled.button`
 // Footer
 
 export const FooterContainer = styled.footer`
-    width:100%;
-    height: 150px;
-    background-color: none;
+    width: 100%;
+    padding: 10px 0;
+    margin: 20px 0 0 0;
+    background-color: #2c2c2c;  // 어두운 배경색
+    color: #ffffff;  // 텍스트를 읽기 쉽게 밝은 색상으로 설정
 `;
 
 export const FooterContent = styled.div`
     display: flex;
     justify-content: space-around;
+    gap: 2rem;
     padding: 20px 0;
-    margin: 0 10% 0 10%;
+    max-width: 1200px;  // 최대 너비를 설정해 넓은 화면에서 과도하게 확장되지 않도록
+    margin: 0 auto;
 `;
 
 export const Section = styled.div`
-    flex: 4;
+    flex: 2;
     text-align: left;
+    font-size: 0.9rem;
+    line-height: 2.5;
+    color: #cccccc;
+    white-space: nowrap;
 `;
 
 export const FooterSection = styled.div`
-    flex: 1;
+    flex: 1.5;
     text-align: center;
+    font-size: 0.9rem;
+    color: #cccccc;
+    line-height: 1.8;
+    white-space: nowrap;
 `;
 
 export const InquirySection = styled.div`
@@ -207,11 +219,17 @@ export const FooterSectionTitle = styled.h4`
 `;
 
 export const SocialIcons = styled.div`
-    margin: 15px 0 15px 0;
-    text-align: center;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin: 15px auto;
     a {
-        margin-right: 10px;
-        text-decoration: none;
+        color: #ffffff;
+        font-size: 1.2rem;
+        transition: color 0.3s;
+    }
+    a:hover {
+        color: #ff6347;  // 예시로 호버 시 색상을 변경
     }
 `;
 
@@ -220,4 +238,6 @@ export const Copyright = styled.div`
     padding: 10px;
     font-size: 0.8rem;
     color: #777;
+    margin-top: 20px;
+    border-top: 1px solid #444;
 `;
