@@ -55,4 +55,6 @@ public class Board {
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
+    // 채팅용 필드
+    private boolean chatroom;
 }
