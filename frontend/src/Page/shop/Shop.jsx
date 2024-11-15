@@ -4,6 +4,7 @@ import {fetchData} from "../../Server/ApiServiceNoToken";
 import {ShopContainer} from "../../styled/shopStyled";
 import SideMenu from "../../Components/Menu/SideMenu";
 import ItemWrapper from "./ItemWrapper";
+import LoadingPage from "../../Components/LoadingPage";
 
 function Shop() {
     const [items, setItems] = useState([]);
@@ -13,17 +14,23 @@ function Shop() {
     useEffect(() => {
         fetchData("/shop/list").then((res)=>{
             console.log(res)
-            setItems(res.data)
+            setItems(res.data.items)
         });
     }, []);
     // const thumbnailUrl = item.imgurl.split(',')[0];
-    console.log(items);
-    return (
-        <ShopContainer>
-            <SideMenu/>
-            <ItemWrapper items={items}/>
-        </ShopContainer>
-    );
+    if(items){
+        return (
+            <ShopContainer>
+                <SideMenu/>
+                <ItemWrapper items={items}/>
+            </ShopContainer>
+        );
+    }else{
+        return (
+            <LoadingPage/>
+        )
+    }
+
 }
 
 export default Shop;

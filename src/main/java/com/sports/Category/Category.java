@@ -12,4 +12,7 @@ public class Category {
 
     @Column(name = "category_name")
     private String name;
+
+    @Column(name = "english_name")
+    private String enName;
 }

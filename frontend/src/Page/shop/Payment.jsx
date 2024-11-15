@@ -3,6 +3,7 @@ import { fetchTokenData, postTokenJsonData } from "../../Server/ApiService";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import styled from "styled-components";
+import LoadingPage from "../../Components/LoadingPage";
 
 const FormBox = styled(Form)`
     display: flex;
@@ -62,7 +63,7 @@ function Payment() {
 
     useEffect(() => {
         fetchTokenData("/mypage/cart/checkout").then((res) => {
-            setPaymentItem(res);
+            setPaymentItem(res.data);
         });
     }, []);
 
@@ -156,12 +157,20 @@ function Payment() {
                             </Field>
                             <p>체크된 상품들</p>
                             <ItemContainer>
-                                <ItemImage src={'https://via.placeholder.com/50'} alt="상품 이미지" />
-                                <div>
-                                    <p>상품명: 대머리</p>
-                                    <p>수량: 2</p>
-                                    <p>가격: 100원</p>
-                                </div>
+                                {paymentItem.cartItems.map((item,idx)=>{
+                                    return(
+                                        <div key={idx}>
+                                            <ItemImage src={item.itemImgUrl} alt="상품 이미지" />
+                                            <div>
+                                                <p>상품명: {item.itemTitle}</p>
+                                                <p>수량: {item.count}</p>
+                                                <p>가격: {item.itemPrice}</p>
+                                            </div>
+                                        </div>
+                                        )
+
+                                })}
+
                             </ItemContainer>
                             <p>최종 가격: {paymentItem.totalPrice}원</p>
                             <button type="submit" disabled={isSubmitting}>결제하기</button>
@@ -173,7 +182,7 @@ function Payment() {
     } else {
         return (
             <div>
-                로딩중
+                <LoadingPage/>
             </div>
         );
     }

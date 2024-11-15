@@ -14,6 +14,7 @@ import {
     CheckoutButton, DeleteAllButton
 } from "../../styled/Shop/ShopStyled";
 import { useNavigate } from "react-router-dom";
+import LoadingPage from "../../Components/LoadingPage";
 
 function ShopCart() {
     const [userCart, setUserCart] = useState([]);
@@ -51,74 +52,73 @@ function ShopCart() {
     };
 
     useEffect(() => {
-        fetchTokenData("/mypage/cart").then(
-            (data) => {
-                const itemsWithCount = data.data.map(cartItem => ({
-                    ...cartItem.item,
-                    count: cartItem.count,
-                    cartId: cartItem.id,
-                    isChecked: cartItem.checked,
-                }));
-                setUserCart(itemsWithCount);
-            }
-        );
+        fetchTokenData("/mypage/cart").then((res)=>{
+            setUserCart(res.data.cartItems)
+        })
     }, []);
     console.log(userCart);
 
-    return (
-        <CartContainer>
-            <DeleteAllButton>선택 항목 삭제</DeleteAllButton>
-            <CartTable>
-                <thead>
-                <tr>
-                    <TableHeader style={{ width: '10%' }}>선택</TableHeader>
-                    <TableHeader style={{ width: '10%' }}>사진</TableHeader>
-                    <TableHeader style={{ width: '30%' }}>상품명</TableHeader>
-                    <TableHeader style={{ width: '10%' }}>가격</TableHeader>
-                    <TableHeader style={{ width: '10%' }}>수량</TableHeader>
-                    <TableHeader style={{ width: '10%' }}>삭제</TableHeader>
-                </tr>
-                </thead>
-                <tbody>
-                {userCart.map(item => (
-                    <TableRow key={item.cartId}>
-                        <TableData>
-                            <input
-                                type="checkbox"
-                                onChange={() => handleUpdate('isChecked', item.cartId, item.cartId, !item.isChecked)}
-                                checked={item.isChecked}
-                            />
-                        </TableData>
-                        <TableData>
-                            <ItemImage src={item.imgurl} alt={item.name} />
-                        </TableData>
-                        <TableData>{item.title}</TableData>
-                        <TableData>{item.price.toLocaleString()}원</TableData>
-                        <TableData>
-                            <button onClick={() => handleUpdate('count', item.cartId, item.cartId, item.count - 1)}>▼
-                            </button>
-                            <QuantityInput
-                                type="number"
-                                min="1"
-                                value={item.count}
-                                readOnly
-                            />
-                            <button onClick={() => handleUpdate('count', item.cartId, item.cartId, item.count + 1)}>▲
-                            </button>
-                        </TableData>
-                        <TableData>
-                            <DeleteButton onClick={() => handleUpdate('delete', item.cartId, item.cartId)}>삭제</DeleteButton>
-                        </TableData>
-                    </TableRow>
-                ))}
-                </tbody>
-            </CartTable>
-            <CartSummary>
-                <TotalPrice>합계: {userCart.reduce((total, item) => total + item.price * item.count, 0).toLocaleString()}원</TotalPrice>
-                <CheckoutButton onClick={() => navigate('/shop/payment')}>결제하기</CheckoutButton>
-            </CartSummary>
-        </CartContainer>
-    );
+    if(userCart){
+        return (
+            <CartContainer>
+                <DeleteAllButton>선택 항목 삭제</DeleteAllButton>
+                <CartTable>
+                    <thead>
+                    <tr>
+                        <TableHeader style={{ width: '10%' }}>선택</TableHeader>
+                        <TableHeader style={{ width: '10%' }}>사진</TableHeader>
+                        <TableHeader style={{ width: '30%' }}>상품명</TableHeader>
+                        <TableHeader style={{ width: '10%' }}>가격</TableHeader>
+                        <TableHeader style={{ width: '10%' }}>수량</TableHeader>
+                        <TableHeader style={{ width: '10%' }}>삭제</TableHeader>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {userCart.map(item => (
+                        <TableRow key={item.cartId}>
+                            <TableData>
+                                <input
+                                    type="checkbox"
+                                    onChange={() => handleUpdate('isChecked', item.cartId, item.cartId, !item.isChecked)}
+                                    checked={!!item.isChecked} // item.isChecked가 undefined일 경우 false로 처리
+                                />
+                            </TableData>
+                            <TableData>
+                                <ItemImage src={item.itemImgUrl} alt={item.name}/>
+                            </TableData>
+                            <TableData>{item.itemTitle}</TableData>
+                            <TableData>{item.itemPrice.toLocaleString()}원</TableData>
+                            <TableData>
+                                <button onClick={() => handleUpdate('count', item.cartId, item.cartId, item.count - 1)}>▼
+                                </button>
+                                <QuantityInput
+                                    type="number"
+                                    min="1"
+                                    value={item.count}
+                                    readOnly
+                                />
+                                <button onClick={() => handleUpdate('count', item.cartId, item.cartId, item.count + 1)}>▲
+                                </button>
+                            </TableData>
+                            <TableData>
+                                <DeleteButton onClick={() => handleUpdate('delete', item.cartId, item.cartId)}>삭제</DeleteButton>
+                            </TableData>
+                        </TableRow>
+                    ))}
+                    </tbody>
+                </CartTable>
+                <CartSummary>
+                    <TotalPrice>합계: {userCart.reduce((total, item) => total + item.price * item.count, 0).toLocaleString()}원</TotalPrice>
+                    <CheckoutButton onClick={() => navigate('/shop/payment')}>결제하기</CheckoutButton>
+                </CartSummary>
+            </CartContainer>
+        );
+    }else{
+        return(
+            <div><LoadingPage/></div>
+        )
+    }
+
 }
 
 export default ShopCart;
