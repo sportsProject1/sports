@@ -11,15 +11,15 @@ function MainBanner() {
     const banners = [
         {
             image: banner1,
-            text: "나만의 운동 메이트를 만나고, 더 나은 나를 만들어 보세요!"
+            text: `<span class="small-text">나만의<br>운동 메이트를 만나고,</span><br><span class="large-text">더 나은 나를<br>만들어 보세요!</span>`
         },
         {
             image: banner2,
-            text: "함께 하는 힘, 혼자서는 느낄 수 없는 성취감을 경험하세요."
+            text: `<span class="small-text">함께 하는 힘,</span><br><span class="large-text">혼자서는 느낄 수 없는<br>성취감을 경험하세요.</span>`
         },
         {
             image: banner3,
-            text: "건강한 라이프스타일의 시작, Movo가 여러분과 함께합니다."
+            text: `<span class="small-text">건강한<br>라이프스타일의 시작,</span><br><span class="large-text">Movo가<br>여러분과 함께합니다.</span>`
         }
     ];
 
@@ -45,7 +45,7 @@ function MainBanner() {
                     <Banner key={idx} style={{ backgroundImage: `url(${banner.image})` }} />
                 ))}
             </BannerWrapper>
-            <BannerInfo>{banners[bannerIndex].text}</BannerInfo>
+            <BannerInfo dangerouslySetInnerHTML={{ __html: banners[bannerIndex].text }} />
             <NavButton $left={true} onClick={handlePrev}>◀</NavButton>
             <NavButton onClick={handleNext}>▶</NavButton>
         </BannerContainer>

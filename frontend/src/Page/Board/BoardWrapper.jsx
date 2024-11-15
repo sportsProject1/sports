@@ -3,7 +3,7 @@ import {ItemContainer} from "../../styled/Common";
 import {
     Author,
     CategoryTag,
-    PlaceholderIcon,
+    PlaceholderImg,
     PostCard,
     PostContent,
     PostImage,
@@ -43,7 +43,7 @@ function BoardWrapper({boardItem}){
                 {currentPosts.map((post, index) => (
                     <PostCard onClick={()=>{navigate(`/board/detail/${post.id}`)}} key={post.id + index}>
                         <PostImage>
-                            <PlaceholderIcon>📷</PlaceholderIcon>
+                            <PlaceholderImg>📷</PlaceholderImg>
                             <CategoryTag>{post.category}</CategoryTag>
                         </PostImage>
                         <PostContent>
