@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import logoImage from '../../assets/movologo.png';
+import logoImage from '../../assets/logowhitebg.png';
 import { Link } from 'react-router-dom';
 
 // 로고를 감싸는 전체 컨테이너
@@ -24,8 +24,8 @@ const StyledLink = styled(Link)`
 
   img {
     border-radius: 60px;
-    width: auto;
-    height: 70%;
+    width: 300px;
+    height: 100%;
   }
 `;
 const Logo = () => {
