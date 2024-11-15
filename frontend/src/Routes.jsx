@@ -23,6 +23,7 @@ const Routes = createBrowserRouter([
             { path: '/login', element: <Login/> },
             { path: '/register', element: <Register/> },
             { path: '/board', element: <Board/>,},
+            { path: '/board/:sport', element: <Board/>},
             { path: '/board/add', element: <BoardAdd /> },
             { path: '/board/detail/:id', element: <BoardDetail/> },
             { path: '/board/update/:id', element: <BoardAdd/>},
