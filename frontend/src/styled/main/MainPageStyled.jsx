@@ -7,54 +7,66 @@ export const MainContainer = styled.div`
 `;
 
 export const BannerContainer = styled.div`
-    width: 100%; // 컨테이너는 100% 너비를 유지
+    width: 100%;
     height: 700px;
     display: flex;
-    overflow: hidden; // 넘치는 부분 숨기기
-    position: relative; // 슬라이드 버튼 등을 위한 포지셔닝
-`;
-export const BannerWrapper = styled.div`
-    display: flex;
-    width: 300%;
-    transform: translateX(${props => props.$translateX}%);
-    transition: transform 0.5s ease-in-out;
+    overflow: hidden;
+    position: relative;
 `;
 
-// 배너 슬라이드
 export const Banner = styled.div`
-    flex: 0 0 100%; // 한 슬라이드가 100% 너비 차지
+    flex: 0 0 100%;
     height: 700px;
-    background-image: url('https://via.placeholder.com/300');
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
-    transition: transform 0.5s ease-in-out; // 슬라이드 애니메이션
-    position: relative;
-    overflow: hidden;
-    transition: transform 0.5s ease-in-out;
-    filter: blur(3px);
-
+    transition: filter 0.5s ease-in-out;
     &:hover {
+        filter: blur(5px);
         transform: scale(1.1);
-        filter: blur(1px);
+    }
+`;
+
+export const BannerWrapper = styled.div`
+    display: flex;
+    width: 300%;
+    transform: translateX(${(props) => props.$translateX}%);
+    transition: transform 1s ease-in-out;
+
+    /* BannerContainer hover 상태에서 배너 블러 처리 */
+    ${BannerContainer}:hover ${Banner} {
+        filter: blur(5px);
     }
 `;
 
 export const BannerInfo = styled.div`
+    width: max-content;
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: rgba(0, 0, 0, 0.5);
-    color: white;
+    color: rgba(255, 255, 255, 0.7);
     padding: 20px 40px;
-    border-radius: 8px;
+    border-radius: 5px;
     font-size: 1.5rem;
     font-weight: bold;
     text-align: center;
     line-height: 1.4;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-    z-index: 1;
+    z-index: 10;
+    background-color: transparent;
+    opacity: 1;
+    transition:
+        opacity 0.5s ease-in-out,
+        transform 0.5s ease-in-out,
+        background-color 0.5s ease-in-out,
+        color 0.5s ease-in-out,
+        box-shadow 0.5s ease-in-out;
+
+    ${BannerContainer}:hover & {
+        background-color: rgba(255, 255, 255, 0.3);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        color: black;
+    }
 `;
 
 export const NavButton = styled.button`

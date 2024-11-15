@@ -26,7 +26,7 @@ function MainBanner() {
     useEffect(() => {
         const interval = setInterval(() => {
             setBannerIndex(prevIndex => handleNextSlide(prevIndex, banners.length));
-        }, 3000);
+        }, 10000);
 
         return () => clearInterval(interval);
     }, [banners.length]);
@@ -40,13 +40,12 @@ function MainBanner() {
     };
     return (
         <BannerContainer>
-            <BannerWrapper $translateX={-bannerIndex * 100}>
+             <BannerWrapper $translateX={-bannerIndex * 100}>
                 {banners.map((banner, idx) => (
-                    <Banner key={idx} style={{ backgroundImage: `url(${banner.image})` }}>
-                        <BannerInfo>{banner.text}</BannerInfo>
-                    </Banner>
+                    <Banner key={idx} style={{ backgroundImage: `url(${banner.image})` }} />
                 ))}
             </BannerWrapper>
+            <BannerInfo>{banners[bannerIndex].text}</BannerInfo>
             <NavButton $left={true} onClick={handlePrev}>◀</NavButton>
             <NavButton onClick={handleNext}>▶</NavButton>
         </BannerContainer>
