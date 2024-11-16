@@ -1,25 +1,18 @@
 import {useEffect, useState} from "react";
 import {
-    CommentInput,
-    CommentSection,
     ContentSection,
-    DateText, InteractionSection, LikeButton,
+    DateText,
+    InteractionSection,
+    LikeButton,
     PageContainer,
-    SlideImage, SubmitButton,
     Title,
-    TitleSection, ViewsText
+    TitleSection,
+    ViewsText
 } from "../../styled/Board/BoardPageStyled";
 import {fetchData} from "../../Server/ApiServiceNoToken";
 import {useNavigate, useParams} from "react-router-dom";
-import {deleteTokenData, postTokenData, postTokenJsonData} from "../../Server/ApiService";
-import {
-    CommentAuthor,
-    CommentContent,
-    CommentHeader,
-    CommentItem,
-    CommentListContainer,
-    CommentTime
-} from "../../styled/Comment";
+import {deleteTokenData, postTokenJsonData} from "../../Server/ApiService";
+import Comment from "../../Components/Comment";
 
 function BoardDetail(){
     const [detailBoard,setDetailBoard] = useState(null);
@@ -35,9 +28,10 @@ function BoardDetail(){
         })
         fetchData(`/comment/get/board/${id}`).then((res)=>{
             setCommentData(res.data.commentItems)
+        }).catch((err)=>{
+            console.log("불러 올 댓글 없어")
         })
     }, []);
-    console.log(commentData)
     const formattedDate = detailBoard?.createdAt.split('T')[0].substring(2);
 
 
@@ -51,16 +45,36 @@ function BoardDetail(){
         }
     }
 
-    const onCreateComment = async () =>{
+    const onCreateComment = async () => {
         const postComment = {
-            content : comment,
+            content: comment,
+        };
+        try {
+            await postTokenJsonData(`/comment/add/board/${id}`, postComment);
+            setComment(''); // 댓글 입력란 초기화
+            // 댓글 작성 후 새로 데이터를 가져와서 반영
+            fetchData(`/comment/get/board/${id}`).then((res) => {
+                setCommentData(res.data.commentItems);
+            }).catch((err) => {
+                console.log("댓글 불러오기 실패");
+            });
+        } catch (e) {
+            console.log(e);
         }
-        try{
-            await postTokenJsonData(`/comment/add/board/${id}`,postComment).then((res)=>{
-                console.log(res,"댓긍성공")
-            })
-        }catch(e){
-            console.log(e)
+    }
+    const onLike = async () => {
+        const likeId = {
+            id: id,
+        };
+        try {
+            await postTokenJsonData(`/board/${id}/like`, likeId);
+            // 성공적으로 좋아요를 눌렀다면, 좋아요 수를 증가시킴
+            setDetailBoard(prevDetailBoard => ({
+                ...prevDetailBoard,
+                likes: prevDetailBoard.likes + 1
+            }));
+        } catch (err) {
+            console.log(err);
         }
     }
 
@@ -77,17 +91,11 @@ function BoardDetail(){
                     <Title>{detailBoard.title}</Title>
                     <DateText>작성자:{detailBoard.author}  | 작성일: {formattedDate} </DateText>
                 </TitleSection>
-
-                {/* 이미지 슬라이드 */}
-                {detailBoard.imgUrl && detailBoard.imgUrl.split(',').map((image, index) => (
-                    <SlideImage key={index} src={image.trim()} alt={`게시글 이미지 ${index + 1}`} />
-                ))}
-
                 {/* 본문 */}
                 <ContentSection>
                     <div dangerouslySetInnerHTML={{ __html: detailBoard.content }}></div>
                     <InteractionSection>
-                        <LikeButton>좋아요 {detailBoard.likes}</LikeButton>
+                        <LikeButton onClick={onLike}>좋아요 {detailBoard.likes}</LikeButton>
                         <div>
                             <LikeButton
                             onClick={()=>navigate(`/board/update/${id}`)}>수정하기</LikeButton>
@@ -98,28 +106,12 @@ function BoardDetail(){
                 </ContentSection>
 
                 {/* 댓글 섹션 */}
-                <CommentSection>
-                    <CommentInput
-                        placeholder="댓글을 작성하세요..."
-                        value={comment}
-                        onChange={(e)=>{
-
-                            setComment(e.target.value);
-                        }}
-                    />
-                    <SubmitButton onClick={onCreateComment}>댓글 작성</SubmitButton>
-                </CommentSection>
-                <CommentListContainer>
-                    {commentData?.map((comment, index) => (
-                        <CommentItem key={index}>
-                            <CommentHeader>
-                                <CommentAuthor>{comment.username}</CommentAuthor>
-                                <CommentTime>{comment.createdAt}</CommentTime>
-                            </CommentHeader>
-                            <CommentContent>{comment.content}</CommentContent>
-                        </CommentItem>
-                    ))}
-                </CommentListContainer>
+                <Comment
+                    comment={comment}
+                    setComment={setComment}
+                    onCreateComment={onCreateComment}
+                    commentData={commentData}
+                    setCommentData={setCommentData}/>
             </PageContainer>
         )
     }

@@ -6,6 +6,9 @@ import {postTokenData, putTokenData} from "../../Server/ApiService";
 import { fetchData } from "../../Server/ApiServiceNoToken";
 
 const StyledContainer = styled.div`
+width: 80%;
+    margin:auto;
+    margin-top: 30px;
     .toastui-editor-defaultUI .toastui-editor-mode-switch {
         display: none !important; /* 강제적으로 숨기기 */
     }
@@ -51,7 +54,6 @@ function CreateForm({ updateData,updateId }) {
 
     useEffect(() => {
         // updateData가 있으면 초기값 설정
-        // updateData가 있으면 초기값 설정
         if (updateData) {
             setTitle(updateData.title);
             if (editorRef.current) {
@@ -68,7 +70,16 @@ function CreateForm({ updateData,updateId }) {
         }
 
         fetchData("/category/get").then((res) => {
-            setCategory(res.data);
+            // 'sports'와 'etc' 태그가 있는 카테고리만 필터링
+            const filteredCategories = res.data.filter(item =>
+                item.tag === 'sports' || item.tag === 'etc'
+            );
+            setCategory(filteredCategories);
+
+            // 카테고리 데이터가 있을 경우 첫 번째 항목을 기본 선택
+            if (filteredCategories.length > 0 && !updateData) {
+                setCategoryId(filteredCategories[0].id);
+            }
         });
 
 
