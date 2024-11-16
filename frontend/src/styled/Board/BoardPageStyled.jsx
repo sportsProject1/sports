@@ -88,31 +88,3 @@ export const ViewsText = styled.span`
   font-size: 0.9rem;
   color: #555;
 `;
-
-// 댓글 섹션
-export const CommentSection = styled.div`
-  background-color: #fff;
-  padding: 1rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-`;
-
-export const CommentInput = styled.textarea`
-  width: 100%;
-  height: 100px;
-  padding: 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  margin-bottom: 1rem;
-  resize: vertical;
-`;
-
-export const SubmitButton = styled.button`
-  padding: 0.5rem 1rem;
-  background-color: #1e90ff;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 1rem;
-`;

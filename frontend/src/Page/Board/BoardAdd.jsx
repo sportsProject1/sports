@@ -20,7 +20,6 @@ function BoardAdd() {
 
     return (
         <div>
-            <h1>글 생성</h1>
             <CreateForm
                 updateId={id}
                 updateData={updateData}
