@@ -25,7 +25,6 @@ const FormTest = styled.form`
 function ShopAdd() {
     const { id } = useParams(); // 상품 ID를 URL에서 가져옴
     const navigate = useNavigate();
-    const token = useSelector((state) => state.auth.token);
 
     const [addItem, setAddItem] = useState({
         title: "",
@@ -33,18 +32,36 @@ function ShopAdd() {
         desc: "",
         file: "",
         stock: "",
-        categoryId: "1"
+        categoryId: ""
     });
 
     const { images, handleImageChange, handleRemoveImage } = useImageUploader(true);
 
+    const [category,setCategory] = useState()
+
     useEffect(() => {
         if (id) {
             // 상품 ID가 있는 경우 해당 상품의 상세 정보를 불러옴
-            fetchData(`/shop/detail/${id}`,setAddItem)
-                .then((res) => {console.log(res)})
-                .catch((err) => console.log(err));
+            fetchData(`/shop/detail/${id}`)
+                .then((res) => {
+                    const updateItem = res.data.item
+                    setAddItem({
+                        title: updateItem.title,
+                        price: updateItem.price,
+                        desc: updateItem.desc,
+                        file: "",
+                        stock: updateItem.stock,
+                        categoryId: updateItem.categoryId
+                    })
+                })
         }
+
+        fetchData('/category/get').then((res)=>{
+            const filteredCategories = res.data.filter(item=>
+            item.tag === 'shop')
+            setCategory(filteredCategories);
+            setAddItem({...addItem,categoryId: filteredCategories[0].id})
+        })
     }, [id]);
 
     const handleSubmit = async (e) => {
@@ -75,7 +92,7 @@ function ShopAdd() {
             console.error(error);
         }
     };
-
+console.log(addItem)
     return (
         <Container>
             <h1>{id ? "상품 수정 페이지" : "상품 추가 페이지"}</h1>
@@ -105,7 +122,7 @@ function ShopAdd() {
                 <input
                     onChange={(e) => handleChange(e, addItem, setAddItem)}
                     type="text"
-                    placeholder="수량"
+                    placeholder="재고"
                     name="stock"
                     value={addItem.stock}
                 />
@@ -114,8 +131,11 @@ function ShopAdd() {
                     onChange={(e) => handleChange(e, addItem, setAddItem)}
                     value={addItem.categoryId}
                 >
-                    <option value="1">농구</option>
-                    <option value="2">축구</option>
+                    {category?.map((item)=> {
+                        return(
+                        <option key={item.id} value={item.id}>{item.name}</option>
+                        )
+                    })}
                 </select>
 
                 <div style={{ display: 'flex', overflowX: 'auto' }}>

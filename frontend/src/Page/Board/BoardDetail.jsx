@@ -66,19 +66,14 @@ function BoardDetail(){
         try {
             // 게시글에 대해 좋아요 요청
             const response = await postTokenJsonData(`/board/${id}/like`, { id });
-            console.log(response)
-            if (response && response.data) {
-                const { likeCount, liked } = response.data;
+            const { likeCount } = response;
 
-                // 좋아요 상태와 좋아요 수 갱신
-                setDetailBoard(prevDetailBoard => ({
-                    ...prevDetailBoard,
-                    likes: likeCount
-                }));
-                console.log(`좋아요 상태: ${liked}, 좋아요 수: ${likeCount}`);
-            } else {
-                console.error("서버로부터 올바른 응답을 받지 못했습니다.");
-            }
+            // 좋아요 수 갱신
+            setDetailBoard(prevDetailBoard => ({
+                ...prevDetailBoard,
+                likes: likeCount
+            }));
+
         } catch (err) {
             console.error("좋아요 요청 중 오류가 발생했습니다:", err);
         }

@@ -1,36 +1,55 @@
-import {useEffect, useState} from "react";
-import {useNavigate} from "react-router-dom";
-import {fetchData} from "../../Server/ApiServiceNoToken";
-import {ShopContainer} from "../../styled/shopStyled";
+import { useEffect, useState, useMemo } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { fetchData } from "../../Server/ApiServiceNoToken";
+import { ShopContainer } from "../../styled/shopStyled";
 import SideMenu from "../../Components/Menu/SideMenu";
 import ItemWrapper from "./ItemWrapper";
 import LoadingPage from "../../Components/LoadingPage";
 
 function Shop() {
     const [items, setItems] = useState([]);
+    const [category, setCategory] = useState();
+    const { shop } = useParams();
+    const navigate = useNavigate();
 
-    const navigate= useNavigate()
-
+    // Fetch items and categories
     useEffect(() => {
-        fetchData("/shop/list").then((res)=>{
-            console.log(res)
-            setItems(res.data.items)
-        });
+        const fetchAllData = async () => {
+            try {
+                const [itemsResponse, categoryResponse] = await Promise.all([
+                    fetchData("/shop/list"),
+                    fetchData("/category/get")
+                ]);
+                setItems(itemsResponse.data.items);
+                setCategory(categoryResponse.data);
+            } catch (error) {
+                console.error("데이터 로딩 중 오류:", error);
+            }
+        };
+        fetchAllData();
     }, []);
-    // const thumbnailUrl = item.imgurl.split(',')[0];
-    if(items){
-        return (
-            <ShopContainer>
-                <SideMenu/>
-                <ItemWrapper items={items}/>
-            </ShopContainer>
-        );
-    }else{
-        return (
-            <LoadingPage/>
-        )
+
+    // Memoize filtered items to prevent unnecessary calculations on each render
+    const filteredShopItems = useMemo(() => {
+        if (!shop) return items;
+        const matchedCategory = category?.find(cat => cat.enName === shop);
+        return matchedCategory ? items.filter(item => item.categoryId === matchedCategory.id) : [];
+    }, [shop, items, category]);
+
+    // Filter shop-related categories
+    const sportCategories = useMemo(() => category?.filter(item => item.tag === 'shop'), [category]);
+
+    // Loading state handling
+    if (!category || items.length === 0) {
+        return <LoadingPage />;
     }
 
+    return (
+        <ShopContainer>
+            <SideMenu params={"/shop"} category={sportCategories} />
+            <ItemWrapper items={filteredShopItems} />
+        </ShopContainer>
+    );
 }
 
 export default Shop;

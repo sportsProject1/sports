@@ -16,11 +16,10 @@ function MyPage(){
     }
 
     useEffect(() => {
-        const getData = async () =>{
-            const data = await fetchTokenData("/user/mypage")
-            setUserData(data.data)
-        }
-        getData();
+        fetchTokenData("/user/mypage").then((res)=>{
+            setUserData(res.data)
+        })
+
     }, [userUpdate]);
     if(userData){
         return (

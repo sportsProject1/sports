@@ -29,6 +29,7 @@ const Routes = createBrowserRouter([
             { path: '/board/update/:id', element: <BoardAdd/>},
 
             { path: '/shop', element: <Shop/> },
+            { path: '/shop/:shop', element: <Shop/>},
             { path: '/shop/detail/:id', element:<ShopDetail/>},
             { path: '/shop/update/:id', element:<ShopAdd/>},
             { path: '/shop/add', element: <ShopAdd/>},

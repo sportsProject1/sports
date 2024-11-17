@@ -143,7 +143,8 @@ function CreateForm({ updateData,updateId }) {
                     onChange={(e) => setTitle(e.target.value)}
                     id="title-input"
                 />
-                <select onChange={(e) => setCategoryId(e.target.value)} value={categoryId}>
+                <select
+                    onChange={(e) => setCategoryId(e.target.value)} value={categoryId}>
                     {category?.map((item) => {
                         return (
                             <option key={item.id} value={item.id}>
