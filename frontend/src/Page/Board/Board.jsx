@@ -20,7 +20,6 @@ function Board() {
             setCategory(res.data);
         })
     }, []);
-    console.log(category);
 
     // 카테고리 필터링 로직
     const filteredBoardItems = sport
@@ -30,14 +29,14 @@ function Board() {
             return matchedCategory ? item.category === matchedCategory.name : false;
         })
         : boardItem; // sport 값이 없으면 모든 아이템을 보여줌
+    console.log(boardItem)
 
     const sportCategories = category?.filter(item => item.tag === 'sports');
-    console.log(sportCategories)
 
     if(boardItem){
         return (
             <BoardContainer>
-                <SideMenu category={sportCategories} />
+                <SideMenu params={"/board"} category={sportCategories} />
                 <BoardWrapper boardItem={filteredBoardItems} />
             </BoardContainer>
         );

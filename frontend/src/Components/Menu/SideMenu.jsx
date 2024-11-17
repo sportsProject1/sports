@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useMemo } from 'react';
 import styled from 'styled-components';
-import {Link} from "react-router-dom";
-import {fetchData} from "../../Server/ApiServiceNoToken";
+import { Link } from "react-router-dom";
 import LoadingPage from "../LoadingPage";
 
 // 전체 사이드바 컨테이너
@@ -13,7 +12,7 @@ export const SidebarContainer = styled.div`
 export const SidebarFixed = styled.div.withConfig({
     shouldForwardProp: (prop) => prop !== 'scrollDirection'
 })`
-    width: 300px;
+    width: 250px;
     padding: 20px;
     border: 1px solid #e0e0e0;
     border-radius: 8px;
@@ -23,8 +22,6 @@ export const SidebarFixed = styled.div.withConfig({
     gap: 15px;
     position: fixed;
     transition: transform 0.6s ease-in-out, opacity 0.6s ease-in-out;
-    transform: ${({ scrollDirection }) => (scrollDirection === 'up' ? 'translateY(0)' : 'translateY(10px)')};
-    opacity: ${({ scrollDirection }) => (scrollDirection === 'up' ? 1 : 0.9)};
 `;
 
 // 제목 스타일
@@ -58,42 +55,22 @@ export const KeywordTag = styled.div`
     margin-right: 5px;
 `;
 
-function SideMenu({category}) {
-    const [scrollDirection, setScrollDirection] = useState('up');
-    const [lastScrollY, setLastScrollY] = useState(0);
+function SideMenu({ category, params }) {
+    // Memoize category links to prevent unnecessary re-renders
+    const categoryLinks = useMemo(() => {
+        return category?.map((item) => (
+            <Link key={item.id} to={`${params}/${item.enName}`}>{item.name}</Link>
+        ));
+    }, [category, params]);
 
-    useEffect(() => {
-
-        const handleScroll = () => {
-            if (window.scrollY > lastScrollY) {
-                setScrollDirection('down');
-            } else {
-                setScrollDirection('up');
-            }
-            setLastScrollY(window.scrollY);
-        };
-
-        window.addEventListener('scroll', handleScroll);
-        return () => {
-            window.removeEventListener('scroll', handleScroll);
-        };
-
-
-    }, [lastScrollY]);
-
-    if(category){
+    if (category) {
         return (
             <SidebarContainer>
-                <SidebarFixed scrollDirection={scrollDirection}>
-
+                <SidebarFixed>
                     <CategorySection>
                         <SectionTitle>Category 1</SectionTitle>
-                        <Link to={"/board"}>모두 보기</Link>
-                        {category.map((item)=>{
-                            return (
-                                <Link key={item.id} to={`/board/${item.enName}`}>{item.name}</Link>
-                            )
-                        })}
+                        <Link to={params}>모두 보기</Link>
+                        {categoryLinks}
                     </CategorySection>
 
                     <CategorySection>
@@ -102,17 +79,12 @@ function SideMenu({category}) {
                         <Label>Label Description</Label>
                         <Label>Label Description</Label>
                     </CategorySection>
-
                 </SidebarFixed>
             </SidebarContainer>
         );
-    }else{
-        return (
-            <LoadingPage/>
-        )
+    } else {
+        return <LoadingPage />;
     }
-
-
 }
 
 export default SideMenu;
