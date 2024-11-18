@@ -3,24 +3,25 @@ import {useDispatch, useSelector} from "react-redux";
 import {logout} from "../../Store/authSlice";
 import styled from "styled-components";
 import {postTokenData, postTokenJsonData} from "../../Server/ApiService";
-import { FaUser, FaSignInAlt, FaShoppingCart, FaUserCircle } from "react-icons/fa";
+import { FaUserPlus, FaSignInAlt, FaShoppingCart, FaSignOutAlt } from "react-icons/fa";
+import { FaUserGear } from "react-icons/fa6";
 import { MdAdminPanelSettings } from "react-icons/md";
 
 const MenuContainer = styled.div`
     display: flex;
     align-items: center;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 10px 0;
+    justify-content: flex-end;
+    width: 100%;
+    gap: 20px;
 `;
 
 const MenuLeft = styled.ul`
     display: flex;
     align-items: center;
-
+    gap: 40px;
+    margin-right: 40px;
     li {
         list-style: none;
-        margin: 0 15px;
         padding: 5px 10px;
         cursor: pointer;
 
@@ -85,7 +86,7 @@ function Menu (){
                <li>모집</li>
                {user?.role === "ROLE_ADMIN" && (
                    <li>
-                       <Link to={"/admin"}>어드민 페이지</Link>
+                       <Link to={"/admin"}>관리자 홈</Link>
                    </li>
                )}
            </MenuLeft>
@@ -96,7 +97,7 @@ function Menu (){
                    <>
                        <li>
                            <Link to={"/register"}>
-                               <FaUser /> {/* 회원가입 아이콘 */}
+                               <FaUserPlus /> {/* 회원가입 아이콘 */}
                            </Link>
                        </li>
                        <li>
@@ -108,11 +109,11 @@ function Menu (){
                ) : (
                    <>
                        <li>
-                           <FaUserCircle onClick={handleLogout} /> {/* 로그아웃 아이콘 */}
+                           <FaSignOutAlt onClick={handleLogout} /> {/* 로그아웃 아이콘 */}
                        </li>
                        <li>
                            <Link to={"/mypage"}>
-                               <FaUser /> {/* 마이페이지 아이콘 */}
+                               <FaUserGear /> {/* 마이페이지 아이콘 */}
                            </Link>
                        </li>
                    </>
