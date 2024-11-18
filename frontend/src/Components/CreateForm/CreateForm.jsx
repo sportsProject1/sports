@@ -2,7 +2,7 @@ import '@toast-ui/editor/dist/toastui-editor.css';
 import { Editor } from '@toast-ui/react-editor';
 import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
-import {postTokenData, putTokenData} from "../../Server/ApiService";
+import {postTokenData, postTokenJsonData, putTokenData} from "../../Server/ApiService";
 import { fetchData } from "../../Server/ApiServiceNoToken";
 import {useNavigate} from "react-router-dom";
 
@@ -90,44 +90,53 @@ function CreateForm({ updateData,updateId }) {
     const handleSubmit = async (e) => {
         e.preventDefault(); // 폼의 기본 동작 방지
 
-        if(updateData){
-            try{
-                const formData = new FormData();
-                formData.append('title', title);
-                formData.append('categoryId', categoryId);
-
-                const htmlContent = editorRef.current.getInstance().getHTML();
-                formData.append('content', htmlContent);
-                await putTokenData(`/board/${updateId}`, formData).then(()=>{
-                    navigate('/board',{replace:true})
-                });
-
-            }catch (err){
-                console.log(err);
-            }
-
-        }else{
+        if (updateData) {
             try {
                 const formData = new FormData();
                 formData.append('title', title);
                 formData.append('categoryId', categoryId);
-                formData.append('chatroom',chatRoom)
+
+                const htmlContent = editorRef.current.getInstance().getHTML();
+                formData.append('content', htmlContent);
+                await putTokenData(`/board/${updateId}`, formData).then(() => {
+                    navigate('/board', { replace: true })
+                });
+
+            } catch (err) {
+                console.log(err);
+            }
+
+        } else {
+            try {
+                const formData = new FormData();
+                formData.append('title', title);
+                formData.append('categoryId', categoryId);
+                formData.append('chatroom', chatRoom);
 
                 const htmlContent = editorRef.current.getInstance().getHTML();
                 formData.append('content', htmlContent);
 
-                // POST 요청 전송
-                await postTokenData('/board/add', formData).then((res)=>{
-                    navigate('/board',{replace:true})
-                });
+                // 게시글 생성 요청
+                const res = await postTokenData('/board/add', formData);
+
+                // 게시글 생성 후 채팅방 생성
+                if (chatRoom) {
+                    const chatRoomData = {
+                        boardId: res,
+                        roomName: title, // 방 이름을 게시글 제목으로 설정하거나 적절한 값을 설정
+                        createdUser: 13 // 게시글 작성자를 기본적으로 참여자로 추가
+                    };
+                    await postTokenJsonData('/chat/create', chatRoomData);
+                }
+
+                // 게시글 목록 페이지로 이동
+                navigate('/board', { replace: true });
 
             } catch (error) {
                 console.error('게시물 전송 중 오류 발생:', error);
                 alert('게시물 전송에 실패했습니다.');
             }
         }
-
-
     };
 
     const toolbarItems = [

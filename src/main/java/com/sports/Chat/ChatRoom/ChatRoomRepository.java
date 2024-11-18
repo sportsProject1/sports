@@ -1,7 +1,6 @@
-package com.sports.Chat;
+package com.sports.Chat.ChatRoom;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
-
 }
