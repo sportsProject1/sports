@@ -56,11 +56,16 @@ export const KeywordTag = styled.div`
 `;
 
 function SideMenu({ category, params,categoryTitle,subCategoryTitle,subCategory }) {
+    console.log("params:", params);
     // Memoize category links to prevent unnecessary re-renders
     const categoryLinks = useMemo(() => {
-        return category?.map((item) => (
-            <Link key={item.id} to={`${params}/${item.enName}`}>{item.name}</Link>
-        ));
+        console.log("category:", category);  // category 값 확인
+        return category?.map((item) => {
+            console.log("item.enName:", item.enName);  // 각 카테고리의 enName 확인
+            return (
+                <Link key={item.id} to={`${params}/${item.enName}`}>{item.name}</Link>
+            );
+        });
     }, [category, params]);
     const subCategoryLinks = useMemo(() => {
         return subCategory?.map((item) => (

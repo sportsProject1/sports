@@ -8,7 +8,7 @@ import { Title } from "../../styled/Common";
 
 function Board() {
     const [boardItem, setBoardItem] = useState([]);
-    const { sport } = useParams();  // URL 파라미터에서 sport 값 가져오기
+    const { sport } = useParams(); // URL 파라미터에서 sport 값 가져오기
     const [category, setCategory] = useState([]);
     const [sortOption, setSortOption] = useState('latest');
     const [searchQuery, setSearchQuery] = useState('');
@@ -49,24 +49,29 @@ function Board() {
         fetchBoardData();
     }, [searchQuery]);  // 검색어가 변경될 때마다 실행
 
-    // 'sports' 태그가 있는 카테고리만 필터링
-    const sportCategories = useMemo(() => {
-        return category.filter(item => item.tag === "sports" && item.enName); // 'sports' 태그 및 enName이 있는 항목만 필터링
-    }, [category]);
+    // 카테고리 필터링 로직
+    const filterByCategory = useMemo(() => {
+        if (!sport || !category) return boardItem;
 
-    // 검색어로 필터링된 게시글 목록 (여기서 `title`을 기준으로만 필터링)
-    const filteredBoardItems = useMemo(() => {
-        return sport
-            ? boardItem.filter(item => {
-                // `title`에 검색어가 포함된 게시글만 필터링
-                return item.title.toLowerCase().includes(searchQuery.toLowerCase());
-            })
-            : boardItem.filter(item => item.title.toLowerCase().includes(searchQuery.toLowerCase()));
-    }, [boardItem, sport, searchQuery]);
+        const matchedCategory = category.find(cat => cat.enName === sport);
+        if (matchedCategory) {
+            return boardItem.filter(item => item.category === matchedCategory.name);
+        }
+        return boardItem;
+    }, [boardItem, category, sport]);
+
+    // 검색어로 필터링 (제목 기준)
+    const filterBySearchQuery = useMemo(() => {
+        if (!searchQuery.trim()) return filterByCategory;
+
+        return filterByCategory.filter(item =>
+            item.title.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+    }, [filterByCategory, searchQuery]);
 
     // 정렬 로직
     const sortedBoardItems = useMemo(() => {
-        return [...filteredBoardItems].sort((a, b) => {
+        return [...filterBySearchQuery].sort((a, b) => {
             switch (sortOption) {
                 case 'latest':
                     return new Date(b.createdAt) - new Date(a.createdAt);
@@ -80,7 +85,21 @@ function Board() {
                     return 0;
             }
         });
-    }, [filteredBoardItems, sortOption]);
+    }, [filterBySearchQuery, sortOption]);
+
+    // 'sports' 태그가 있는 카테고리만 필터링
+    const sportCategories = useMemo(() => {
+        return category.filter(item => item.tag === "sports" && item.enName); // 'sports' 태그 및 enName이 있는 항목만 필터링
+    }, [category]);
+
+    // 'etc' 태그가 있는 카테고리만 필터링
+    const etcCategories = useMemo(() => {
+        return category.filter(item => item.tag === "etc"); // 'etc' 태그가 있는 카테고리
+    }, [category]);
+
+    const handleSortChange = (sortOption) => {
+        setSortOption(sortOption);
+    };
 
     if (boardItem.length === 0) {
         return (
@@ -94,12 +113,12 @@ function Board() {
         <BoardContainer>
             <SideMenu
                 params={"/board"}
-                category={sportCategories} // 'sports' 태그가 있는 카테고리만 전달
+                category={sportCategories}
                 categoryTitle={"운동 이야기"}
                 subCategoryTitle={"그 외"}
-                subCategory={category.filter(item => item.tag === 'etc')} // 'etc' 태그가 있는 카테고리 전달
+                subCategory={etcCategories}
             />
-            <BoardWrapper handleSortChange={setSortOption} boardItem={sortedBoardItems} />
+            <BoardWrapper handleSortChange={handleSortChange} boardItem={sortedBoardItems} />
         </BoardContainer>
     );
 }

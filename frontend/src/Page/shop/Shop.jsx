@@ -9,11 +9,10 @@ import LoadingPage from "../../Components/LoadingPage";
 function Shop() {
     const [items, setItems] = useState([]);
     const [category, setCategory] = useState([]);
-    const { shop } = useParams();
+    const { shop } = useParams(); // 카테고리 이름 파라미터
+    const location = useLocation(); // 현재 위치 (쿼리 파라미터 추출용)
     const navigate = useNavigate();
-    const location = useLocation();
-    const [searchQuery, setSearchQuery] = useState('');
-    const [selectedCategory, setSelectedCategory] = useState(null);
+    const [searchQuery, setSearchQuery] = useState(''); // 검색어 상태
 
     // 쿼리 파라미터에서 검색어 추출
     useEffect(() => {
@@ -24,51 +23,72 @@ function Shop() {
         }
     }, [location]);
 
-    // 데이터 요청 (전체 상품과 카테고리 가져오기)
+    // 데이터 요청 (아이템과 카테고리)
     useEffect(() => {
         const fetchAllData = async () => {
             try {
-                let itemsResponse;
-                if (searchQuery.trim()) {
-                    // 검색어가 있을 때 검색 API 호출
-                    itemsResponse = await fetchData(`/shop/search?keyword=${searchQuery}`);
-                } else {
-                    // 검색어가 없을 때 전체 상품 가져오기
-                    itemsResponse = await fetchData("/shop/list");
-                }
+                const [itemsResponse, categoryResponse] = await Promise.all([
+                    fetchData("/shop/list"),
+                    fetchData("/category/get")
+                ]);
                 setItems(itemsResponse.data.items);
-                const categoryResponse = await fetchData("/category/get");
-                setCategory(categoryResponse.data); // 카테고리 데이터를 가져옵니다.
+                setCategory(categoryResponse.data);
             } catch (error) {
                 console.error("데이터 로딩 중 오류:", error);
             }
         };
-
         fetchAllData();
-    }, [searchQuery]);  // 검색어가 변경될 때마다 실행
+    }, []); // 처음에 한 번만 데이터 로드
 
-    // 'shop' 태그가 있는 카테고리만 필터링
+    // 카테고리 필터링 (shop 태그가 달린 카테고리만)
     const shopCategories = useMemo(() => {
         return category.filter(cat => cat.tag === "shop");
     }, [category]);
 
-    // 필터링된 상품 목록
-    const filteredShopItems = useMemo(() => {
-        let filteredItems = items;
-        if (selectedCategory) {
-            filteredItems = filteredItems.filter(item => item.categoryId === selectedCategory.id);
+    // 검색어 필터링
+    const filteredItemsBySearch = useMemo(() => {
+        if (!searchQuery.trim()) return items;
+        return items.filter(item =>
+            item.title.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+    }, [searchQuery, items]);
+
+    // 카테고리 필터링 (shop 파라미터가 있을 경우 해당 카테고리만 필터링)
+    const filteredItemsByCategory = useMemo(() => {
+        if (!shop) return items; // shop 파라미터가 없으면 전체 아이템
+        const matchedCategory = shopCategories.find(cat => cat.enName === shop);
+        return matchedCategory ? items.filter(item => item.categoryId === matchedCategory.id) : [];
+    }, [shop, items, shopCategories]);
+
+    // 검색어와 카테고리 필터링이 결합되지 않도록 처리
+    const finalFilteredItems = useMemo(() => {
+        if (searchQuery.trim()) {
+            return filteredItemsBySearch; // 검색어가 있으면 검색어 필터링된 결과만 반환
         }
-        return filteredItems;
-    }, [selectedCategory, items]);
+        return filteredItemsByCategory; // 검색어 없으면 카테고리 필터링된 결과 반환
+    }, [filteredItemsBySearch, filteredItemsByCategory, searchQuery]);
+
+    // 카테고리 클릭 시 URL 변경
+    const handleCategoryClick = (category) => {
+        if (category && category.enName) {
+            navigate(`/shop/${category.enName}`); // 카테고리 클릭 시 URL 변경
+        }
+    };
+
+    // 데이터가 없으면 로딩 화면 표시
+    if (!items.length || !category.length) {
+        return <LoadingPage />;
+    }
 
     return (
         <ShopContainer>
             <SideMenu
-                category={shopCategories} // 'shop' 태그가 있는 카테고리만 전달
-                selectedCategory={selectedCategory} // 선택된 카테고리 전달
-                setSelectedCategory={setSelectedCategory} // 카테고리 변경 함수 전달
+                params={"/shop"}
+                category={shopCategories}
+                categoryTitle={"카테고리"}
+                handleCategoryClick={handleCategoryClick}
             />
-            <ItemWrapper items={filteredShopItems} />
+            <ItemWrapper items={finalFilteredItems} />
         </ShopContainer>
     );
 }
