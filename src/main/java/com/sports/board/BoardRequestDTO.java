@@ -18,4 +18,5 @@ public class BoardRequestDTO {
     private Long userId;        // 작성자 ID
     private Long categoryId;    // 카테고리 ID
     private List<MultipartFile> file; // 업로드시킬 파일 리스트 받아오는 필드
+    private boolean chatroom = false;
 }
