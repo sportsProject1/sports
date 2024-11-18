@@ -3,22 +3,53 @@ import {useDispatch, useSelector} from "react-redux";
 import {logout} from "../../Store/authSlice";
 import styled from "styled-components";
 import {postTokenData, postTokenJsonData} from "../../Server/ApiService";
+import { FaUser, FaSignInAlt, FaShoppingCart, FaUserCircle } from "react-icons/fa";
+import { MdAdminPanelSettings } from "react-icons/md";
 
-const MenuUl = styled.ul`
-        margin: auto;
-        display: flex;
-        align-items: center;
-    li{
+const MenuContainer = styled.div`
+    display: flex;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 10px 0;
+`;
+
+const MenuLeft = styled.ul`
+    display: flex;
+    align-items: center;
+
+    li {
         list-style: none;
-        margin:15px;
-        padding:15px;
+        margin: 0 15px;
+        padding: 5px 10px;
         cursor: pointer;
+
+        &:hover {
+            border-bottom: 1px solid #ccc;
+            box-shadow: 0 2px 0 rgba(0, 0, 0, 0.2);
+        }
     }
-    > div > ul li:hover{
-        border-bottom: 1px solid #ccc;
-        box-shadow: 0 2px  0 rgba(0,0,0,.2);
+`;
+
+const MenuRight = styled.ul`
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    li {
+        list-style: none;
+        cursor: pointer;
+
+        a, svg {
+            color: #333;
+            text-decoration: none;
+            font-size: 1.5rem;
+        }
+
+        &:hover {
+            color: #3498db;
+        }
     }
-`
+`;
 
 function Menu (){
 
@@ -44,34 +75,57 @@ function Menu (){
         }
     };
     return(
-        <MenuUl>
-            <li>
-                <Link to={"/board"}>운동</Link>
-            </li>
-            <li>자유</li>
-            <li>모집</li>
-            <li><Link to={"/"}>홈</Link></li>
-            <li>
-                <Link to={"/register"}>
-                    회원가입
-                </Link>
-            </li>
+        <MenuContainer>
+           {/* 왼쪽 메뉴 */}
+           <MenuLeft>
+               <li>
+                   <Link to={"/board"}>운동</Link>
+               </li>
+               <li>자유</li>
+               <li>모집</li>
+               {user?.role === "ROLE_ADMIN" && (
+                   <li>
+                       <Link to={"/admin"}>어드민 페이지</Link>
+                   </li>
+               )}
+           </MenuLeft>
 
-            {user ? <li onClick={handleLogout}>로그아웃</li> : <li><Link to={"/login"}>로그인</Link></li>}
-
-            {user ? <li><Link to={"/mypage"}>마이페이지</Link></li> : null}
-
-            <li>
-                <Link to={"/shop"}>상점</Link>
-            </li>
-
-            <li>
-                <Link to={"/shop/cart"}>장바구니</Link>
-            </li>
-
-
-        </MenuUl>
-    )
+           {/* 오른쪽 메뉴 */}
+           <MenuRight>
+               {!user ? (
+                   <>
+                       <li>
+                           <Link to={"/register"}>
+                               <FaUser /> {/* 회원가입 아이콘 */}
+                           </Link>
+                       </li>
+                       <li>
+                           <Link to={"/login"}>
+                               <FaSignInAlt /> {/* 로그인 아이콘 */}
+                           </Link>
+                       </li>
+                   </>
+               ) : (
+                   <>
+                       <li>
+                           <FaUserCircle onClick={handleLogout} /> {/* 로그아웃 아이콘 */}
+                       </li>
+                       <li>
+                           <Link to={"/mypage"}>
+                               <FaUser /> {/* 마이페이지 아이콘 */}
+                           </Link>
+                       </li>
+                   </>
+               )}
+               <li>
+                   <Link to={"/shop/cart"}>
+                       <FaShoppingCart /> {/* 장바구니 아이콘 */}
+                   </Link>
+               </li>
+           </MenuRight>
+       </MenuContainer>
+   );
 }
+
 
 export default Menu;

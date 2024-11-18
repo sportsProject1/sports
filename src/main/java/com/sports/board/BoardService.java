@@ -143,6 +143,7 @@ public class BoardService {
                 .content(dto.getContent())
                 .author(author)
                 .category(category)
+                .chatroom(dto.isChatroom())
                 .build();
     }
 

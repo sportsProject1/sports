@@ -13,10 +13,10 @@ export const FormWrap = styled.form`
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     background-color: #f9f9f9;
     > h1, > ${Title} {
-            margin-bottom: 20px; /* 타이틀 아래 여백 */
+            margin-bottom: 20px;
             font-size: 1.5rem;
             text-align: center;
-            color: #333; /* 제목 색상 */
+            color: #333;
         }
 `;
 
