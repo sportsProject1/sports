@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import {postTokenData, putTokenData} from "../../Server/ApiService";
 import { fetchData } from "../../Server/ApiServiceNoToken";
+import {useNavigate} from "react-router-dom";
 
 const StyledContainer = styled.div`
 width: 80%;
@@ -48,10 +49,11 @@ const StyledInput = styled.input`
 
 function CreateForm({ updateData,updateId }) {
     const editorRef = useRef();
+    const navigate = useNavigate();
     const [title, setTitle] = useState('');
     const [categoryId, setCategoryId] = useState('');
     const [category, setCategory] = useState();
-
+    const [chatRoom,setChatRoom] = useState(false)
     useEffect(() => {
         // updateData가 있으면 초기값 설정
         if (updateData) {
@@ -96,7 +98,9 @@ function CreateForm({ updateData,updateId }) {
 
                 const htmlContent = editorRef.current.getInstance().getHTML();
                 formData.append('content', htmlContent);
-                const response = await putTokenData(`/board/${updateId}`, formData);
+                await putTokenData(`/board/${updateId}`, formData).then(()=>{
+                    navigate('/board',{replace:true})
+                });
 
             }catch (err){
                 console.log(err);
@@ -107,17 +111,16 @@ function CreateForm({ updateData,updateId }) {
                 const formData = new FormData();
                 formData.append('title', title);
                 formData.append('categoryId', categoryId);
+                formData.append('chatroom',chatRoom)
 
                 const htmlContent = editorRef.current.getInstance().getHTML();
                 formData.append('content', htmlContent);
 
                 // POST 요청 전송
-                const response = await postTokenData('/board/add', formData);
-                if (response.success) {
-                    alert('게시물이 성공적으로 등록되었습니다.');
-                } else {
-                    alert('게시물 등록에 실패했습니다.');
-                }
+                await postTokenData('/board/add', formData).then((res)=>{
+                    navigate('/board',{replace:true})
+                });
+
             } catch (error) {
                 console.error('게시물 전송 중 오류 발생:', error);
                 alert('게시물 전송에 실패했습니다.');
@@ -153,6 +156,9 @@ function CreateForm({ updateData,updateId }) {
                         );
                     })}
                 </select>
+                <label onChange={()=>setChatRoom(!chatRoom)} id={"chat_room"}>채팅방 만들기
+                <input value={chatRoom} id={"chat_room"} type={"checkbox"}/>
+                </label>
                 <Editor
                     ref={editorRef}
                     initialValue="내용을 입력하세요."
