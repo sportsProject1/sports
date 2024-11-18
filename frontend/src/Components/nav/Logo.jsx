@@ -18,14 +18,12 @@ const StyledLink = styled(Link)`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 100%;
   height: 100%;
   cursor: pointer;
 
   img {
-    border-radius: 60px;
-    width: 300px;
-    height: 100%;
+    width: 150px;
+    height: auto;
   }
 `;
 const Logo = () => {
