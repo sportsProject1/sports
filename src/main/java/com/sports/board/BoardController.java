@@ -1,5 +1,6 @@
 package com.sports.board;
 
+import com.sports.Item.DTO.ItemDTO;
 import com.sports.like.LikeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -67,6 +68,13 @@ public class BoardController {
     public ResponseEntity<Map<String, Object>> toggleLike(@PathVariable Long id) {
         Map<String, Object> response = likeService.toggleBoardLike(id); // 좋아요 상태와 좋아요 수 반환
         return ResponseEntity.ok(response);
+    }
+
+    //검색(게시판)
+    @GetMapping("/search")
+    public ResponseEntity<List<BoardResponseDTO>> searchBoards(@RequestParam String keyword) {
+        List<BoardResponseDTO> searchResults = boardService.searchBoardByTitle(keyword);
+        return ResponseEntity.ok(searchResults);
     }
 
 }

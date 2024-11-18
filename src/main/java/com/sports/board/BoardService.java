@@ -181,4 +181,27 @@ public class BoardService {
         // 기본 이미지 없이 imgUrl = null
         return null;
     }
+
+    //검색기능(보드)
+    public List<BoardResponseDTO> searchBoardByTitle(String keyword) {
+        List<Board> boards = boardRepository.searchByTitle(keyword);
+        return boards.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    private BoardResponseDTO convertToDTO(Board board) {
+        return new BoardResponseDTO(
+                board.getId(),
+                board.getTitle(),
+                board.getContent(),
+                board.getImgUrl(),
+                board.getCreatedAt(),
+                board.getUpdatedAt(),
+                board.getLikes(),
+                board.getViews(),
+                board.getAuthor().getUsername(),
+                board.getCategory().getName()
+        );
+    }
 }

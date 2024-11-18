@@ -1,6 +1,6 @@
 // FormFields.jsx
 import React from 'react';
-import { FormFieldsWrapper } from "../../../styled/user/UserStyled";
+import { FormFieldsWrapper, InputWithError, ErrorText, PassMessage } from "../../../styled/user/UserStyled";
 
 function FormFields({ formik, handlePhoneChange,isSignUp,disable,onUpdate,handleAddressSearch }) {
     const fields =
@@ -22,6 +22,7 @@ function FormFields({ formik, handlePhoneChange,isSignUp,disable,onUpdate,handle
                     {field === "phone" && "전화번호"}
                     {field === "email" && "이메일"}
                     {field === "zipCode" && "주소"}
+                    <InputWithError>
                     <input
                         placeholder={`${field}를 입력하세요.`}
                         name={field}
@@ -32,6 +33,16 @@ function FormFields({ formik, handlePhoneChange,isSignUp,disable,onUpdate,handle
                         disabled={disable}
                         readOnly={field === "roadAddress" || field === "zipCode"}
                     />
+                    </InputWithError>
+                    {formik.touched[field] && (
+                        <>
+                            {formik.errors[field] ? (
+                                <ErrorText>{formik.errors[field]}</ErrorText> // 실패 메시지
+                            ) : (
+                                <PassMessage>{`${field}의 길이가 일치합니다.`}</PassMessage> // 성공 메시지
+                            )}
+                        </>
+                    )}
                 </label>
             ))}
             {isSignUp === "sign" ? (
