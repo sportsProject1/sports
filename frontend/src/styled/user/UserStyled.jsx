@@ -77,6 +77,7 @@ export const FormFieldsWrapper = styled.div`
         }
 
         div {
+            width: -webkit-fill-available;
             color: red;
             font-size: 12px;
             margin-top: 3px;

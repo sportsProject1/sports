@@ -25,6 +25,7 @@ const GlobalStyle = createGlobalStyle`
     
     button {
         cursor: pointer;
+        width:50%;
         border: none;
         padding: ${({ theme }) => theme.spacing.small} ${({ theme }) => theme.spacing.medium};
         border-radius: ${({ theme }) => theme.borderRadius};
