@@ -6,6 +6,7 @@ import {putTokenData} from "../../../../Server/ApiService";
 import ProfileImageUpload from "../ProfileImageUpload";
 import FormFields from "../FormFields";
 import {FormWrap} from "../../../../styled/user/UserStyled";
+import { Title } from "../../../../styled/Common";
 
 function UserInfo({userData,onUpdate}){
 
@@ -13,30 +14,32 @@ function UserInfo({userData,onUpdate}){
 
     const [isImageDeleted, setIsImageDeleted] = useState(false); // 이미지 삭제 여부를 추적하는 상태 변수
 
-    useEffect(() => {
-        if (userData) {
-            formik.setValues({
-                imgURL: userData.imgURL || '',
-                username: userData.username || '',
-                nickname: userData.nickname || '',
-                phone: userData.phone || '',
-                address: userData.address || '',
-                email: userData.email || '',
-                file: '',
-            });
-        }
-    }, [userData]);
+//     useEffect(() => {
+//         if (userData) {
+//             formik.setValues({
+//                 imgURL: userData.imgURL || '',
+//                 username: userData.username || '',
+//                 nickname: userData.nickname || '',
+//                 phone: userData.phone || '',
+//                 address: userData.address || '',
+//                 email: userData.email || '',
+//                 file: '',
+//             });
+//         }
+//     }, [userData]);
 
     const formik = useFormik({
+        // userData를 기반으로 초기값 설정
         initialValues: {
-            imgURL:'',
-            username:'',
-            nickname:'',
-            phone:'',
-            address:'',
-            email:'',
-            file:'',
+            imgURL: userData?.imgURL || '',
+            username: userData?.username || '',
+            nickname: userData?.nickname || '',
+            phone: userData?.phone || '',
+            address: userData?.address || '',
+            email: userData?.email || '',
+            file: '',
         },
+        enableReinitialize: true, // userData 변경 시 초기값 재설정
         validationSchema:Yup.object({
             phone:Yup.string().required('전화번호를 입력하세요.').matches(/^[0-9]{3}-[0-9]{4}-[0-9]{4}$/, '전화번호 형식이 유효하지 않습니다.'),
             email:Yup.string().email("유효한 이메일을 입력하세요.").required("이메일을 입력하세요"),
@@ -74,10 +77,12 @@ function UserInfo({userData,onUpdate}){
     const handlePhoneChange = (e) => {
         const formattedPhone = formatPhoneNumber(e.target.value);
         formik.setFieldValue("phone", formattedPhone);
+        formik.validateField("phone"); // 유효성 검사 강제 실행
     };
 
     return (
         <FormWrap>
+            <Title>마이페이지</Title>
 
             <ProfileImageUpload
                 images={images}

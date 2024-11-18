@@ -3,7 +3,6 @@ import {useState} from "react";
 import useImageUploader from "../../hooks/useImageUploader";
 import {postData} from "../../Server/ApiServiceNoToken";
 import RegisterForm from "./RegisterFrom";
-import {Title} from "../../styled/Common";
 
 
 function Register() {
@@ -13,7 +12,6 @@ function Register() {
     const {images,handleImageChange,resetImages} = useImageUploader(false)
     return (
         <div>
-            <Title>회원가입 페이지</Title>
             <RegisterForm onSuccess={() => navigate("/")}/>
         </div>
     )
