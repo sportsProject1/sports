@@ -1,5 +1,6 @@
 package com.sports.Chat.ChatRoom;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.sports.board.Board;
 import com.sports.user.entito.User;
 import jakarta.persistence.*;
@@ -9,6 +10,7 @@ import java.util.Set;
 
 @Data
 @Entity
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class ChatRoom {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

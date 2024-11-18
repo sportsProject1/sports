@@ -2,28 +2,27 @@ import '@toast-ui/editor/dist/toastui-editor.css';
 import { Editor } from '@toast-ui/react-editor';
 import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
-import {postTokenData, postTokenJsonData, putTokenData} from "../../Server/ApiService";
-import { fetchData } from "../../Server/ApiServiceNoToken";
-import {useNavigate} from "react-router-dom";
+import { postTokenData, postTokenJsonData, putTokenData } from '../../Server/ApiService';
+import { fetchData } from '../../Server/ApiServiceNoToken';
+import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 const StyledContainer = styled.div`
-width: 80%;
-    margin:auto;
+    width: 80%;
+    margin: auto;
     margin-top: 30px;
     .toastui-editor-defaultUI .toastui-editor-mode-switch {
-        display: none !important; /* 강제적으로 숨기기 */
+        display: none !important;
     }
     .toastui-editor-contents {
         font-family: 'Noto Sans', sans-serif;
         line-height: 1.8;
     }
-
     .toastui-editor-toolbar {
         border-radius: 5px;
         background-color: #f9f9f9;
         border: 1px solid #ddd;
     }
-
     .toastui-editor {
         border-radius: 8px;
         border: 1px solid #ccc;
@@ -47,95 +46,63 @@ const StyledInput = styled.input`
     }
 `;
 
-function CreateForm({ updateData,updateId }) {
+function CreateForm({ updateData, updateId }) {
     const editorRef = useRef();
     const navigate = useNavigate();
-    const [title, setTitle] = useState('');
-    const [categoryId, setCategoryId] = useState('');
+    const [formData, setFormData] = useState({
+        title: '',
+        categoryId: '',
+        chatRoom: false,
+    });
     const [category, setCategory] = useState();
-    const [chatRoom,setChatRoom] = useState(false)
-    useEffect(() => {
-        // updateData가 있으면 초기값 설정
-        if (updateData) {
-            setTitle(updateData.title);
-            if (editorRef.current) {
-                editorRef.current.getInstance().setHTML(updateData.content); // 에디터에 초기 content 설정
-            }
+    const userId = useSelector((state) => state.auth.user?.userId);
 
-            // category 데이터가 로드된 후에 categoryId 설정
-            if (updateData.category && category) {
-                const matchedCategory = category.find(item => item.name === updateData.category);
-                if (matchedCategory) {
-                    setCategoryId(matchedCategory.id); // 일치하는 카테고리 ID 설정
-                }
-            }
+    useEffect(() => {
+        if (updateData) {
+            setFormData((prev) => ({
+                ...prev,
+                title: updateData.title,
+                categoryId: updateData.categoryId || '',
+            }));
+            editorRef.current?.getInstance().setHTML(updateData.content);
         }
 
-        fetchData("/category/get").then((res) => {
-            // 'sports'와 'etc' 태그가 있는 카테고리만 필터링
-            const filteredCategories = res.data.filter(item =>
-                item.tag === 'sports' || item.tag === 'etc'
-            );
+        fetchData('/category/get').then((res) => {
+            const filteredCategories = res.data.filter((item) => item.tag === 'sports' || item.tag === 'etc');
             setCategory(filteredCategories);
-
-            // 카테고리 데이터가 있을 경우 첫 번째 항목을 기본 선택
             if (filteredCategories.length > 0 && !updateData) {
-                setCategoryId(filteredCategories[0].id);
+                setFormData((prev) => ({ ...prev, categoryId: filteredCategories[0].id }));
             }
         });
-
-
     }, [updateData]);
 
     const handleSubmit = async (e) => {
-        e.preventDefault(); // 폼의 기본 동작 방지
+        e.preventDefault();
+        const content = editorRef.current.getInstance().getHTML();
+        const newFormData = new FormData();
+        newFormData.append('title', formData.title);
+        newFormData.append('categoryId', formData.categoryId);
+        newFormData.append('content', content);
+        newFormData.append('chatroom', formData.chatRoom);
 
-        if (updateData) {
-            try {
-                const formData = new FormData();
-                formData.append('title', title);
-                formData.append('categoryId', categoryId);
-
-                const htmlContent = editorRef.current.getInstance().getHTML();
-                formData.append('content', htmlContent);
-                await putTokenData(`/board/${updateId}`, formData).then(() => {
-                    navigate('/board', { replace: true })
+        try {
+            if (updateData) {
+                await putTokenData(`/board/${updateId}`, newFormData);
+            } else {
+                await postTokenData('/board/add', newFormData).then((res)=>{
+                    if (formData.chatRoom) {
+                        postTokenJsonData('/chat/create', {
+                            boardId: res,
+                            roomName: formData.title,
+                        });
+                    }
                 });
 
-            } catch (err) {
-                console.log(err);
             }
-
-        } else {
-            try {
-                const formData = new FormData();
-                formData.append('title', title);
-                formData.append('categoryId', categoryId);
-                formData.append('chatroom', chatRoom);
-
-                const htmlContent = editorRef.current.getInstance().getHTML();
-                formData.append('content', htmlContent);
-
-                // 게시글 생성 요청
-                const res = await postTokenData('/board/add', formData);
-
-                // 게시글 생성 후 채팅방 생성
-                if (chatRoom) {
-                    const chatRoomData = {
-                        boardId: res,
-                        roomName: title, // 방 이름을 게시글 제목으로 설정하거나 적절한 값을 설정
-                        createdUser: 13 // 게시글 작성자를 기본적으로 참여자로 추가
-                    };
-                    await postTokenJsonData('/chat/create', chatRoomData);
-                }
-
-                // 게시글 목록 페이지로 이동
-                navigate('/board', { replace: true });
-
-            } catch (error) {
-                console.error('게시물 전송 중 오류 발생:', error);
-                alert('게시물 전송에 실패했습니다.');
-            }
+            navigate('/board', { replace: true });
+        } catch (error) {
+            console.error('게시물 전송 중 오류 발생:', error);
+            alert('게시물 전송에 실패했습니다.');
         }
     };
 
@@ -151,22 +118,24 @@ function CreateForm({ updateData,updateId }) {
                 <StyledInput
                     type="text"
                     placeholder="제목을 입력하세요"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
+                    value={formData.title}
+                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                     id="title-input"
                 />
-                <select
-                    onChange={(e) => setCategoryId(e.target.value)} value={categoryId}>
-                    {category?.map((item) => {
-                        return (
-                            <option key={item.id} value={item.id}>
-                                {item.name}
-                            </option>
-                        );
-                    })}
+                <select onChange={(e) => setFormData({ ...formData, categoryId: e.target.value })} value={formData.categoryId}>
+                    {category?.map((item) => (
+                        <option key={item.id} value={item.id}>
+                            {item.name}
+                        </option>
+                    ))}
                 </select>
-                <label onChange={()=>setChatRoom(!chatRoom)} id={"chat_room"}>채팅방 만들기
-                <input value={chatRoom} id={"chat_room"} type={"checkbox"}/>
+                <label>
+                    채팅방 만들기
+                    <input
+                        type="checkbox"
+                        checked={formData.chatRoom}
+                        onChange={() => setFormData((prev) => ({ ...prev, chatRoom: !prev.chatRoom }))}
+                    />
                 </label>
                 <Editor
                     ref={editorRef}
@@ -179,16 +148,9 @@ function CreateForm({ updateData,updateId }) {
                     hooks={{
                         addImageBlobHook: async (blob, callback) => {
                             try {
-                                // 서버에 이미지 업로드 후 경로 반환
-                                const formData = new FormData();
-                                formData.append('file', blob);
-                                console.log(blob);
-
-                                // postTokenData 함수가 response.data를 반환
-                                const fullPath = await postTokenData('/board/fileAdd', formData);
-                                console.log(fullPath);
-
-                                // 미리보기에서는 전체 URL 사용
+                                const imageFormData = new FormData();
+                                imageFormData.append('file', blob);
+                                const fullPath = await postTokenData('/board/fileAdd', imageFormData);
                                 callback(fullPath, '이미지 설명');
                             } catch (error) {
                                 console.error('이미지 업로드 중 오류 발생:', error);
@@ -197,7 +159,6 @@ function CreateForm({ updateData,updateId }) {
                         },
                     }}
                 />
-
                 <button type="submit">게시물 등록</button>
             </form>
         </StyledContainer>
@@ -205,3 +166,4 @@ function CreateForm({ updateData,updateId }) {
 }
 
 export default CreateForm;
+
