@@ -22,22 +22,7 @@ const GlobalStyle = createGlobalStyle`
             color: ${({ theme }) => theme.colors.secondary};
         }
     }
-    
-    button {
-        cursor: pointer;
-        width:50%;
-        border: none;
-        padding: ${({ theme }) => theme.spacing.small} ${({ theme }) => theme.spacing.medium};
-        border-radius: ${({ theme }) => theme.borderRadius};
-        background-color: ${({ theme }) => theme.colors.primary};
-        color: ${({ theme }) => theme.colors.surface};
-        font-weight: bold;
-        transition: ${({ theme }) => theme.transition};
-        &:hover {
-            background-color: ${({ theme }) => theme.colors.secondary};
-            box-shadow: ${({ theme }) => theme.boxShadow};
-        }
-    }
+
 `;
 
 export default GlobalStyle;

@@ -83,6 +83,9 @@ function Menu (){
                </li>
                <li>자유</li>
                <li>모집</li>
+               <li>
+                  <Link to={"/shop"}>상점</Link>
+              </li>
                {user?.role === "ROLE_ADMIN" && (
                    <li>
                        <Link to={"/admin"}>관리자 홈</Link>
