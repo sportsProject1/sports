@@ -3,12 +3,9 @@ import { useParams, useNavigate } from "react-router-dom";
 import useImageUploader from "../../hooks/useImageUploader";
 import { handleChange } from "../../Utils/handleChange";
 import { Container } from "../../styled/Container";
-import { Form } from "../../styled/Form";
-import { useSelector } from "react-redux";
-import {postTokenData, putTokenData} from "../../Server/ApiService";
-import {fetchData} from "../../Server/ApiServiceNoToken";
 import styled from "styled-components";
-
+import { postTokenData, putTokenData } from "../../Server/ApiService";
+import { fetchData } from "../../Server/ApiServiceNoToken";
 
 const FormTest = styled.form`
     width: 50%;
@@ -19,8 +16,33 @@ const FormTest = styled.form`
         padding:15px;
         margin:15px 0;
     }
-`
+`;
 
+const ImageContainer = styled.div`
+    display: flex;
+    overflow-x: auto;
+`;
+
+const ImageWrapper = styled.div`
+    position: relative;
+    margin: 5px;
+`;
+
+const Image = styled.img`
+    width: 100px;
+    height: 100px;
+`;
+
+const RemoveButton = styled.button`
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: red;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+`;
 
 function ShopAdd() {
     const { id } = useParams(); // 상품 ID를 URL에서 가져옴
@@ -37,32 +59,56 @@ function ShopAdd() {
 
     const { images, handleImageChange, handleRemoveImage } = useImageUploader(true);
 
-    const [category,setCategory] = useState()
+    const [category, setCategory] = useState([]);
+    const [existingImages, setExistingImages] = useState([]); // 기존 이미지 상태 관리
 
     useEffect(() => {
-        if (id) {
-            // 상품 ID가 있는 경우 해당 상품의 상세 정보를 불러옴
-            fetchData(`/shop/detail/${id}`)
-                .then((res) => {
-                    const updateItem = res.data.item
-                    setAddItem({
+        const fetchDataForItem = async () => {
+            try {
+                if (id) {
+                    // 상품 ID가 있는 경우 해당 상품의 상세 정보를 불러옴
+                    const itemResponse = await fetchData(`/shop/detail/${id}`);
+                    const updateItem = itemResponse.data.item;
+
+                    setAddItem((prevItem) => ({
+                        ...prevItem,
                         title: updateItem.title,
                         price: updateItem.price,
                         desc: updateItem.desc,
-                        file: "",
                         stock: updateItem.stock,
-                        categoryId: updateItem.categoryId
-                    })
-                })
-        }
+                        categoryId: updateItem.categoryId,
+                    }));
 
-        fetchData('/category/get').then((res)=>{
-            const filteredCategories = res.data.filter(item=>
-            item.tag === 'shop')
-            setCategory(filteredCategories);
-            setAddItem({...addItem,categoryId: filteredCategories[0].id})
-        })
+                    // 기존 이미지 URL 배열로 저장
+                    if (updateItem.imgurl) {
+                        setExistingImages(updateItem.imgurl.split(',').map((url) => url.trim()));
+                    }
+                }
+
+                // 카테고리 정보 불러오기
+                const categoryResponse = await fetchData('/category/get');
+                const filteredCategories = categoryResponse.data.filter(item => item.tag === 'shop');
+                setCategory(filteredCategories);
+
+                // id가 없는 경우 카테고리 ID 기본값 설정
+                if (!id && filteredCategories.length > 0) {
+                    setAddItem((prevItem) => ({
+                        ...prevItem,
+                        categoryId: filteredCategories[0].id,
+                    }));
+                }
+            } catch (error) {
+                console.error("데이터 로딩 중 오류:", error);
+            }
+        };
+
+        fetchDataForItem();
     }, [id]);
+
+    // 기존 이미지 삭제 핸들러
+    const handleRemoveExistingImage = (index) => {
+        setExistingImages((prevImages) => prevImages.filter((_, i) => i !== index));
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -73,11 +119,15 @@ function ShopAdd() {
         addItemFormData.append("stock", addItem.stock);
         addItemFormData.append("categoryId", addItem.categoryId);
 
-        if (images.length > 0) {
-            images.forEach((image) => {
-                addItemFormData.append("file", image.file);
-            });
+        // 기존 이미지를 서버에 전달
+        if (existingImages.length > 0) {
+            addItemFormData.append("existingImages", existingImages.join(','));
         }
+
+        // 새로 추가된 이미지 파일 추가
+        images.forEach((image) => {
+            addItemFormData.append("file", image.file);
+        });
 
         try {
             if (id) {
@@ -92,7 +142,7 @@ function ShopAdd() {
             console.error(error);
         }
     };
-console.log(addItem)
+
     return (
         <Container>
             <h1>{id ? "상품 수정 페이지" : "상품 추가 페이지"}</h1>
@@ -131,37 +181,32 @@ console.log(addItem)
                     onChange={(e) => handleChange(e, addItem, setAddItem)}
                     value={addItem.categoryId}
                 >
-                    {category?.map((item)=> {
-                        return(
+                    {category.map((item) => (
                         <option key={item.id} value={item.id}>{item.name}</option>
-                        )
-                    })}
+                    ))}
                 </select>
 
-                <div style={{ display: 'flex', overflowX: 'auto' }}>
-                    {images.map((image, index) => (
-                        <div key={index} style={{ position: 'relative', margin: '5px' }}>
-                            <img src={image.preview} alt={`preview ${index}`}
-                                 style={{ width: '100px', height: '100px' }} />
-                            <button
-                                type="button"
-                                onClick={() => handleRemoveImage(index)}
-                                style={{
-                                    position: 'absolute',
-                                    top: '5px',
-                                    right: '5px',
-                                    background: 'red',
-                                    color: 'white',
-                                    border: 'none',
-                                    borderRadius: '50%',
-                                    cursor: 'pointer',
-                                }}
-                            >
+                {/* 기존 이미지 표시 및 삭제 버튼 추가 */}
+                <ImageContainer>
+                    {existingImages.map((url, index) => (
+                        <ImageWrapper key={index}>
+                            <Image src={url} alt={`existing preview ${index}`} />
+                            <RemoveButton type="button" onClick={() => handleRemoveExistingImage(index)}>
                                 X
-                            </button>
-                        </div>
+                            </RemoveButton>
+                        </ImageWrapper>
                     ))}
-                </div>
+
+                    {/* 새로 추가된 이미지 표시 */}
+                    {images.map((image, index) => (
+                        <ImageWrapper key={index}>
+                            <Image src={image.preview} alt={`preview ${index}`} />
+                            <RemoveButton type="button" onClick={() => handleRemoveImage(index)}>
+                                X
+                            </RemoveButton>
+                        </ImageWrapper>
+                    ))}
+                </ImageContainer>
 
                 <input type="submit" value={id ? "상품 수정" : "상품 등록"} />
             </FormTest>
