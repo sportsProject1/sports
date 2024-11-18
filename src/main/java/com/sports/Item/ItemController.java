@@ -118,7 +118,8 @@ public class ItemController {
     public ResponseEntity<ItemResponseDTO> updateItem(
             @PathVariable Long id,
             @ModelAttribute ItemDTO itemDTO, // DTO를 받음
-            @RequestParam(value = "file", required = false) List<MultipartFile> file) {
+            @RequestParam(value = "file", required = false) List<MultipartFile> file,
+            @RequestParam(value = "imgurl", required = false) String imgurl) {
         if (id == null) {
             // 유효하지 않은 상품 ID
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -129,7 +130,7 @@ public class ItemController {
             Long userId = user.getId(); // 현재 사용자의 ID를 가져옴
 
             // 아이템 업데이트
-            itemService.update(id, itemDTO, file, userId); // userId도 함께 전달
+            itemService.update(id, itemDTO, file, imgurl, userId); // userId도 함께 전달
             // 성공적인 상품 업데이트
             ItemResponseDTO response = new ItemResponseDTO("상품이 성공적으로 업데이트되었습니다.");
             return ResponseEntity.ok(response);
@@ -195,5 +196,12 @@ public class ItemController {
             response.setTitle("상품을 찾을 수 없습니다.");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
+    }
+
+    //검색(쇼핑몰)
+    @GetMapping("/search")
+    public ResponseEntity<List<ItemDTO>> searchItems(@RequestParam String keyword) {
+        List<ItemDTO> searchResults = itemService.searchItemsByTitle(keyword);
+        return ResponseEntity.ok(searchResults);
     }
 }
