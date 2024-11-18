@@ -2,8 +2,6 @@ package com.sports.board;
 
 import com.sports.Category.Category;
 import com.sports.Category.CategoryRepository;
-import com.sports.Item.DTO.ItemDTO;
-import com.sports.Item.Item;
 import com.sports.Item.S3Service;
 import com.sports.like.LikeRepository;
 import com.sports.user.entito.User;
