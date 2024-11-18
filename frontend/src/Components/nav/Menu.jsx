@@ -4,8 +4,7 @@ import {logout} from "../../Store/authSlice";
 import styled from "styled-components";
 import {postTokenData, postTokenJsonData} from "../../Server/ApiService";
 import { FaUserPlus, FaSignInAlt, FaShoppingCart, FaSignOutAlt } from "react-icons/fa";
-import { FaUserGear } from "react-icons/fa6";
-import { MdAdminPanelSettings } from "react-icons/md";
+import { FaPersonChalkboard, FaUserGear } from "react-icons/fa6";
 
 const MenuContainer = styled.div`
     display: flex;
@@ -35,6 +34,7 @@ const MenuRight = styled.ul`
     display: flex;
     align-items: center;
     gap: 40px;
+    margin-right: 1%;
     li {
         list-style: none;
         cursor: pointer;
@@ -42,11 +42,14 @@ const MenuRight = styled.ul`
         a, svg {
             color: #333;
             text-decoration: none;
-            font-size: 1.5rem;
+            font-size: 1rem;
         }
 
         &:hover {
             color: #3498db;
+        }
+        a:hover {
+            color: ${({ theme }) => theme.colors.secondary};
         }
     }
 `;
@@ -74,6 +77,14 @@ function Menu (){
             console.error("로그아웃 중 오류 발생:", error);
         }
     };
+
+    const handleCartClick = () => {
+        if (!user) {
+            navigate("/login"); // 로그인 페이지로 리다이렉트
+        } else {
+            navigate("/shop/cart"); // 장바구니로 이동
+        }
+    };
     return(
         <MenuContainer>
            {/* 왼쪽 메뉴 */}
@@ -88,7 +99,7 @@ function Menu (){
               </li>
                {user?.role === "ROLE_ADMIN" && (
                    <li>
-                       <Link to={"/admin"}>관리자 홈</Link>
+                       <Link to={"/admin"}>관리자 <FaPersonChalkboard /></Link>
                    </li>
                )}
            </MenuLeft>
@@ -99,31 +110,29 @@ function Menu (){
                    <>
                        <li>
                            <Link to={"/register"}>
-                               <FaUserPlus /> {/* 회원가입 아이콘 */}
+                               회원가입<FaUserPlus /> {/* 회원가입 아이콘 */}
                            </Link>
                        </li>
                        <li>
                            <Link to={"/login"}>
-                               <FaSignInAlt /> {/* 로그인 아이콘 */}
+                               로그인<FaSignInAlt /> {/* 로그인 아이콘 */}
                            </Link>
                        </li>
                    </>
                ) : (
                    <>
-                       <li>
-                           <FaSignOutAlt onClick={handleLogout} /> {/* 로그아웃 아이콘 */}
+                       <li onClick={handleLogout} >
+                           로그아웃<FaSignOutAlt/> {/* 로그아웃 아이콘 */}
                        </li>
                        <li>
                            <Link to={"/mypage"}>
-                               <FaUserGear /> {/* 마이페이지 아이콘 */}
+                               마이페이지<FaUserGear /> {/* 마이페이지 아이콘 */}
                            </Link>
                        </li>
                    </>
                )}
-               <li>
-                   <Link to={"/shop/cart"}>
-                       <FaShoppingCart /> {/* 장바구니 아이콘 */}
-                   </Link>
+               <li onClick={handleCartClick}>
+                   장바구니<FaShoppingCart /> {/* 장바구니 아이콘 */}
                </li>
            </MenuRight>
        </MenuContainer>

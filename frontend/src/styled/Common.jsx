@@ -21,7 +21,7 @@ export const Title = styled.h1`
 
 // 공통 버튼 스타일
 export const Button = styled.button`
-    width: 50%;
+    width:100%;
     padding: ${({ theme }) => theme.spacing.medium};
     background-color: ${({ theme }) => theme.colors.primary};
     color: ${({ theme }) => theme.colors.surface};
