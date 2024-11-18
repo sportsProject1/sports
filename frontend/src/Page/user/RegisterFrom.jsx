@@ -4,10 +4,11 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import useImageUploader from "../../hooks/useImageUploader";
 import { FormWrap } from "../../styled/user/UserStyled";
+import { Title } from "../../styled/Common";
 import { postData } from "../../Server/ApiServiceNoToken";
 import ProfileImageUpload from "./userComponents/ProfileImageUpload";
 import FormFields from "./userComponents/FormFields";
-import ValidationMessages from "./userComponents/ValidationMessages";
+// import ValidationMessages from "./userComponents/ValidationMessages";
 import {values} from "lodash-es";
 import axios from "axios";
 
@@ -119,6 +120,7 @@ function RegisterForm({ onSuccess }) {
 
     return (
         <FormWrap onSubmit={formik.handleSubmit} encType="multipart/form-data">
+            <Title>회원가입</Title>
             <ProfileImageUpload
                 isImageDeleted={isImageDeleted}
                 images={images}
@@ -133,7 +135,7 @@ function RegisterForm({ onSuccess }) {
                 handleAddressSearch={handleAddressSearch}
                 isSignUp={"sign"}
             />
-            <ValidationMessages isAvailable={isAvailable} formik={formik} />
+{/*             <ValidationMessages isAvailable={isAvailable} formik={formik} /> */}
         </FormWrap>
     );
 }

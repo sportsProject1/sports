@@ -128,16 +128,21 @@ public class UserService {
         existingUser.setAddress(userDTO.getAddress());
 
         // 이미지 파일 처리 로직
-        if (file != null && !file.isEmpty()) {
-            // 새로운 파일이 업로드된 경우 - 기존 URL과 비교
-            String newImgURL = s3Service.saveFile(file.getOriginalFilename(), file.getInputStream());
+        String newImgURL;
 
-            // 기존 이미지 URL과 다를 때만 업데이트
-            if (!newImgURL.equals(existingUser.getImgURL())) {
-                existingUser.setImgURL(newImgURL);
-            }
+        // 업로드된 파일이 있으면 해당 파일을 저장
+        if (file != null && !file.isEmpty()) {
+            newImgURL = s3Service.saveFile(file.getOriginalFilename(), file.getInputStream());
+        } else {
+            // 파일이 없으면 기본 이미지를 설정
+            newImgURL = s3Service.saveFile(null, null);
         }
-        // 파일이 null일 경우 이미지를 업데이트하지 않음
+
+        // 기존 이미지 URL과 비교해 업데이트
+        if (!newImgURL.equals(existingUser.getImgURL())) {
+            existingUser.setImgURL(newImgURL);
+        }
+
 
         // 변경된 사용자 정보를 저장
         User updatedUser = userRepository.save(existingUser);

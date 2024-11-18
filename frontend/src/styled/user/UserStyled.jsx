@@ -1,14 +1,23 @@
 import styled from 'styled-components';
+import { Title } from "../../styled/Common";
 
 export const FormWrap = styled.form`
     display: flex;
+    flex-direction: column;
+    align-items: center;
     max-width: 900px;
-    margin: auto;
+    margin: 5% auto;
     padding: 20px;
     border: 1px solid #ddd;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     background-color: #f9f9f9;
+    > h1, > ${Title} {
+            margin-bottom: 20px; /* 타이틀 아래 여백 */
+            font-size: 1.5rem;
+            text-align: center;
+            color: #333; /* 제목 색상 */
+        }
 `;
 
 export const ProfileImageWrapper = styled.div`
@@ -98,8 +107,20 @@ export const ErrorFieldsWrapper = styled.div`
         }
 `;
 
+export const InputWithError = styled.div`
+    display: flex;
+    align-items: center;
+
+    input {
+        flex: 1;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+`;
+
 export const PassMessage = styled.div`
-    color:${props => props.theme.colors.secondary};
+    color:${props => props.theme.colors.secondary} !important;;
 `;
 
 export const ErrorMessage = styled.div`
