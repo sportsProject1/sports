@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
 // 서브메뉴 전체 컨테이너
@@ -9,6 +10,7 @@ const SubMenuContainer = styled.div`
     padding: 20px;
     justify-content: space-between;
     width: 100%;
+    background-color: #f9f9f9;
 `;
 
 // 검색창 스타일
@@ -25,16 +27,18 @@ const SearchInput = styled.input`
     border: none;
     outline: none;
     font-size: 16px;
-    width: 150px;
+    width: 250px;
     margin-right: 10px;
+    padding: 8px;
 `;
 
 const SearchIcon = styled.span`
-    font-size: 16px;
+    font-size: 18px;
     color: #333;
+    cursor: pointer;
 `;
 
-// 필터 버튼 스타일 (styled-components prop 전달 방지 처리)
+// 필터 버튼 스타일
 const FilterButton = styled.button.withConfig({
     shouldForwardProp: (prop) => prop !== '$active'
 })`
@@ -53,8 +57,20 @@ const FilterButton = styled.button.withConfig({
 `;
 
 function SubMenu({ handleSortChange }) {
+    const [searchQuery, setSearchQuery] = useState('');
     const [activeButton, setActiveButton] = useState("latest");
+    const navigate = useNavigate();
 
+    // 검색어를 URL로 전달하는 함수
+    const handleSearch = () => {
+        if (searchQuery.trim()) {
+            // 현재 페이지가 /board 인지 /shop 인지에 따라 적절한 경로로 이동
+            const path = window.location.pathname.includes('/board') ? '/board' : '/shop';
+            navigate(`${path}/search?keyword=${searchQuery}`);
+        }
+    };
+
+    // 필터 버튼 클릭 시 처리 함수
     const handleButtonClick = (buttonName) => {
         setActiveButton(buttonName);
         handleSortChange(buttonName); // 버튼 클릭 시 정렬 함수 호출, 버튼 이름을 그대로 전달
@@ -64,8 +80,13 @@ function SubMenu({ handleSortChange }) {
         <SubMenuContainer>
             {/* 검색창 */}
             <SearchInputWrapper>
-                <SearchInput placeholder="Search" />
-                <SearchIcon>🔍</SearchIcon>
+                <SearchInput
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="검색어를 입력하세요"
+                />
+                <SearchIcon onClick={handleSearch}>🔍</SearchIcon>
             </SearchInputWrapper>
 
             {/* 필터 버튼들 */}
