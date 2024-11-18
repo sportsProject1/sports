@@ -40,13 +40,14 @@ function Shop() {
     const sportCategories = useMemo(() => category?.filter(item => item.tag === 'shop'), [category]);
 
     // Loading state handling
-    if (!category || items.length === 0) {
-        return <LoadingPage />;
-    }
 
     return (
         <ShopContainer>
-            <SideMenu params={"/shop"} category={sportCategories} />
+            <SideMenu
+                params={"/shop"}
+                category={sportCategories}
+                categoryTitle={"카테고리"}
+            />
             <ItemWrapper items={filteredShopItems} />
         </ShopContainer>
     );

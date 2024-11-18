@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -77,7 +78,7 @@ public class ItemService {
     }
 
     @PreAuthorize("hasRole('ROLE_MANAGER') or @itemRepository.findById(#id).get().userId == authentication.principal.id")
-    public void update(Long id, ItemDTO dto, List<MultipartFile> files, Long userId) throws IOException {
+    public void update(Long id, ItemDTO dto, List<MultipartFile> files, String imgurl, Long userId) throws IOException {
         // userId로 User 객체를 찾음
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다."));
@@ -106,18 +107,21 @@ public class ItemService {
             } else {
                 throw new RuntimeException("파일 업로드에 실패했습니다.");
             }
+        } else if (imgurl != null && !imgurl.isEmpty()) {
+            // imgurl이 직접 전달된 경우, 해당 URL을 사용
+            item.setImgurl(imgurl); // 직접 전달된 URL을 설정
         } else {
-            // 새 파일이 없다면 기존 이미지를 유지
+            // 새 파일이나 imgurl이 없다면 기존 이미지를 유지
             if (item.getImgurl() == null || item.getImgurl().isEmpty()) {
                 // 기본 이미지 URL을 설정할 수 있다면 설정
                 item.setImgurl("https://mystudy5350.s3.amazonaws.com/test/222.jfif"); // 기본 이미지 URL로 설정할 수 있습니다.
             }
-            // 기존 이미지를 그대로 사용
         }
 
         // 상품 업데이트 저장
         itemRepository.save(item);
     }
+
 
     @PreAuthorize("hasRole('ROLE_MANAGER') or @itemRepository.findById(#id).get().userId == authentication.principal.id")
     public void delete(Long id, Long userId) {
@@ -137,6 +141,14 @@ public class ItemService {
     public Item findById(Long itemId) {
         return itemRepository.findById(itemId)
                 .orElseThrow(() -> new RuntimeException("상품을 찾을 수 없습니다.")); // 예외 처리
+    }
+
+    //검색기능(아이템)
+    public List<ItemDTO> searchItemsByTitle(String keyword) {
+        List<Item> items = itemRepository.searchByTitle(keyword);
+        return items.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
     }
 
 }

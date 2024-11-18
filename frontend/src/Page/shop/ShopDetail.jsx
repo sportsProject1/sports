@@ -56,7 +56,7 @@ function ShopDetail() {
     const onDelete = async () => {
         try {
             await deleteTokenData(`/shop/delete/${id}`);
-            console.log("Item deleted successfully");
+            navigate('/shop',{replace:true})
         } catch (err) {
             console.log(err);
         }

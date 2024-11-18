@@ -24,7 +24,6 @@ function MyPage(){
     if(userData){
         return (
             <div>
-                <Title>마이페이지</Title>
                 {userUpdate === false ?
                     <UserInfo userData={userData} onUpdate={onUpdate}/> :
                     <UserUpdateForm userData={userData} onUpdate={onUpdate}/>

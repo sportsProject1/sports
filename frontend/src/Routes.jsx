@@ -14,6 +14,7 @@ import OAuth2RedirectHandler from "./Utils/OAuth2RedirectHandler";
 import Payment from "./Page/shop/Payment";
 import BoardAdd from "./Page/Board/BoardAdd";
 import BoardDetail from "./Page/Board/BoardDetail";
+import AdminPage from "./Page/user/userComponents/AdminPage";
 
 const Routes = createBrowserRouter([
     {
@@ -38,6 +39,7 @@ const Routes = createBrowserRouter([
 
             { path: '/mypage', element: <MyPage/>},
 
+            { path: '/admin', element: <AdminPage /> },
             { path: '/oauth2/redirect', element: <OAuth2RedirectHandler/>}
         ]
     }

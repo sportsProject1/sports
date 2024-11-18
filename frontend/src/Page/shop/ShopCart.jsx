@@ -53,6 +53,7 @@ function ShopCart() {
 
     useEffect(() => {
         fetchTokenData("/mypage/cart").then((res)=>{
+            console.log(res)
             setUserCart(res.data.cartItems)
         })
     }, []);

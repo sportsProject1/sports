@@ -4,7 +4,7 @@ import styled from 'styled-components';
 // 기본적인 페이지 컨테이너 스타일
 export const Container = styled.div`
     max-width: 400px;
-    margin: 0 auto;
+    margin: 5% auto;
     padding: ${({ theme }) => theme.spacing.large};
     background-color: ${({ theme }) => theme.colors.surface};
     box-shadow: ${({ theme }) => theme.boxShadow};
@@ -14,7 +14,7 @@ export const Container = styled.div`
 // 페이지 제목 스타일
 export const Title = styled.h1`
   font-size: ${({ theme }) => theme.fontSizes.xlarge};
-  color: ${({ theme }) => theme.colors.primary};
+  color: black;
   text-align: center;
   margin-bottom: ${({ theme }) => theme.spacing.medium};
 `;

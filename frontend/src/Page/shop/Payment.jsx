@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { fetchTokenData, postTokenJsonData } from "../../Server/ApiService";
+import {fetchTokenData, postTokenJsonData} from "../../Server/ApiService";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import styled from "styled-components";
@@ -52,7 +52,7 @@ const validationSchema = Yup.object({
         .max(5, '이름은 5글자 이하이어야 합니다.')
         .required('이름을 입력해주세요.'),
     phone: Yup.string()
-        .matches(/^\d{3}-\d{3,4}-\d{4}$/, '올바른 핸드폰 번호 양식이어야 합니다. (예: 010-1234-5678)')
+        .matches(/^(\d{3})-(\d{3,4})-(\d{4})$/, '올바른 핸드폰 번호 양식이어야 합니다. (예: 010-1234-5678)')
         .required('핸드폰 번호를 입력해주세요.'),
     detailAddress: Yup.string().required('상세 주소를 입력해주세요.'),
 });
@@ -60,12 +60,6 @@ const validationSchema = Yup.object({
 function Payment() {
     const [paymentItem, setPaymentItem] = useState();
     const postcodeRef = useRef();
-
-    useEffect(() => {
-        fetchTokenData("/mypage/cart/checkout").then((res) => {
-            setPaymentItem(res.data);
-        });
-    }, []);
 
     const handleAddressSearch = (setFieldValue) => {
         const openPostcode = () => {
@@ -93,7 +87,46 @@ function Payment() {
         }
     };
 
-    console.log(paymentItem);
+    const formatPhoneNumber = (phone) => {
+        const cleaned = ('' + phone).replace(/\D/g, '');
+        if (cleaned.length <= 3) {
+            return cleaned;
+        } else if (cleaned.length <= 7) {
+            return `${cleaned.slice(0, 3)}-${cleaned.slice(3)}`;
+        } else {
+            return `${cleaned.slice(0, 3)}-${cleaned.slice(3, 7)}-${cleaned.slice(7)}`;
+        }
+    };
+
+    useEffect(() => {
+        fetchTokenData("/mypage/cart/checkout").then((res) => {
+            const [zipcode, roadAddress, detailAddress] = res.data.deliveryAddress.split(',').map(part => part.trim());
+            const userData = {
+                name: res.data.name,
+                phone: formatPhoneNumber(res.data.phoneNumber),
+                zipcode: zipcode,
+                roadAddress: roadAddress,
+                detailAddress: detailAddress
+            };
+            const totalPrice = res.data.cartItems.reduce((acc, item) => acc + item.itemPrice * item.count, 0);
+            setPaymentItem({ ...res.data, ...userData, totalPrice });
+        });
+    }, []);
+
+    const handlePhoneChange = (event, setFieldValue) => {
+        let value = event.target.value.replace(/[^0-9]/g, ''); // 숫자 이외의 문자는 제거합니다.
+
+        if (value.length <= 3) {
+            // 3자리 이하일 경우 그대로 유지
+            setFieldValue('phone', value);
+        } else if (value.length <= 7) {
+            // 3-4 형식
+            setFieldValue('phone', `${value.slice(0, 3)}-${value.slice(3)}`);
+        } else {
+            // 3-4-4 형식
+            setFieldValue('phone', `${value.slice(0, 3)}-${value.slice(3, 7)}-${value.slice(7, 11)}`);
+        }
+    };
 
     if (paymentItem) {
         return (
@@ -101,24 +134,26 @@ function Payment() {
                 결제페이지
                 <Formik
                     initialValues={{
-                        name: '',
-                        phone: '',
-                        zipCode: '', // 우편번호 필드
-                        roadAddress: '', // 도로명 주소 필드
-                        detailAddress: '', // 상세 주소 필드
+                        name: paymentItem.name || '',
+                        phone: paymentItem.phone || '',
+                        zipCode: paymentItem.zipcode || '', // 우편번호 필드
+                        roadAddress: paymentItem.roadAddress || '', // 도로명 주소 필드
+                        detailAddress: paymentItem.detailAddress || '', // 상세 주소 필드
                         paymentMethod: '카드결제',
                         Address: '' // 주소 전체를 담을 필드
                     }}
                     validationSchema={validationSchema}
                     onSubmit={(values) => {
-                        // Address 필드를 zipCode, roadAddress, detailAddress를 합쳐서 설정
-                        values.Address = `${values.zipCode}, ${values.roadAddress}, ${values.detailAddress}`;
-
-                        postTokenJsonData("/payment/process", values).then((res) => {
-                            console.log(res, values);
-                        }).catch((err) => {
-                            console.log(err, values);
-                        });
+                        console.log(123)
+                        const paymentMethod = {
+                            name: values.name,
+                            phoneNumber: values.phone,
+                            paymentMethod: values.paymentMethod,
+                            deliveryAddress: `${values.zipCode}, ${values.roadAddress}, ${values.detailAddress}`
+                        };
+                        postTokenJsonData("/payment/process", paymentMethod).then((res) => {
+                            console.log(res)
+                        })
                     }}
                 >
                     {({ isSubmitting, setFieldValue }) => (
@@ -128,7 +163,15 @@ function Payment() {
                                 <ErrorMessage name="name" component="div" style={{ color: 'red' }} />
                             </div>
                             <div>
-                                <Field name="phone" placeholder="핸드폰" />
+                                <Field name="phone" placeholder="핸드폰">
+                                    {({ field }) => (
+                                        <input
+                                            {...field}
+                                            placeholder="핸드폰"
+                                            onChange={(e) => handlePhoneChange(e, setFieldValue)}
+                                        />
+                                    )}
+                                </Field>
                                 <ErrorMessage name="phone" component="div" style={{ color: 'red' }} />
                             </div>
                             <div>
@@ -157,8 +200,8 @@ function Payment() {
                             </Field>
                             <p>체크된 상품들</p>
                             <ItemContainer>
-                                {paymentItem.cartItems.map((item,idx)=>{
-                                    return(
+                                {paymentItem.cartItems.map((item, idx) => {
+                                    return (
                                         <div key={idx}>
                                             <ItemImage src={item.itemImgUrl} alt="상품 이미지" />
                                             <div>
@@ -167,10 +210,8 @@ function Payment() {
                                                 <p>가격: {item.itemPrice}</p>
                                             </div>
                                         </div>
-                                        )
-
+                                    );
                                 })}
-
                             </ItemContainer>
                             <p>최종 가격: {paymentItem.totalPrice}원</p>
                             <button type="submit" disabled={isSubmitting}>결제하기</button>
@@ -182,7 +223,7 @@ function Payment() {
     } else {
         return (
             <div>
-                <LoadingPage/>
+                <LoadingPage />
             </div>
         );
     }

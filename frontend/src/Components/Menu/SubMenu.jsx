@@ -52,11 +52,12 @@ const FilterButton = styled.button.withConfig({
     }
 `;
 
-function SubMenu() {
-    const [activeButton, setActiveButton] = useState("New");
+function SubMenu({ handleSortChange }) {
+    const [activeButton, setActiveButton] = useState("latest");
 
     const handleButtonClick = (buttonName) => {
         setActiveButton(buttonName);
+        handleSortChange(buttonName); // 버튼 클릭 시 정렬 함수 호출, 버튼 이름을 그대로 전달
     };
 
     return (
@@ -70,28 +71,28 @@ function SubMenu() {
             {/* 필터 버튼들 */}
             <div>
                 <FilterButton
-                    $active={activeButton === "New"}
-                    onClick={() => handleButtonClick("New")}
+                    $active={activeButton === "latest"}
+                    onClick={() => handleButtonClick("latest")}
                 >
-                    New
+                    최신순
                 </FilterButton>
                 <FilterButton
-                    $active={activeButton === "Price ascending"}
-                    onClick={() => handleButtonClick("Price ascending")}
+                    $active={activeButton === "oldest"}
+                    onClick={() => handleButtonClick("oldest")}
                 >
-                    Price ascending
+                    오래된순
                 </FilterButton>
                 <FilterButton
-                    $active={activeButton === "Price descending"}
-                    onClick={() => handleButtonClick("Price descending")}
+                    $active={activeButton === "views"}
+                    onClick={() => handleButtonClick("views")}
                 >
-                    Price descending
+                    조회수순
                 </FilterButton>
                 <FilterButton
-                    $active={activeButton === "Rating"}
-                    onClick={() => handleButtonClick("Rating")}
+                    $active={activeButton === "likes"}
+                    onClick={() => handleButtonClick("likes")}
                 >
-                    Rating
+                    좋아요순
                 </FilterButton>
             </div>
         </SubMenuContainer>

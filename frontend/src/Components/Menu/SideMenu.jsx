@@ -55,10 +55,15 @@ export const KeywordTag = styled.div`
     margin-right: 5px;
 `;
 
-function SideMenu({ category, params }) {
+function SideMenu({ category, params,categoryTitle,subCategoryTitle,subCategory }) {
     // Memoize category links to prevent unnecessary re-renders
     const categoryLinks = useMemo(() => {
         return category?.map((item) => (
+            <Link key={item.id} to={`${params}/${item.enName}`}>{item.name}</Link>
+        ));
+    }, [category, params]);
+    const subCategoryLinks = useMemo(() => {
+        return subCategory?.map((item) => (
             <Link key={item.id} to={`${params}/${item.enName}`}>{item.name}</Link>
         ));
     }, [category, params]);
@@ -68,16 +73,14 @@ function SideMenu({ category, params }) {
             <SidebarContainer>
                 <SidebarFixed>
                     <CategorySection>
-                        <SectionTitle>Category 1</SectionTitle>
+                        <SectionTitle>{categoryTitle}</SectionTitle>
                         <Link to={params}>모두 보기</Link>
                         {categoryLinks}
                     </CategorySection>
 
                     <CategorySection>
-                        <SectionTitle>Category 1</SectionTitle>
-                        <Label>Label Description</Label>
-                        <Label>Label Description</Label>
-                        <Label>Label Description</Label>
+                        <SectionTitle>{subCategoryTitle}</SectionTitle>
+                        {subCategoryLinks}
                     </CategorySection>
                 </SidebarFixed>
             </SidebarContainer>
