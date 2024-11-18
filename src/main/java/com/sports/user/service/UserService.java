@@ -78,7 +78,7 @@ public class UserService {
         userRefreshToken.updateRefreshToken(refreshToken);
         userRefreshTokenRepository.save(userRefreshToken);
 
-        return new AuthResponse(user.getUsername(), user.getNickname(), role, accessToken, refreshToken);
+        return new AuthResponse(user.getId(), user.getUsername(), user.getNickname(), role, accessToken, refreshToken);
     }
 
 
@@ -110,6 +110,7 @@ public class UserService {
         userInfo.put("username", user.getUsername());
         userInfo.put("email", user.getEmail());
         userInfo.put("imgURL", user.getImgURL());
+        userInfo.put("userId", user.getId());
 
         response.put("user", userInfo);
 

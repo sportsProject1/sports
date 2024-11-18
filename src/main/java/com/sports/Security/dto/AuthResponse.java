@@ -9,6 +9,7 @@ import lombok.*;
 @ToString
 //@JsonInclude(JsonInclude.Include.NON_NULL)
 public class AuthResponse {
+    private Long userId;
     private String username;
     private String nickname;
     private String role;
@@ -17,7 +18,8 @@ public class AuthResponse {
     private String errorMessage;
 
     // 기본적인 생성자 (에러 메세지 제외)
-    public AuthResponse(String username, String nickname, String role, String accessToken, String refreshToken) {
+    public AuthResponse(Long userId, String username, String nickname, String role, String accessToken, String refreshToken) {
+        this.userId = userId;
         this.username = username;
         this.nickname = nickname;
         this.role = role;
