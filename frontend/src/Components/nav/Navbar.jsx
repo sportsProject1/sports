@@ -14,6 +14,8 @@ const NavBox = styled.nav.withConfig({
         height: 100px;
         position: fixed;
         display: flex;
+        justify-content: space-between;
+        padding: 0 20px;
         border-bottom: 1px solid #ccc;
         box-shadow: 0 2px 4px 0 rgba(0,0,0,.2);
         background-color: #fff;
