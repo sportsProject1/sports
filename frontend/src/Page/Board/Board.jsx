@@ -1,41 +1,68 @@
-import styled from "styled-components";
-import {Link, Outlet, useLocation, useParams} from "react-router-dom";
+import { useEffect, useState, useMemo } from "react";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
+import { fetchData } from "../../Server/ApiServiceNoToken";
+import { BoardContainer } from "../../styled/Board/BoardPageStyled";
 import SideMenu from "../../Components/Menu/SideMenu";
-import {BoardContainer} from "../../styled/Board/BoardPageStyled";
 import BoardWrapper from "./BoardWrapper";
-import {useEffect, useState, useMemo} from "react";
-import {fetchData} from "../../Server/ApiServiceNoToken";
-import {Title} from "../../styled/Common";
+import { Title } from "../../styled/Common";
 
 function Board() {
     const [boardItem, setBoardItem] = useState([]);
-    const { sport } = useParams(); // 경로의 sport 값을 가져옴
-    const [category, setCategory] = useState();
+    const { sport } = useParams();  // URL 파라미터에서 sport 값 가져오기
+    const [category, setCategory] = useState([]);
     const [sortOption, setSortOption] = useState('latest');
+    const [searchQuery, setSearchQuery] = useState('');
+    const navigate = useNavigate();
+    const location = useLocation();
 
+    // 쿼리 파라미터에서 검색어 추출
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        const keyword = params.get("keyword");
+        if (keyword) {
+            setSearchQuery(keyword);
+        }
+    }, [location]);
+
+    // 데이터 요청 (전체 게시글과 카테고리 가져오기)
     useEffect(() => {
         const fetchBoardData = async () => {
             try {
-                const boardResponse = await fetchData("/board/list");
+                let boardResponse;
+                if (searchQuery.trim()) {
+                    // 검색어가 있을 때 제목(title)만 기준으로 검색 API 호출
+                    boardResponse = await fetchData(`/board/search?keyword=${searchQuery}`);
+                } else {
+                    // 검색어가 없을 때 전체 게시글 가져오기
+                    boardResponse = await fetchData("/board/list");
+                }
                 setBoardItem(boardResponse.data);
+
+                // 카테고리 데이터 가져오기
                 const categoryResponse = await fetchData("/category/get");
-                setCategory(categoryResponse.data);
+                setCategory(categoryResponse.data); // 카테고리 데이터를 가져옵니다.
             } catch (error) {
                 console.error("데이터 로딩 중 오류:", error);
             }
         };
-        fetchBoardData();
-    }, []);
 
-    // 카테고리 필터링 로직
+        fetchBoardData();
+    }, [searchQuery]);  // 검색어가 변경될 때마다 실행
+
+    // 'sports' 태그가 있는 카테고리만 필터링
+    const sportCategories = useMemo(() => {
+        return category.filter(item => item.tag === "sports" && item.enName); // 'sports' 태그 및 enName이 있는 항목만 필터링
+    }, [category]);
+
+    // 검색어로 필터링된 게시글 목록 (여기서 `title`을 기준으로만 필터링)
     const filteredBoardItems = useMemo(() => {
         return sport
             ? boardItem.filter(item => {
-                const matchedCategory = category?.find(cat => cat.enName === sport);
-                return matchedCategory ? item.category === matchedCategory.name : false;
+                // `title`에 검색어가 포함된 게시글만 필터링
+                return item.title.toLowerCase().includes(searchQuery.toLowerCase());
             })
-            : boardItem;
-    }, [boardItem, category, sport]);
+            : boardItem.filter(item => item.title.toLowerCase().includes(searchQuery.toLowerCase()));
+    }, [boardItem, sport, searchQuery]);
 
     // 정렬 로직
     const sortedBoardItems = useMemo(() => {
@@ -55,13 +82,6 @@ function Board() {
         });
     }, [filteredBoardItems, sortOption]);
 
-    const sportCategories = useMemo(() => category?.filter(item => item.tag === 'sports'), [category]);
-    const etcCategories = useMemo(() => category?.filter(item => item.tag === 'etc'), [category]);
-
-    const handleSortChange = (sortOption) => {
-        setSortOption(sortOption);
-    };
-
     if (boardItem.length === 0) {
         return (
             <div>
@@ -74,12 +94,12 @@ function Board() {
         <BoardContainer>
             <SideMenu
                 params={"/board"}
-                category={sportCategories}
+                category={sportCategories} // 'sports' 태그가 있는 카테고리만 전달
                 categoryTitle={"운동 이야기"}
                 subCategoryTitle={"그 외"}
-                subCategory={etcCategories}
+                subCategory={category.filter(item => item.tag === 'etc')} // 'etc' 태그가 있는 카테고리 전달
             />
-            <BoardWrapper handleSortChange={handleSortChange} boardItem={sortedBoardItems} />
+            <BoardWrapper handleSortChange={setSortOption} boardItem={sortedBoardItems} />
         </BoardContainer>
     );
 }

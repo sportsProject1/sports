@@ -9,6 +9,12 @@ const ZipCodeWrapper = styled.div`
     gap: 10px;
     margin-bottom: 20px;
     width: 100%;
+    button {
+        border: none;
+        color: white;
+        width: 30%;
+        background-color: ${({ theme }) => theme.colors.primary};
+    }
 `;
 
 const ButtonContainer = styled.div`
@@ -23,7 +29,6 @@ const RegisterButton = styled.div`
     flex-direction: column;
     gap: 10px;
     margin-top: 20px;
-
     button {
         width: 100%;
     }

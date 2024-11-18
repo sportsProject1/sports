@@ -200,8 +200,9 @@ public class ItemController {
 
     //검색(쇼핑몰)
     @GetMapping("/search")
-    public ResponseEntity<List<ItemDTO>> searchItems(@RequestParam String keyword) {
+    public ResponseEntity<ItemResponseDTO> searchItems(@RequestParam String keyword) {
         List<ItemDTO> searchResults = itemService.searchItemsByTitle(keyword);
-        return ResponseEntity.ok(searchResults);
+        ItemResponseDTO response = new ItemResponseDTO("상품 검색 성공", searchResults);
+        return ResponseEntity.ok(response);
     }
 }
