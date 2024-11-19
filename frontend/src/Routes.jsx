@@ -14,8 +14,11 @@ import OAuth2RedirectHandler from "./Utils/OAuth2RedirectHandler";
 import Payment from "./Page/shop/Payment";
 import BoardAdd from "./Page/Board/BoardAdd";
 import BoardDetail from "./Page/Board/BoardDetail";
+import History from "./Page/shop/History";
+
 import AdminPage from "./Page/user/userComponents/admin/AdminPage";
 import UserList from "./Page/user/userComponents/admin/UserList";
+
 
 const Routes = createBrowserRouter([
     {
@@ -39,6 +42,7 @@ const Routes = createBrowserRouter([
             { path: '/shop/payment', element: <Payment/>},
 
             { path: '/mypage', element: <MyPage/>},
+            { path: '/history', element: <History/>},
 
             // Admin 관련 라우트
             {
