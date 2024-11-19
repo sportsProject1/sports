@@ -17,6 +17,10 @@ import BoardDetail from "./Page/Board/BoardDetail";
 import AdminPage from "./Page/user/userComponents/AdminPage";
 import Chat from "./Page/Chat/Chat";
 import ChatRoom from "./Page/Chat/ChatRoom";
+import History from "./Page/shop/History";
+
+import AdminPage from "./Page/user/userComponents/admin/AdminPage";
+import UserList from "./Page/user/userComponents/admin/UserList";
 
 const Routes = createBrowserRouter([
     {
@@ -40,11 +44,24 @@ const Routes = createBrowserRouter([
             { path: '/shop/payment', element: <Payment/>},
 
             { path: '/mypage', element: <MyPage/>},
+            { path: '/history', element: <History/>},
+
+            // Admin 관련 라우트
+            {
+                path: "/admin/*",
+                element: <AdminPage />, // AdminPage가 상위 컴포넌트
+                children: [
+                    { index: true, element: <UserList /> }, // /admin으로 접근 시 /admin/users로
+                    { path: "users", element: <UserList /> }, // 사용자 관리
+                    { path: "posts", element: <div>Post Management Coming Soon!</div> }, // 게시물 관리
+                ],
+            },
 
             { path: '/chat', element:<Chat/>},
             { path: '/chat/:id', element:<ChatRoom/>},
 
             { path: '/admin', element: <AdminPage /> },
+
             { path: '/oauth2/redirect', element: <OAuth2RedirectHandler/>}
         ]
     }
