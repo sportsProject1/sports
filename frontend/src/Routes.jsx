@@ -14,12 +14,11 @@ import OAuth2RedirectHandler from "./Utils/OAuth2RedirectHandler";
 import Payment from "./Page/shop/Payment";
 import BoardAdd from "./Page/Board/BoardAdd";
 import BoardDetail from "./Page/Board/BoardDetail";
-import AdminPage from "./Page/user/userComponents/AdminPage";
+import AdminPage from "./Page/user/userComponents/admin/AdminPage";
 import Chat from "./Page/Chat/Chat";
 import ChatRoom from "./Page/Chat/ChatRoom";
 import History from "./Page/shop/History";
 
-import AdminPage from "./Page/user/userComponents/admin/AdminPage";
 import UserList from "./Page/user/userComponents/admin/UserList";
 
 const Routes = createBrowserRouter([
