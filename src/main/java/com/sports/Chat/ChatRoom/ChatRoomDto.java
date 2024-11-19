@@ -10,4 +10,6 @@ public class ChatRoomDto {
     private Long boardId;
     private String roomName;
     private Set<Long> createdUser;
+
+
 }

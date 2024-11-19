@@ -15,6 +15,8 @@ import Payment from "./Page/shop/Payment";
 import BoardAdd from "./Page/Board/BoardAdd";
 import BoardDetail from "./Page/Board/BoardDetail";
 import AdminPage from "./Page/user/userComponents/AdminPage";
+import Chat from "./Page/Chat/Chat";
+import ChatRoom from "./Page/Chat/ChatRoom";
 
 const Routes = createBrowserRouter([
     {
@@ -38,6 +40,9 @@ const Routes = createBrowserRouter([
             { path: '/shop/payment', element: <Payment/>},
 
             { path: '/mypage', element: <MyPage/>},
+
+            { path: '/chat', element:<Chat/>},
+            { path: '/chat/:id', element:<ChatRoom/>},
 
             { path: '/admin', element: <AdminPage /> },
             { path: '/oauth2/redirect', element: <OAuth2RedirectHandler/>}

@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
@@ -16,4 +17,7 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
 
     // 특정 boardId를 기준으로 ChatRoom을 찾는 메서드
     Optional<ChatRoom> findByBoardId(Long boardId);
+
+    @Query("SELECT c FROM ChatRoom c JOIN c.createdUser u WHERE u.id = :userId")
+    List<ChatRoom> findChatRoomsByUserId(Long userId);
 }

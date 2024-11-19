@@ -63,7 +63,6 @@ public class BoardController {
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteBoard(@PathVariable Long id) {
         Board board = boardService.getBoardEntityById(id); // Board 엔티티 가져오기
-        System.out.println("여여여"+board);
         boardService.deleteBoard(board); // 삭제 메서드 호출
         chatRoomRepository.deleteByBoardId(id);
         return ResponseEntity.ok("게시판 ID " + id + "가 성공적으로 삭제되었습니다.");
