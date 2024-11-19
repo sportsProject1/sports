@@ -1,23 +1,28 @@
 import styled from "styled-components";
 
 export const MainContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position:relative;
 `;
 
 export const BannerContainer = styled.div`
-    width: 100%;
-    height: 700px;
+    width: 85%;
+    height: 300px;
     display: flex;
     overflow: hidden;
     position: relative;
     background-color: #000;
+    left: -8%;
+    margin: 0 auto;
 `;
 
 export const Banner = styled.div`
     flex: 0 0 100%;
-    height: 700px;
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
@@ -47,13 +52,13 @@ export const BannerInfo = styled.div`
 
     .small-text {
         color: rgba(255, 255, 255, 0.8);
-        font-size: 3.5rem;
+        font-size: 1.5rem;
         font-weight: 500;
     }
 
     .large-text {
         color: white;
-        font-size: 5rem;
+        font-size: 3rem;
         font-weight: bold;
     }
 
@@ -93,11 +98,83 @@ export const SectionTitle = styled.h2`
 `;
 
 export const SectionContainer = styled.div`
-    width: 80%;
+    width: 70%;
     margin: auto;
     overflow: hidden;
     position: relative;
 `;
+
+//// 리스트 추가
+export const ListContainer = styled.div`
+    width: 100%;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+`;
+
+export const ListItem = styled.div`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    border-bottom: 1px solid #ddd;
+
+    &:last-child {
+        border-bottom: none;
+    }
+
+    &:hover {
+        background-color: #f1f1f1;
+        cursor: pointer;
+    }
+`;
+
+export const ItemLeft = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    .thumbnail {
+        width: 50px;
+        height: 50px;
+        background-color: #e9ecef;
+        border-radius: 8px;
+        object-fit: cover;
+    }
+
+    .text {
+        display: flex;
+        flex-direction: column;
+
+        .title {
+            font-weight: bold;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .author {
+            font-size: 12px;
+            color: #777;
+        }
+    }
+`;
+
+export const ItemRight = styled.div`
+    font-size: 12px;
+    color: #555;
+    text-align: right;
+
+    .date {
+        margin-bottom: 5px;
+    }
+
+    .views {
+        font-weight: bold;
+    }
+`;
+//// 리스트 추가
 
 export const CardWrapper = styled.div`
     display: flex;
@@ -150,6 +227,16 @@ export const PlaceholderImg = styled.img`
     object-fit: cover;
     border-radius: 8px;
 `;
+
+// 보드 이미지 (없을 경우 보여줄 이미지)
+export const BoardImg = styled.img`
+    width: 10%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+`;
+
+
 
 // 콘텐츠 영역 스타일
 export const PostContent = styled.div`

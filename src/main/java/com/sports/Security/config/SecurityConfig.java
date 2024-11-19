@@ -51,7 +51,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers("/admin").hasRole("ADMIN")
                         .requestMatchers("/manager").hasRole("MANAGER")
-                        .requestMatchers("/clerk").hasRole("CLERK")
+                        .requestMatchers("/seller").hasRole("SELLER")
                         .requestMatchers("/board/fileAdd", "/board/{id}/like").authenticated() // 첫 번째 매칭되는 조건이 적용, 아래에서 permitAll 해줘도 인증이 적용됨
                         .requestMatchers((request) ->
                                 request.getRequestURI().endsWith("/add") && "POST".equals(request.getMethod())
@@ -83,7 +83,7 @@ public class SecurityConfig {
     @Bean
     public RoleHierarchy roleHierarchy() {
         RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
-        roleHierarchy.setHierarchy("ROLE_ADMIN > ROLE_MANAGER > ROLE_CLERK > ROLE_USER");
+        roleHierarchy.setHierarchy("ROLE_ADMIN > ROLE_MANAGER > ROLE_SELLER > ROLE_USER");
         return roleHierarchy;
     }
 

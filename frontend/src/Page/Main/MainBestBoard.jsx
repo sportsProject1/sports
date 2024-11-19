@@ -3,11 +3,15 @@ import {
     Author,
     CardWrapper,
     CategoryTag, NavButton,
-    PlaceholderImg,
+    BoardImg,
     PostCard,
     PostContent,
     PostImage, PostTitle,
-    SectionContainer
+    SectionContainer,
+    ListContainer,
+    ListItem,
+    ItemLeft,
+    ItemRight,
 } from "../../styled/main/MainPageStyled";
 
 import movologo from "../../assets/movologo.png";
@@ -32,22 +36,24 @@ function MainBestBoard() {
 
     return (
         <SectionContainer>
+            <ListContainer>
             <CardWrapper $translateX={-pageIndex * 100 / totalPages}>
                 {posts.map((post, index) => (
-                    <PostCard key={post.id + index}>
-                        <PostImage>
-                            <PlaceholderImg src={post.img} alt="Logo Image"/>
+                    <ListItem key={post.id + index}>
+                        <ItemLeft>
+                            <BoardImg src={post.img} alt="Logo Image"/>
                             <CategoryTag>{post.category}</CategoryTag>
-                        </PostImage>
-                        <PostContent>
+                        </ItemLeft>
+                        <ItemRight>
                             <PostTitle>{post.title}</PostTitle>
                             <Author>{post.author}</Author>
-                        </PostContent>
-                    </PostCard>
+                        </ItemRight>
+                    </ListItem>
                 ))}
             </CardWrapper>
             <NavButton $left={true} onClick={() => setPageIndex(prevIndex => handlePrevSlide(prevIndex, totalPages))}>◀</NavButton>
             <NavButton onClick={() => setPageIndex(prevIndex => handleNextSlide(prevIndex, totalPages))}>▶</NavButton>
+            </ListContainer>
         </SectionContainer>
     );
 }
