@@ -1,11 +1,11 @@
 package com.sports.Chat.ChatRoom;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/chat")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ChatRoomController {
     private final ChatRoomService chatRoomService;
 

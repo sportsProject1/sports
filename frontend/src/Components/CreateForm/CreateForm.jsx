@@ -49,6 +49,7 @@ const StyledInput = styled.input`
 function CreateForm({ updateData, updateId }) {
     const editorRef = useRef();
     const navigate = useNavigate();
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [formData, setFormData] = useState({
         title: '',
         categoryId: '',
@@ -78,6 +79,10 @@ function CreateForm({ updateData, updateId }) {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (isSubmitting) return; // 이미 요청 중이라면 함수 종료
+
+        setIsSubmitting(true); // 요청 시작 시 플래그 설정
+
         const content = editorRef.current.getInstance().getHTML();
         const newFormData = new FormData();
         newFormData.append('title', formData.title);
@@ -89,20 +94,19 @@ function CreateForm({ updateData, updateId }) {
             if (updateData) {
                 await putTokenData(`/board/${updateId}`, newFormData);
             } else {
-                await postTokenData('/board/add', newFormData).then((res)=>{
-                    if (formData.chatRoom) {
-                        postTokenJsonData('/chat/create', {
-                            boardId: res,
-                            roomName: formData.title,
-                        });
-                    }
-                });
-
+                const res = await postTokenData('/board/add', newFormData);
+                if (formData.chatRoom) {
+                    // chatroom이 true일 때만 chat/create 호출
+                    console.log(formData.chatRoom)
+                    await postTokenJsonData('/chat/create', {
+                        boardId: res,
+                        roomName: formData.title,
+                    });
+                }
             }
             navigate('/board', { replace: true });
         } catch (error) {
             console.error('게시물 전송 중 오류 발생:', error);
-            alert('게시물 전송에 실패했습니다.');
         }
     };
 

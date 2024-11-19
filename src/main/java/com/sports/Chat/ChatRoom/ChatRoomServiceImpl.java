@@ -5,9 +5,8 @@ import com.sports.board.BoardRepository;
 import com.sports.user.entito.User;
 import com.sports.user.repository.UserRepository;
 import com.sports.user.service.UserContextService;
-import com.sports.user.service.UserService;
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
@@ -15,7 +14,7 @@ import java.util.Optional;
 import java.util.Set;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Transactional
 public class ChatRoomServiceImpl implements ChatRoomService {
     private final ChatRoomRepository chatRoomRepository;
@@ -31,18 +30,23 @@ public class ChatRoomServiceImpl implements ChatRoomService {
         }
 
         Board board = boardOptional.get();
+
+        // 이미 이 게시글에 대한 채팅방이 있는지 확인
+        Optional<ChatRoom> existingChatRoom = chatRoomRepository.findByBoardId(board.getId());
+        if (existingChatRoom.isPresent()) {
+            throw new RuntimeException("이미 해당 게시글에 대한 채팅방이 존재합니다.");
+        }
+
         ChatRoom chatRoom = new ChatRoom();
         chatRoom.setBoard(board);
         chatRoom.setRoomName(chatRoomDto.getRoomName());
 
-        // 현재 인증된 사용자 ID 가져오기
         Long currentUserId = userContextService.getCurrentUserId();
         Optional<User> userOptional = userRepository.findById(currentUserId);
         if (userOptional.isEmpty()) {
             throw new RuntimeException("사용자를 찾을 수 없습니다.");
         }
 
-        // 채팅방 생성자를 기본 참여자로 추가
         Set<User> users = new HashSet<>();
         users.add(userOptional.get());
         chatRoom.setCreatedUser(users);

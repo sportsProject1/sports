@@ -1,5 +1,6 @@
 package com.sports.board;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.sports.Category.Category;
 import com.sports.user.entito.User;
 import jakarta.persistence.*;
@@ -19,6 +20,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Board {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
