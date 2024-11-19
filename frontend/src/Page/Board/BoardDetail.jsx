@@ -27,6 +27,7 @@ function BoardDetail(){
             setDetailBoard(res.data);
         })
         fetchData(`/comment/get/board/${id}`).then((res)=>{
+            console.log(res)
             setCommentData(res.data.commentItems)
         }).catch((err)=>{
             console.log("불러 올 댓글 없어")
@@ -112,7 +113,9 @@ function BoardDetail(){
                     setComment={setComment}
                     onCreateComment={onCreateComment}
                     commentData={commentData}
-                    setCommentData={setCommentData}/>
+                    setCommentData={setCommentData}
+                    boardId={id}/>
+
             </PageContainer>
         )
     }

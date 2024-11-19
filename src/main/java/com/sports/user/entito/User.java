@@ -1,5 +1,6 @@
 package com.sports.user.entito;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Data;
@@ -11,6 +12,7 @@ import java.sql.Timestamp;
 @Entity
 @Data
 @NoArgsConstructor
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

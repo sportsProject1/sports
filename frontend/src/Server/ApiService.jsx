@@ -22,6 +22,16 @@ export const postTokenData = async (url, formData) => {
     }
 };
 
+export const postTokenJsonData = async (url, formData) => {
+    try {
+        const response = await api.post(url, formData);
+        return response.data;
+    } catch (error) {
+        console.error('API 요청 실패:', error);
+        throw error;
+    }
+};
+
 export const deleteTokenData = async (url)=>{
     try{
         const response = await api.delete(url,{})
@@ -51,17 +61,5 @@ export const putTokenJsonData = async (url,formData)=>{
         })
     }
     catch(error){
-    }
-}
-
-export const postTokenJsonData = async (url,formData)=>{
-    try{
-        const response = await api.post(url, formData,{
-            headers:{
-                "Content-Type": "application/json",
-            }
-        })
-        return response.data
-    }catch(error){
     }
 }
