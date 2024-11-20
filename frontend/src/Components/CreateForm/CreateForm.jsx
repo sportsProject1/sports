@@ -69,7 +69,8 @@ function CreateForm({ updateData, updateId }) {
         }
 
         fetchData('/category/get').then((res) => {
-            const filteredCategories = res.data.filter((item) => item.tag === 'sports' || item.tag === 'etc');
+            console.log(res)
+            const filteredCategories = res.data.filter((item) => item.tag === '운동' || item.tag === 'etc');
             setCategory(filteredCategories);
             if (filteredCategories.length > 0 && !updateData) {
                 setFormData((prev) => ({ ...prev, categoryId: filteredCategories[0].id }));

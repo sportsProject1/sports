@@ -62,7 +62,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
         return convertToChatRoomDto(savedChatRoom);
     }
 
-    private ChatRoomDto convertToChatRoomDto(ChatRoom chatRoom) {
+    public ChatRoomDto convertToChatRoomDto(ChatRoom chatRoom) {
         ChatRoomDto chatRoomDto = new ChatRoomDto();
         chatRoomDto.setId(chatRoom.getId());
         chatRoomDto.setRoomName(chatRoom.getRoomName());

@@ -89,7 +89,7 @@ function Board() {
 
     // 'sports' 태그가 있는 카테고리만 필터링
     const sportCategories = useMemo(() => {
-        return category.filter(item => item.tag === "sports" && item.enName); // 'sports' 태그 및 enName이 있는 항목만 필터링
+        return category.filter(item => item.tag === "운동" && item.enName); // 'sports' 태그 및 enName이 있는 항목만 필터링
     }, [category]);
 
     // 'etc' 태그가 있는 카테고리만 필터링

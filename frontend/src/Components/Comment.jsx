@@ -11,7 +11,7 @@ import { useState } from "react";
 import {deleteTokenData, postTokenJsonData, putTokenJsonData} from "../Server/ApiService";
 import { useSelector } from "react-redux"; // 사용자 정보를 가져오기 위해 추가
 
-function Comment({ commentData, comment, setComment, onCreateComment, setCommentData, postAuthorId,boardId }) {
+function Comment({ commentData, comment, setComment, onCreateComment, setCommentData, postAuthorId,chatRoomId }) {
     const [activeMenuIndex, setActiveMenuIndex] = useState(null);
     const [editIndex, setEditIndex] = useState(null);
     const [editContent, setEditContent] = useState("");
@@ -65,7 +65,7 @@ function Comment({ commentData, comment, setComment, onCreateComment, setComment
         const inviteUser = {
             userId : userId
         }
-        postTokenJsonData(`/chat/invite/51`,inviteUser).then((res)=>{
+        postTokenJsonData(`/chat/invite/${chatRoomId}`,inviteUser).then((res)=>{
             console.log(res)
 
         })

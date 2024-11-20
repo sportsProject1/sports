@@ -23,6 +23,16 @@ public class ChatRoomInvitationServiceImpl implements ChatRoomInvitationService 
     private final UserRepository userRepository;
     private final ChatRoomInvitationRepository chatRoomInvitationRepository;
 
+    private ChatRoomInvitationDto convertToChatRoomDto(ChatRoomInvitation invitation) {
+        ChatRoomInvitationDto dto = new ChatRoomInvitationDto();
+        dto.setId(invitation.getId());
+        dto.setChatRoomId(invitation.getChatRoom().getId());
+        dto.setUserId(invitation.getUser().getId());
+        dto.setStatus(invitation.getStatus().name());
+        dto.setRoomName(invitation.getChatRoom().getRoomName()); // roomName 설정 추가
+        return dto;
+    }
+
     @Override
     public List<ChatRoomInvitationDto> getUserInvitations(Long userId) {
         User user = userRepository.findById(userId)
@@ -31,14 +41,7 @@ public class ChatRoomInvitationServiceImpl implements ChatRoomInvitationService 
         List<ChatRoomInvitation> invitations = chatRoomInvitationRepository.findByUser(user);
 
         return invitations.stream()
-                .map(invitation -> {
-                    ChatRoomInvitationDto dto = new ChatRoomInvitationDto();
-                    dto.setId(invitation.getId());
-                    dto.setChatRoomId(invitation.getChatRoom().getId());
-                    dto.setUserId(invitation.getUser().getId());
-                    dto.setStatus(invitation.getStatus().name());
-                    return dto;
-                })
+                .map(this::convertToChatRoomDto)
                 .collect(Collectors.toList());
     }
 
@@ -61,13 +64,7 @@ public class ChatRoomInvitationServiceImpl implements ChatRoomInvitationService 
             invitation.setStatus(ChatRoomInvitation.InvitationStatus.PENDING);
             chatRoomInvitationRepository.save(invitation);
 
-            ChatRoomInvitationDto invitationDto = new ChatRoomInvitationDto();
-            invitationDto.setId(invitation.getId());
-            invitationDto.setChatRoomId(chatRoom.getId());
-            invitationDto.setUserId(user.getId());
-            invitationDto.setStatus(invitation.getStatus().name());
-
-            return ResponseEntity.status(HttpStatus.CREATED).body(invitationDto);
+            return ResponseEntity.status(HttpStatus.CREATED).body(convertToChatRoomDto(invitation));
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
@@ -90,13 +87,7 @@ public class ChatRoomInvitationServiceImpl implements ChatRoomInvitationService 
             chatRoom.getCreatedUser().add(user);
             chatRoomRepository.save(chatRoom);
 
-            ChatRoomInvitationDto invitationDto = new ChatRoomInvitationDto();
-            invitationDto.setId(invitation.getId());
-            invitationDto.setChatRoomId(chatRoom.getId());
-            invitationDto.setUserId(user.getId());
-            invitationDto.setStatus(invitation.getStatus().name());
-
-            return ResponseEntity.ok(invitationDto);
+            return ResponseEntity.ok(convertToChatRoomDto(invitation));
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
@@ -117,16 +108,12 @@ public class ChatRoomInvitationServiceImpl implements ChatRoomInvitationService 
             chatRoomInvitationRepository.save(invitation);
             chatRoomInvitationRepository.delete(invitation);
 
-            ChatRoomInvitationDto invitationDto = new ChatRoomInvitationDto();
-            invitationDto.setId(invitation.getId());
-            invitationDto.setChatRoomId(chatRoom.getId());
-            invitationDto.setUserId(user.getId());
-            invitationDto.setStatus("DELETED");
+            ChatRoomInvitationDto invitationDto = convertToChatRoomDto(invitation);
+            invitationDto.setStatus("DELETED"); // 상태를 DELETED로 설정
 
             return ResponseEntity.ok(invitationDto);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
-
 }
