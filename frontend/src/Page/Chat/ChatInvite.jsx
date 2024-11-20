@@ -1,25 +1,44 @@
-import {useEffect, useState} from "react";
-import {fetchTokenData} from "../../Server/ApiService";
-import {useSelector} from "react-redux";
+import {postTokenJsonData} from "../../Server/ApiService";
 
-function ChatInvite(){
-    const [inviteList,setInviteList] = useState()
-    const user = useSelector((state) => state.auth.user);
-    const userId = user ? user.userId : null; // user가 존재하는 경우에만 userId를 가져옴
+function ChatInvite({inviteList}){
 
-    useEffect(() => {
-        if (userId) { // userId가 존재할 때만 fetch 실행
-            fetchTokenData(`/chat/invitations/${userId}`).then((res) => {
-                console.log(res);
-            });
-        }
-    }, [userId]);
-    return(
-        <div>
+    const onAccept = async (roomId,userId) =>{
+        postTokenJsonData(`/chat/accept/${roomId}`,{
+            userId:userId
+        }).then((res)=>{
+            console.log(res)
+        })
+    }
 
+    const onRemove = async (roomId,userId) =>{
+        postTokenJsonData(`/chat/remove/${roomId}`,{
+            userId: userId
+        }).then((res)=>{
+            console.log(res)
+        })
+    }
 
+    if(inviteList){
+        return(
+            <div>
+                {inviteList.map((invite,idx)=>{
+                    return(
+                        <div key={invite.id}>
+                            <h1>{invite.roomName}</h1>
+                            <button onClick={()=>onAccept(invite.chatRoomId,invite.userId)}>수락</button>
+                            <button onClick={()=>onRemove(invite.chatRoomId,invite.userId)}>거절</button>
+                        </div>
+                    )
+                })}
+            </div>
+        )
+    }else{
+        return(
+            <div>
+                초대받은 채팅방이 없습니다.
+            </div>
+        )
+    }
 
-        </div>
-    )
 }
 export default ChatInvite

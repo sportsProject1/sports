@@ -8,4 +8,5 @@ public class ChatRoomInvitationDto {
     private Long chatRoomId;
     private Long userId;
     private String status;
+    private String roomName;
 }

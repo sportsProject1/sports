@@ -9,4 +9,5 @@ public interface ChatRoomService {
     ChatRoom getChatRoom(Long id);
     List<ChatRoomDto> getChatRoomsForCurrentUser();
 
+    ChatRoomDto convertToChatRoomDto(ChatRoom chatRoom);
 }

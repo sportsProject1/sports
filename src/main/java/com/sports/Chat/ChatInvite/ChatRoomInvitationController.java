@@ -14,22 +14,22 @@ public class ChatRoomInvitationController {
     private final ChatRoomInvitationService chatRoomInvitationService;
 
     @PostMapping("/invite/{chatRoomId}")
-    public ResponseEntity<ChatRoomInvitationDto> inviteUser(@PathVariable Long chatRoomId, @RequestBody InviteUserRequest request) {
+    public ResponseEntity<ChatRoomInvitationDto> inviteUserToChatRoom(@PathVariable Long chatRoomId, @RequestBody InviteUserRequest request) {
         return chatRoomInvitationService.inviteUser(chatRoomId, request.getUserId());
     }
 
     @PostMapping("/accept/{chatRoomId}")
-    public ResponseEntity<ChatRoomInvitationDto> acceptUser(@PathVariable Long chatRoomId, @RequestBody InviteUserRequest request) {
+    public ResponseEntity<ChatRoomInvitationDto> acceptChatRoomInvitation(@PathVariable Long chatRoomId, @RequestBody InviteUserRequest request) {
         return chatRoomInvitationService.acceptInvitation(chatRoomId, request.getUserId());
     }
 
     @PostMapping("/remove/{chatRoomId}")
-    public ResponseEntity<ChatRoomInvitationDto> removeUser(@PathVariable Long chatRoomId, @RequestBody InviteUserRequest request) {
+    public ResponseEntity<ChatRoomInvitationDto> declineChatRoomInvitation(@PathVariable Long chatRoomId, @RequestBody InviteUserRequest request) {
         return chatRoomInvitationService.removeInvitation(chatRoomId, request.getUserId());
     }
 
     @GetMapping("/invitations/{userId}")
-    public ResponseEntity<List<ChatRoomInvitationDto>> getUserInvitations(@PathVariable Long userId) {
+    public ResponseEntity<List<ChatRoomInvitationDto>> getUserChatRoomInvitations(@PathVariable Long userId) {
         List<ChatRoomInvitationDto> invitationDtos = chatRoomInvitationService.getUserInvitations(userId);
         return ResponseEntity.ok(invitationDtos);
     }

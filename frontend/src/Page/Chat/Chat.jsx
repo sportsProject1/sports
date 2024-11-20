@@ -1,75 +1,50 @@
 import styled from 'styled-components';
 import {useEffect, useState} from "react";
 import {fetchTokenData} from "../../Server/ApiService";
-import {useNavigate} from "react-router-dom";
+import {Link, useNavigate, useParams} from "react-router-dom";
+import ChatInvite from "./ChatInvite";
+import ChatList from "./ChatList";
+import {ChatContainer, ChatHeader, ChatItem, ChatSection, ChatSidebar} from "../../styled/Chat/ChatStyled";
+import {useSelector} from "react-redux";
 
-const LayoutContainer = styled.div`
-  display: flex;
-    width: 80%;
-    margin: auto;
-  height: 100vh;
-`;
-
-const Sidebar = styled.div`
-  width: 15%; /* 사이드바 너비 */
-  background-color: #4b2b2b; /* 진한 갈색 */
-    color:#ccc
-`;
-
-const MainContent = styled.div`
-  flex: 1;
-  background-color: #d8e9d1; /* 밝은 녹색 */
-  display: flex;
-  flex-direction: column;
-`;
-
-const Header = styled.div`
-  height: 10%; /* 헤더 높이 */
-  background-color: #cc6f6f; /* 분홍색 */
-`;
-
-const ContentSection = styled.div`
-  flex: 1;
-  border-top: 2px solid #cc6f6f; /* 분홍색 구분선 */
-`;
-
-const Footer = styled.div`
-  height: 10%; /* 푸터 높이 */
-  background-color: #cc6f6f; /* 분홍색 */
-`;
 
 function Chat(){
     const [chatRoomList,setChatRoomList] = useState();
+    const [inviteList,setInviteList] = useState();
 
-    const navigate = useNavigate()
+    // 현재 로그인한 유저의 ID 가져오기
+    const user = useSelector((state) => state.auth?.user);
+    const userId = user ? user.userId : null; // user가 존재하는 경우에만 userId 가져옴
+
+    console.log(userId);
+    const { invite } = useParams();
+
+    const navigate = useNavigate();
     useEffect(() => {
-        fetchTokenData('/chat/my-rooms').then((res)=>{
+        fetchTokenData('/chat/my-rooms').then((res) => {
             setChatRoomList(res.data);
-        })
-    }, []);
-    console.log(chatRoomList)
+        });
+
+        if (userId) {
+            fetchTokenData(`/chat/invitations/${userId}`).then((res) => {
+                // 초대 내역 로직
+                setInviteList(res.data)
+            });
+        }
+    }, [userId]);
+    console.log(inviteList)
     return(
-        <LayoutContainer>
-            <Sidebar>
-                <p>채팅 목록</p>
-                <p>초대 내역</p>
-            </Sidebar>
-            <MainContent>
-                <Header />
-                {chatRoomList?.map((list)=>{
-                    return(
-                        <div key={list.id} onClick={()=>navigate(`/chat/${list.id}`)}>
-                            <h1>{list.roomName}</h1>
-                        </div>
-                    )
-                })}
-                <ContentSection />
-                <ContentSection />
-                <ContentSection />
-                <ContentSection />
-                <Footer />
-            </MainContent>
-        </LayoutContainer>
+        <ChatContainer>
+            <ChatSidebar>
+                <Link to={'/chat'}>채팅방 목록</Link>
+                <Link to={'/chat/invite'}>초대 내역</Link>
+            </ChatSidebar>
+            <ChatSection>
+                <ChatHeader />
+                {invite ? <ChatInvite inviteList={inviteList}/> : <ChatList chatRoomList={chatRoomList}/>}
+
+            </ChatSection>
+        </ChatContainer>
     )
 }
 export default Chat
