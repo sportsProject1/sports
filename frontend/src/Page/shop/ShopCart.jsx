@@ -126,7 +126,7 @@ function ShopCart() {
                                 />
                             </TableData>
                             <TableData>
-                                <ItemImage src={item.itemImgUrl} alt={item.itemTitle} />
+                                <ItemImage src={item.itemImgUrl.split(",")[0]} alt={item.itemTitle} />
                             </TableData>
                             <TableData>{item.itemTitle}</TableData>
                             <TableData>{item.itemPrice.toLocaleString()}원</TableData>

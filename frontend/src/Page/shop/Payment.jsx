@@ -3,6 +3,7 @@ import { fetchTokenData, postTokenJsonData } from "../../Server/ApiService";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
 
 const FormBox = styled(Form)`
     display: flex;
@@ -59,6 +60,7 @@ const validationSchema = Yup.object({
 function Payment() {
     const [paymentItem, setPaymentItem] = useState(null);
     const postcodeRef = useRef();
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetchTokenData("/mypage/cart/checkout").then((res) => {
@@ -126,6 +128,7 @@ function Payment() {
 
                     postTokenJsonData("/payment/process", dataToSend).then((res) => {
                         console.log(res);
+                        navigate('/history');
                     }).catch((err) => {
                         console.log(err);
                     });
@@ -164,7 +167,7 @@ function Payment() {
                         <p>결제상품</p>
                         {paymentItem.cartItems.filter(item => item.checked).map((item) => (
                             <ItemContainer key={item.cartId}>
-                                <ItemImage src={item.itemImgUrl} alt="상품 이미지" />
+                                <ItemImage src={item.itemImgUrl.split(",")[0]} alt={item.itemTitle} />
                                 <div>
                                     <p>상품명: {item.itemTitle}</p>
                                     <p>수량: {item.count}</p>
