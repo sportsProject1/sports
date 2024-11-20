@@ -104,19 +104,39 @@ export const SectionContainer = styled.div`
     position: relative;
 `;
 
+export const PostSectionContainer = styled.div`
+    width: 70%;
+    margin: auto;
+    display: flex;
+    flex-wrap: wrap;
+    position: relative;
+`;
+
 //// 리스트 추가
 export const ListContainer = styled.div`
-    width: 100%;
-    margin: 20px auto;
+    width: 49%;
+    height: 600px;
+    margin-top: 20px;
+    margin-right: 9px;
     padding: 20px;
-    background-color: #f9f9f9;
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 `;
+
+export const TagTitleContainer = styled.div`
+     height:12%;
+     background-color:#ccc;
+     border-radius:15px;
+     text-align: center;
+     width:100%;
+     display:flex;
+     align-items:center;
+     justify-content:flex-start;
+     padding-left:5%;
+     font-weight:bold;
+ `;
 
 export const ListItem = styled.div`
     display: flex;
-    justify-content: space-between;
     align-items: center;
     padding: 15px;
     border-bottom: 1px solid #ddd;
@@ -132,47 +152,73 @@ export const ListItem = styled.div`
 `;
 
 export const ItemLeft = styled.div`
-    display: flex;
-    align-items: center;
-    gap: 10px;
+    width: 50px;
+    position:relative;
+    margin-right: 10px;
 
-    .thumbnail {
-        width: 50px;
+    img {
+        display:block;
+        width: 100%;
         height: 50px;
-        background-color: #e9ecef;
+        background-color: rgba(0,0,0,0.05);
         border-radius: 8px;
         object-fit: cover;
     }
 
-    .text {
-        display: flex;
-        flex-direction: column;
-
-        .title {
-            font-weight: bold;
-            color: #333;
-            font-size: 14px;
-        }
-
-        .author {
-            font-size: 12px;
-            color: #777;
-        }
-    }
 `;
 
 export const ItemRight = styled.div`
     font-size: 12px;
     color: #555;
-    text-align: right;
+    position:relative;
+    width: calc(100% - 50px);
 
-    .date {
-        margin-bottom: 5px;
+    span {
+        position: absolute;
+        font-size: 10px;
     }
+`;
 
-    .views {
-        font-weight: bold;
-    }
+export const PostAuthor = styled.div`
+    font-size: 14px;
+    color: #868e96;
+    margin-bottom: 10px;
+    position:relative;
+    width: fit-content;
+`;
+
+export const PostPostTitle = styled.h3`
+    font-size: 16px;
+    font-weight: bold;
+    color: #212529;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 80%;
+`;
+
+// 카테고리 태그 스타일
+export const CategoryTag = styled.span`
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #f1f3f5;
+    color: #495057;
+    font-size: 12px;
+    padding: 4px 8px;
+    border-radius: 12px;
+`;
+
+export const PostCategoryTag = styled.span`
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #f1f3f5;
+    color: #495057;
+    font-size: 12px;
+    padding: 4px 8px;
+    border-radius: 12px;
 `;
 //// 리스트 추가
 
@@ -181,6 +227,13 @@ export const CardWrapper = styled.div`
     transition: transform 0.5s ease-in-out;
     transform: translateX(${props => props.$translateX}%);
     width: 200%; // 2 페이지 분량으로 설정
+`;
+
+export const PostCardWrapper = styled.div`
+    display: flex;
+    flex-direction:column;
+    gap: 20px;
+    transition: transform 0.5s ease-in-out;
 `;
 
 export const PostCard = styled.div`
@@ -195,18 +248,6 @@ export const PostCard = styled.div`
     position: relative;
     margin: 10px;
     cursor: pointer;
-`;
-
-// 카테고리 태그 스타일
-export const CategoryTag = styled.span`
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background-color: #f1f3f5;
-    color: #495057;
-    font-size: 12px;
-    padding: 4px 8px;
-    border-radius: 12px;
 `;
 
 // 이미지 스타일
@@ -227,16 +268,6 @@ export const PlaceholderImg = styled.img`
     object-fit: cover;
     border-radius: 8px;
 `;
-
-// 보드 이미지 (없을 경우 보여줄 이미지)
-export const BoardImg = styled.img`
-    width: 10%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 8px;
-`;
-
-
 
 // 콘텐츠 영역 스타일
 export const PostContent = styled.div`

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -35,6 +36,14 @@ public class BoardController {
     @GetMapping("/{id}")
     public ResponseEntity<BoardResponseDTO> getBoard(@PathVariable Long id) {
         return ResponseEntity.ok(boardService.getBoardById(id));
+    }
+
+    // 메인페이지 게시글 보내기 (최신글 기준)
+    @GetMapping("/main")
+    public Map<String, List<BoardResponseDTO>> getMainBoards() {
+        // 원하는 카테고리 태그 설정
+        List<String> tags = Arrays.asList("운동", "공지사항", "모집", "자유");
+        return boardService.getMainBoardsByTags(tags);
     }
 
     // 글쓰기
@@ -77,7 +86,7 @@ public class BoardController {
         return ResponseEntity.ok(response);
     }
 
-    //검색(게시판)
+    // 검색(게시판)
     @GetMapping("/search")
     public ResponseEntity<List<BoardResponseDTO>> searchBoards(@RequestParam String keyword) {
         List<BoardResponseDTO> searchResults = boardService.searchBoardByTitle(keyword);
