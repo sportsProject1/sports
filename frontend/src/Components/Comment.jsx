@@ -65,7 +65,7 @@ function Comment({ commentData, comment, setComment, onCreateComment, setComment
         const inviteUser = {
             userId : userId
         }
-        postTokenJsonData(`/chat/invite/36`,inviteUser).then((res)=>{
+        postTokenJsonData(`/chat/invite/51`,inviteUser).then((res)=>{
             console.log(res)
 
         })
