@@ -96,13 +96,14 @@ export const QuantityButton = styled.button`
     background-color: #f1f1f1;
     color: #333;
     border: 1px solid #ccc;
-    border-radius: 4px;
-    padding: 10px 15px;
+    border-radius: 100px;
+    padding: 9px 15px;
     font-size: 18px;
     cursor: pointer;
     transition: background-color 0.3s;
     width: 40px;
     height: 40px;
+    font-weight: bold;
 
     &:hover {
         background-color: #e6e6e6;
@@ -116,17 +117,18 @@ export const QuantityButton = styled.button`
 `;
 
 
-// 수정된 수량 입력 스타일 (이름 변경)
+// 수정된 수량 입력 스타일
 export const StyledQuantityInput = styled.input`
     width: 60px;
     height: 40px;
-    padding: 5px;
+    padding-left: 13px;
     text-align: center;
     font-size: 18px;
     border: 1px solid #ddd;
     border-radius: 4px;
     background-color: #fff;
     color: #333;
+    font-weight: bold;
 `;
 
 // 장바구니 버튼 스타일
@@ -166,6 +168,18 @@ export const ActionButton = styled.button`
     &:last-child {
         margin-right: 0;
     }
+`;
+
+export const TotalPriceContainer = styled.div`
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    font-size: 18px;
+    font-weight: bold;
+`;
+
+export const TotalPriceText = styled.span`
+    color: #e60023;  // 총 가격을 강조하는 색상
 `;
 
 // 상품 상세페이지 끝
