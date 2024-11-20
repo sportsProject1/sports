@@ -15,7 +15,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -47,6 +49,21 @@ public class BoardService {
         boardRepository.save(board);
 
         return toResponseDTO(board);
+    }
+
+    // 카테고리 태그별 게시글 가져오기
+    public Map<String, List<BoardResponseDTO>> getMainBoardsByTags(List<String> tags) {
+        Map<String, List<BoardResponseDTO>> result = new LinkedHashMap<>();
+        for (String tag : tags) {
+            // 특정 태그의 게시글 5개 가져오기
+            List<Board> boards = boardRepository.findTop5ByCategoryTagOrderByCreatedAtDesc(tag);
+            List<BoardResponseDTO> dtos = boards.stream()
+                    .map(this::toResponseDTO)
+                    .limit(5)
+                    .toList();
+            result.put(tag, dtos); // 태그를 키로 사용
+        }
+        return result;
     }
 
     // 글쓰기
@@ -133,6 +150,7 @@ public class BoardService {
                 .createdAt(board.getCreatedAt())
                 .updatedAt(board.getUpdatedAt())
                 .imgUrl(board.getImgUrl())
+                .chatroom(board.isChatroom())
                 .build();
     }
 
@@ -187,22 +205,8 @@ public class BoardService {
     public List<BoardResponseDTO> searchBoardByTitle(String keyword) {
         List<Board> boards = boardRepository.searchByTitle(keyword);
         return boards.stream()
-                .map(this::convertToDTO)
+                .map(this::toResponseDTO)
                 .collect(Collectors.toList());
     }
 
-    private BoardResponseDTO convertToDTO(Board board) {
-        return new BoardResponseDTO(
-                board.getId(),
-                board.getTitle(),
-                board.getContent(),
-                board.getImgUrl(),
-                board.getCreatedAt(),
-                board.getUpdatedAt(),
-                board.getLikes(),
-                board.getViews(),
-                board.getAuthor().getUsername(),
-                board.getCategory().getName()
-        );
-    }
 }

@@ -7,15 +7,13 @@ function Home() {
     return (
         <MainContainer>
             <MainBanner/>
-            <Divider/>
 
-            <SectionTitle>최신 게시글</SectionTitle>
+{/*         <SectionTitle>최신 게시글</SectionTitle> */}
             <MainBestBoard/>
             <Divider/>
 
-            <SectionTitle>최신 게시글</SectionTitle>
+{/*         <SectionTitle>최신 게시글</SectionTitle> */}
             <MainBestItem/>
-
 
         </MainContainer>
     )
