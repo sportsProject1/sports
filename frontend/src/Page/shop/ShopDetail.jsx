@@ -1,30 +1,32 @@
+import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
 import { fetchData } from "../../Server/ApiServiceNoToken";
 import ErrorPage from "../ErrorPage";
 import {
     ProductDetailContainer,
-    ProductImageGallery,
-    ProductImage,
     ProductInfoContainer,
     ProductName,
-    ProductDiscount,
-    ProductOriginalPrice,
     ProductPrice,
-    ProductBenefits,
+    ProductDescription,
     QuantityContainer,
-    QuantityInput,
+    StyledQuantityInput,  // 스타일 변경된 수량 입력
+    QuantityButton,       // 스타일 변경된 수량 버튼
     AddToCartButton,
-    ActionButton
+    ActionButton,
+    ProductImageGallery,
+    ProductBenefits,
 } from "../../styled/Shop/ShopStyled";
 import { deleteTokenData, postTokenData } from "../../Server/ApiService";
+import ShopDetailImages from "./ShopDetailImages";
 import styled from "styled-components";
-
 
 const DetailForm = styled.form`
     width: 100%;
-    
-`
+    display: flex;
+    align-items: center; /* 수량 및 버튼들을 세로로 정렬 */
+    gap: 20px;
+`;
+
 function ShopDetail() {
     const [fetchItem, setFetchItem] = useState();
     const [itemCount, setItemCount] = useState(1);
@@ -32,8 +34,8 @@ function ShopDetail() {
     const { id } = useParams();
 
     useEffect(() => {
-        fetchData(`/shop/detail/${id}`).then((res)=>{
-            setFetchItem(res.data.item)
+        fetchData(`/shop/detail/${id}`).then((res) => {
+            setFetchItem(res.data.item);
         });
     }, [id]);
 
@@ -56,7 +58,7 @@ function ShopDetail() {
     const onDelete = async () => {
         try {
             await deleteTokenData(`/shop/delete/${id}`);
-            navigate('/shop',{replace:true})
+            navigate("/shop", { replace: true });
         } catch (err) {
             console.log(err);
         }
@@ -68,47 +70,47 @@ function ShopDetail() {
 
     if (fetchItem) {
         const imageData = fetchItem.imgurl;
-        const imageUrlArray = imageData ? imageData.split(',') : [];
+        const imageUrlArray = imageData ? imageData.split(",") : []; // 쉼표로 구분된 URL을 배열로 변환
 
         return (
             <ProductDetailContainer>
                 {/* 좌측 이미지 갤러리 */}
                 <ProductImageGallery>
-                    {imageUrlArray.map((image, index) => (
-                        <ProductImage src={image} alt={`상품 이미지 ${index + 1}`} key={image} />
-                    ))}
+                    <ShopDetailImages imageUrls={imageData} /> {/* 이미지 컴포넌트 사용 */}
                 </ProductImageGallery>
 
                 {/* 우측 정보 */}
                 <ProductInfoContainer>
                     <ProductName>{fetchItem.title}</ProductName>
-                    {fetchItem.discountRate && (
-                        <ProductDiscount>{fetchItem.discountRate}% 할인</ProductDiscount>
-                    )}
-                    {fetchItem.originalPrice && (
-                        <ProductOriginalPrice>
-                            {fetchItem.originalPrice.toLocaleString()}원
-                        </ProductOriginalPrice>
-                    )}
                     <ProductPrice>{fetchItem.price?.toLocaleString()}원</ProductPrice>
 
                     <ProductBenefits>
                         <p>배송비: {fetchItem.shippingCost ? fetchItem.shippingCost.toLocaleString() : '0'}원</p>
-                        <p>구매 혜택: 최대 적립 {fetchItem.benefitPoints ? fetchItem.benefitPoints.toLocaleString() : '0'}원</p>
+                        <p>최대 적립 {fetchItem.benefitPoints ? fetchItem.benefitPoints.toLocaleString() : '0'}원</p>
                     </ProductBenefits>
 
+                    {/* 상품 설명 */}
+                    <ProductDescription>{fetchItem.desc}</ProductDescription>
+
                     <DetailForm onSubmit={cartItemSubmit}>
+                        {/* 수량 컨트롤 */}
                         <QuantityContainer>
-                            <button type="button" onClick={decreaseCount}>-</button>
-                            <QuantityInput type="number" value={itemCount} readOnly />
-                            <button type="button" onClick={increaseCount}>+</button>
+                            <QuantityButton type="button" onClick={decreaseCount}>-</QuantityButton>
+                            <StyledQuantityInput type="number" value={itemCount} readOnly />
+                            <QuantityButton type="button" onClick={increaseCount}>+</QuantityButton>
                         </QuantityContainer>
+
+                        {/* 장바구니 담기 버튼 */}
                         <AddToCartButton type="submit">장바구니 담기</AddToCartButton>
-                        <div>
-                            <ActionButton onClick={onDelete} type="button">삭제하기</ActionButton>
-                            <ActionButton onClick={onUpdate}>수정하기</ActionButton>
-                        </div>
                     </DetailForm>
+
+                    {/* 삭제 및 수정 버튼 */}
+                    <div>
+                        <ActionButton onClick={onDelete} type="button">
+                            삭제하기
+                        </ActionButton>
+                        <ActionButton onClick={onUpdate}>수정하기</ActionButton>
+                    </div>
                 </ProductInfoContainer>
             </ProductDetailContainer>
         );
