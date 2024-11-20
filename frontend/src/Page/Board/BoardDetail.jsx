@@ -34,7 +34,11 @@ function BoardDetail(){
             console.log("불러 올 댓글 없어")
         })
         fetchData(`/board/${id}/chatroom`).then((res)=>{
-            setChatRoomId(res.data.id)
+            if(res){
+                setChatRoomId(res.data.id)
+            }
+        }).catch(()=>{
+
         })
     }, []);
     const formattedDate = detailBoard?.createdAt.split('T')[0].substring(2);
