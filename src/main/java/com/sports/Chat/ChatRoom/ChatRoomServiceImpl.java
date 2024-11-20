@@ -28,7 +28,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
     private final ChatRoomInvitationRepository chatRoomInvitationRepository;
 
     @Override
-    public ChatRoom createChatRoomWithCurrentUser(ChatRoomDto chatRoomDto) {
+    public ChatRoomDto createChatRoomWithCurrentUser(ChatRoomDto chatRoomDto) {
         Optional<Board> boardOptional = boardRepository.findById(chatRoomDto.getBoardId());
         if (boardOptional.isEmpty()) {
             throw new RuntimeException("게시글을 찾을 수 없습니다.");
@@ -56,7 +56,21 @@ public class ChatRoomServiceImpl implements ChatRoomService {
         users.add(userOptional.get());
         chatRoom.setCreatedUser(users);
 
-        return chatRoomRepository.save(chatRoom);
+        ChatRoom savedChatRoom = chatRoomRepository.save(chatRoom);
+
+        // ChatRoom -> ChatRoomDto로 변환
+        return convertToChatRoomDto(savedChatRoom);
+    }
+
+    private ChatRoomDto convertToChatRoomDto(ChatRoom chatRoom) {
+        ChatRoomDto chatRoomDto = new ChatRoomDto();
+        chatRoomDto.setId(chatRoom.getId());
+        chatRoomDto.setRoomName(chatRoom.getRoomName());
+        chatRoomDto.setBoardId(chatRoom.getBoard().getId());
+        chatRoomDto.setCreatedUser(chatRoom.getCreatedUser().stream()
+                .map(User::getId)
+                .collect(Collectors.toSet()));
+        return chatRoomDto;
     }
 
     @Override
