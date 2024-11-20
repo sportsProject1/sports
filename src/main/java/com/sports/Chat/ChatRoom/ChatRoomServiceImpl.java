@@ -74,66 +74,6 @@ public class ChatRoomServiceImpl implements ChatRoomService {
     }
 
     @Override
-    public ChatRoom inviteUser(Long chatRoomId, Long userId) {
-        ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
-                .orElseThrow(() -> new RuntimeException("채팅방을 찾을 수 없습니다."));
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
-
-        // 초대가 이미 존재하는지 확인
-        Optional<ChatRoomInvitation> existingInvitation = chatRoomInvitationRepository.findByChatRoomAndUser(chatRoom, user);
-        if (existingInvitation.isPresent()) {
-            throw new RuntimeException("해당 사용자에게 이미 초대가 전송되었습니다.");
-        }
-
-        // 초대 생성
-        ChatRoomInvitation invitation = new ChatRoomInvitation();
-        invitation.setChatRoom(chatRoom);
-        invitation.setUser(user);
-        invitation.setStatus(ChatRoomInvitation.InvitationStatus.PENDING);
-        chatRoomInvitationRepository.save(invitation);
-
-        return chatRoom;
-    }
-
-    @Override
-    public ChatRoom acceptInvitation(Long chatRoomId, Long userId) {
-        ChatRoom chatRoom = getChatRoomById(chatRoomId);
-        User user = getUserById(userId);
-
-        // 초대 확인 및 상태 변경
-        ChatRoomInvitation invitation = chatRoomInvitationRepository.findByChatRoomAndUser(chatRoom, user)
-                .orElseThrow(() -> new RuntimeException("초대를 찾을 수 없습니다."));
-        if (invitation.getStatus() != ChatRoomInvitation.InvitationStatus.PENDING) {
-            throw new RuntimeException("이 초대는 이미 처리되었습니다.");
-        }
-
-        invitation.setStatus(ChatRoomInvitation.InvitationStatus.ACCEPTED);
-        chatRoomInvitationRepository.save(invitation);
-
-        // 채팅방에 유저 추가
-        chatRoom.getCreatedUser().add(user);
-        return chatRoomRepository.save(chatRoom);
-    }
-
-    @Override
-    public ChatRoom removeInvitation(Long chatRoomId, Long userId) {
-        ChatRoom chatRoom = getChatRoomById(chatRoomId);
-        User user = getUserById(userId);
-
-        ChatRoomInvitation invitation = chatRoomInvitationRepository.findByChatRoomAndUser(chatRoom, user)
-                .orElseThrow(() -> new RuntimeException("초대를 찾을 수 없습니다."));
-        if (invitation.getStatus() != ChatRoomInvitation.InvitationStatus.PENDING) {
-            throw new RuntimeException("이 초대는 이미 처리되었습니다.");
-        }
-        invitation.setStatus(ChatRoomInvitation.InvitationStatus.REJECTED);
-        chatRoomInvitationRepository.save(invitation); // 상태 업데이트 후 저장
-
-        // chatRoom을 반환
-        return chatRoom;
-    }
-
-    @Override
     public ChatRoom getChatRoom(Long id) {
         return chatRoomRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("채팅방을 찾을 수 없습니다."));

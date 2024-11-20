@@ -5,12 +5,8 @@ import java.util.Optional;
 
 public interface ChatRoomService {
     ChatRoomDto createChatRoomWithCurrentUser(ChatRoomDto chatRoomDto);
-    ChatRoom inviteUser(Long chatRoomId, Long userId);
+
     ChatRoom getChatRoom(Long id);
     List<ChatRoomDto> getChatRoomsForCurrentUser();
-
-
-    ChatRoom acceptInvitation(Long chatRoomId, Long userId);
-    ChatRoom removeInvitation(Long chatRoomId, Long userId);
 
 }

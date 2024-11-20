@@ -19,21 +19,6 @@ public class ChatRoomController {
         return chatRoomService.createChatRoomWithCurrentUser(chatRoomDto);
     }
 
-    @PostMapping("/invite/{chatRoomId}")
-    public ChatRoom inviteUser(@PathVariable Long chatRoomId, @RequestBody InviteUserRequest request) {
-        return chatRoomService.inviteUser(chatRoomId, request.getUserId());
-    }
-
-    @PostMapping("/accept/{chatRoomId}")
-    public ChatRoom acceptInvitation(@PathVariable Long chatRoomId, @RequestBody Long userId) {
-        return chatRoomService.acceptInvitation(chatRoomId, userId);
-    }
-
-    @PostMapping("/remove/{chatRoomId}")
-    public ChatRoom removeInvitation(@PathVariable Long chatRoomId, @RequestBody Long userId) {
-        return chatRoomService.removeInvitation(chatRoomId, userId);
-    }
-
     @GetMapping("/{id}")
     public ChatRoom getChatRoom(@PathVariable Long id) {
         return chatRoomService.getChatRoom(id);
