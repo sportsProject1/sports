@@ -9,12 +9,14 @@ import {
     ProductPrice,
     ProductDescription,
     QuantityContainer,
-    StyledQuantityInput,  // 스타일 변경된 수량 입력
-    QuantityButton,       // 스타일 변경된 수량 버튼
+    StyledQuantityInput,
+    QuantityButton,
     AddToCartButton,
     ActionButton,
     ProductImageGallery,
     ProductBenefits,
+    TotalPriceContainer,
+    TotalPriceText
 } from "../../styled/Shop/ShopStyled";
 import { deleteTokenData, postTokenData } from "../../Server/ApiService";
 import ShopDetailImages from "./ShopDetailImages";
@@ -30,14 +32,29 @@ const DetailForm = styled.form`
 function ShopDetail() {
     const [fetchItem, setFetchItem] = useState();
     const [itemCount, setItemCount] = useState(1);
+    const [totalPrice, setTotalPrice] = useState(0);
+    const [userId, setUserId] = useState(null);
+    const [userRole, setUserRole] = useState(null);
     const navigate = useNavigate();
     const { id } = useParams();
 
     useEffect(() => {
-        fetchData(`/shop/detail/${id}`).then((res) => {
-            setFetchItem(res.data.item);
-        });
-    }, [id]);
+            const loggedInUser = JSON.parse(localStorage.getItem('user'));
+            if (loggedInUser) {
+                setUserId(loggedInUser.userId);
+                setUserRole(loggedInUser.role);
+            }
+
+            fetchData(`/shop/detail/${id}`).then((res) => {
+                setFetchItem(res.data.item);
+            });
+        }, [id]);
+
+    useEffect(() => {
+        if (fetchItem) {
+            setTotalPrice(fetchItem.price * itemCount);
+        }
+    }, [itemCount, fetchItem]);
 
     const cartItemSubmit = async (e) => {
         e.preventDefault();
@@ -70,7 +87,9 @@ function ShopDetail() {
 
     if (fetchItem) {
         const imageData = fetchItem.imgurl;
-        const imageUrlArray = imageData ? imageData.split(",") : []; // 쉼표로 구분된 URL을 배열로 변환
+        const imageUrlArray = imageData ? imageData.split(",") : [];
+
+        const isOwnerOrAdmin = fetchItem.userId === userId || userRole === 'ROLE_ADMIN';
 
         return (
             <ProductDetailContainer>
@@ -86,7 +105,7 @@ function ShopDetail() {
 
                     <ProductBenefits>
                         <p>배송비: {fetchItem.shippingCost ? fetchItem.shippingCost.toLocaleString() : '0'}원</p>
-                        <p>최대 적립 {fetchItem.benefitPoints ? fetchItem.benefitPoints.toLocaleString() : '0'}원</p>
+                        <p>최대 적립: {fetchItem.benefitPoints ? fetchItem.benefitPoints.toLocaleString() : '0'}원</p>
                     </ProductBenefits>
 
                     {/* 상품 설명 */}
@@ -104,12 +123,21 @@ function ShopDetail() {
                         <AddToCartButton type="submit">장바구니 담기</AddToCartButton>
                     </DetailForm>
 
+                    {/* 총 가격 표시 */}
+                    <TotalPriceContainer>
+                        <TotalPriceText>총 가격: {totalPrice.toLocaleString()}원</TotalPriceText>
+                    </TotalPriceContainer>
+
                     {/* 삭제 및 수정 버튼 */}
                     <div>
-                        <ActionButton onClick={onDelete} type="button">
-                            삭제하기
-                        </ActionButton>
-                        <ActionButton onClick={onUpdate}>수정하기</ActionButton>
+                        {isOwnerOrAdmin && (
+                            <>
+                                <ActionButton onClick={onDelete} type="button">
+                                    삭제하기
+                                </ActionButton>
+                                <ActionButton onClick={onUpdate}>수정하기</ActionButton>
+                            </>
+                        )}
                     </div>
                 </ProductInfoContainer>
             </ProductDetailContainer>

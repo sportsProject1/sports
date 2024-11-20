@@ -73,7 +73,8 @@ public class ItemService {
                 item.getImgurl(),
                 item.getStock(),
                 item.getCategory() != null ? item.getCategory().getId() : null,
-                item.getLikes() // 추가된 likes 필드
+                item.getLikes(),
+                item.getUserId()
         );
     }
 
