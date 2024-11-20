@@ -33,7 +33,10 @@ function ItemWrapper({ items }) {
             <ItemContainer>
                 {currentItems.map((item) => (
                     <Card key={item.id} onClick={() => navigate(`/shop/detail/${item.id}`)}>
-                        <CardImage src={item.imgurl} alt={item.name} />
+                        <CardImage
+                                src={item.imgurl ? item.imgurl.split(',')[0] : 'default-image-url.jpg'}
+                                alt={item.name}
+                            />
                         <ProductName>{item.title}</ProductName>
                         <Price>{item.price}</Price>
                     </Card>
