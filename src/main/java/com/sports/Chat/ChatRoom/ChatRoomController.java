@@ -11,7 +11,7 @@ public class ChatRoomController {
 
 
     @PostMapping("/create")
-    public ChatRoom createChatRoom(@RequestBody ChatRoomDto chatRoomDto) {
+    public ChatRoomDto createChatRoom(@RequestBody ChatRoomDto chatRoomDto) {
         return chatRoomService.createChatRoomWithCurrentUser(chatRoomDto);
     }
 
