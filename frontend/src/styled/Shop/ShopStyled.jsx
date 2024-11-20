@@ -2,8 +2,6 @@ import styled from 'styled-components';
 
 // 상품 상세페이지
 // 상품 상세 페이지 컨테이너
-
-// 상품 상세 페이지 컨테이너
 export const ProductDetailContainer = styled.div`
     display: flex;
     gap: 40px;
@@ -12,89 +10,140 @@ export const ProductDetailContainer = styled.div`
     border-radius: 8px;
     max-width: 1200px;
     margin: 40px auto;
+    justify-content: space-between;
+    flex-wrap: wrap;
 `;
 
-// 이미지 갤러리 컨테이너
+// 이미지 갤러리 컨테이너 (왼쪽에 배치)
 export const ProductImageGallery = styled.div`
     display: flex;
     flex-direction: column;
     gap: 10px;
+    flex: 1; /* 왼쪽 부분에 50% 크기 지정 */
+    max-width: 480px;
 `;
 
-// 상품 이미지 스타일
+// 상품 이미지 스타일 (크기 600px x 700px)
 export const ProductImage = styled.img`
-    width: 400px;
+    width: 100%;
     height: auto;
+    max-width: 480px;
+    max-height: 560px;
+    object-fit: contain;
     border-radius: 8px;
-    object-fit: cover;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 `;
 
-// 상품 정보 컨테이너
+// 상품 정보 컨테이너 (오른쪽에 배치)
 export const ProductInfoContainer = styled.div`
     display: flex;
     flex-direction: column;
     gap: 20px;
     flex: 1;
+    justify-content: flex-start;
+    max-width: 540px;
+    padding-top: 20px;
 `;
 
-// 상품명 스타일
+// 상품명 스타일 (크기 키우기)
 export const ProductName = styled.h1`
-    font-size: 28px;
+    font-size: 36px; /* 좀 더 큰 크기로 설정 */
     font-weight: bold;
     color: #333;
+    margin-bottom: 10px;
 `;
 
-// 할인 정보 스타일
-export const ProductDiscount = styled.span`
-    font-size: 18px;
-    color: #e60023;
-    font-weight: bold;
-`;
-
-// 원래 가격 스타일 (취소선)
-export const ProductOriginalPrice = styled.span`
-    font-size: 16px;
-    color: #888;
-    text-decoration: line-through;
-`;
-
-// 현재 가격 스타일
+// 상품 가격 스타일
 export const ProductPrice = styled.span`
-    font-size: 24px;
+    font-size: 20px;
     color: #e60023;
     font-weight: bold;
+    margin-bottom: 10px;
 `;
 
 // 혜택 정보 스타일
 export const ProductBenefits = styled.div`
     font-size: 14px;
     color: #555;
-    border-top: 1px solid #ddd;
+    display: flex;
+    gap: 20px;
+    flex-wrap: nowrap;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #ddd;
     padding-top: 10px;
 `;
 
-// 수량 선택 및 버튼 컨테이너
+// 상품 설명 스타일
+export const ProductDescription = styled.p`
+    font-size: 16px;
+    color: #555;
+    line-height: 1.6;
+    margin-bottom: 20px;
+    min-height: 250px;
+    padding-bottom: 10px;
+`;
+
+// 수량 버튼 컨테이너
 export const QuantityContainer = styled.div`
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 15px;
+    justify-content: flex-start;
+`;
+
+// 수량 변경 버튼 스타일 (수량 조정 버튼 - , +)
+export const QuantityButton = styled.button`
+    background-color: #f1f1f1;
+    color: #333;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 10px 15px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    width: 40px;
+    height: 40px;
+
+    &:hover {
+        background-color: #e6e6e6;
+    }
+
+    &:disabled {
+        background-color: #f8f8f8;
+        color: #aaa;
+        cursor: not-allowed;
+    }
 `;
 
 
+// 수정된 수량 입력 스타일 (이름 변경)
+export const StyledQuantityInput = styled.input`
+    width: 60px;
+    height: 40px;
+    padding: 5px;
+    text-align: center;
+    font-size: 18px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #fff;
+    color: #333;
+`;
+
 // 장바구니 버튼 스타일
 export const AddToCartButton = styled.button`
-    background-color: #4CAF50;
+    background-color: #0C48C5;
     color: white;
     border: none;
     padding: 10px 20px;
     border-radius: 5px;
     cursor: pointer;
     font-size: 16px;
+    margin-left: 20px;
+    flex-shrink: 0;
     transition: background-color 0.3s;
 
     &:hover {
-        background-color: #45a049;
+        background-color: royalblue;
     }
 `;
 
@@ -119,9 +168,8 @@ export const ActionButton = styled.button`
     }
 `;
 
-
-
 // 상품 상세페이지 끝
+
 
 
 
