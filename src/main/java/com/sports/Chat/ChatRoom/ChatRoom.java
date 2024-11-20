@@ -23,6 +23,8 @@ public class ChatRoom {
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
     private Set<User> createdUser;
+    // 위 필드는 createdUser로 방을 생성한 사람이 먼저 들어가고
+    // 초대 받은 사람들도 같이 위 필드에 들어감
 
     @ManyToOne
     @JoinColumn(name = "board_id", nullable = false)
@@ -30,4 +32,5 @@ public class ChatRoom {
 
     @Column(nullable = false)
     private String roomName;
+
 }

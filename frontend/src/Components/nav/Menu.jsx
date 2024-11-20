@@ -92,8 +92,8 @@ function Menu (){
                <li>
                    <Link to={"/board"}>운동</Link>
                </li>
-               <li>자유</li>
                <li>모집</li>
+               <li><Link to={"/chat"}>채팅</Link></li>
                <li>
                   <Link to={"/shop"}>상점</Link>
               </li>
