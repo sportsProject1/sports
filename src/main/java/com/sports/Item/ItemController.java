@@ -45,7 +45,8 @@ public class ItemController {
                         item.getImgurl(),
                         item.getStock(),
                         item.getCategory() != null ? item.getCategory().getId() : null,
-                        item.getLikes()
+                        item.getLikes(),
+                        item.getUserId()
                 ))
                 .collect(Collectors.toList());
 

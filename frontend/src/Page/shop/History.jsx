@@ -87,7 +87,7 @@ function History() {
                                 <ul>
                                     {paymentData.paymentDetails.map((item, idx) => (
                                         <PaymentDetailItem key={idx}>
-                                            <PaymentItemImage src={item.itemUrl} alt={item.itemTitle} />
+                                            <PaymentItemImage src={item.itemUrl.split(",")[0]} alt={item.itemTitle} />
                                             <PaymentDetailContent>
                                                 <div>상품명: {item.itemTitle}</div>
                                                 <div>가격: {item.itemPrice.toLocaleString()}원</div>

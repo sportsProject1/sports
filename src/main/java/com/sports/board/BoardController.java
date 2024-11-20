@@ -1,7 +1,9 @@
 package com.sports.board;
 
+import com.sports.Chat.ChatRoom.ChatRoom;
+import com.sports.Chat.ChatRoom.ChatRoomDto;
+import com.sports.Chat.ChatRoom.ChatRoomIdDto;
 import com.sports.Chat.ChatRoom.ChatRoomRepository;
-import com.sports.Item.DTO.ItemDTO;
 import com.sports.like.LikeService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -89,6 +91,17 @@ public class BoardController {
     public ResponseEntity<List<BoardResponseDTO>> searchBoards(@RequestParam String keyword) {
         List<BoardResponseDTO> searchResults = boardService.searchBoardByTitle(keyword);
         return ResponseEntity.ok(searchResults);
+    }
+
+    // 게시글 아이디로 채팅방 번호 가져오는 로직
+    @GetMapping("/{boardId}/chatroom")
+    public ResponseEntity<ChatRoomIdDto> getChatRoomIdByBoard(@PathVariable Long boardId) {
+        ChatRoom chatRoom = chatRoomRepository.findByBoardId(boardId)
+                .orElseThrow(() -> new RuntimeException("해당 게시글에 연결된 채팅방이 없습니다."));
+
+        // ChatRoomIdDto 인스턴스 생성 및 반환
+        ChatRoomIdDto chatRoomIdDto = new ChatRoomIdDto(chatRoom.getId());
+        return ResponseEntity.ok(chatRoomIdDto);
     }
 
 }

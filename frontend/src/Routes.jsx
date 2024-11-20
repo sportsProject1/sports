@@ -20,6 +20,7 @@ import ChatRoom from "./Page/Chat/ChatRoom";
 import History from "./Page/shop/History";
 
 import UserList from "./Page/user/userComponents/admin/UserList";
+import ChatInvite from "./Page/Chat/ChatInvite";
 
 const Routes = createBrowserRouter([
     {
@@ -57,7 +58,9 @@ const Routes = createBrowserRouter([
             },
 
             { path: '/chat', element:<Chat/>},
+            { path: '/chat/:invite', element:<Chat/>},
             { path: '/chat/:id', element:<ChatRoom/>},
+
 
             { path: '/admin', element: <AdminPage /> },
 
