@@ -1,7 +1,7 @@
 import { ListWrap } from "../../styled/List/ListStyled";
 import SubMenu from "../../Components/Menu/SubMenu";
 import React, { useMemo, useState } from "react";
-import { Card, ItemContainer, Price, ProductName, CardImage, PriceContainer, LikeCount } from "../../styled/Common";
+import { Card, ItemContainer, Price, ProductName, CardImage, PriceContainer, LikeCount, BrandName } from "../../styled/Common";
 import { useNavigate } from "react-router-dom";
 import PagePagination from "../../Components/Pagination/PagePagination";
 
@@ -38,6 +38,7 @@ function ItemWrapper({ items }) {
                                 alt={item.name}
                             />
                         <ProductName>{item.title}</ProductName>
+                        <BrandName>{item.nickname}</BrandName>
                         <PriceContainer>
                             <Price>{item.price.toLocaleString()}원</Price>
                             <LikeCount>♡ {item.likes}</LikeCount>

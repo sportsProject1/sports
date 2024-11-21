@@ -129,9 +129,17 @@ export const ProductName = styled.div`
     font-size: 18px;
     font-weight: bold;
     padding: 10px 5px;
-    height: 50px;
+    height: 28px;
     overflow: hidden; // 텍스트가 길 때 잘림 처리
     margin-top: 10px;
+`;
+
+export const BrandName = styled.div`
+    font-size: 12px;
+    padding: 10px 5px;
+    height: 20px;
+    margin-bottom: 10px;
+    color: #a0a0a0;
 `;
 
 export const Price = styled.div`

@@ -38,7 +38,9 @@ public class ItemDTO {
 
     private Long userId;
 
-    public ItemDTO(Long id, String title, Integer price, String desc, String imgurl, Integer stock, Long categoryId, int likes, Long userId) {
+    private String nickname;
+
+    public ItemDTO(Long id, String title, Integer price, String desc, String imgurl, Integer stock, Long categoryId, int likes, Long userId, String nickname) {
         this.id = id;
         this.title = title;
         this.price = price;
@@ -48,5 +50,6 @@ public class ItemDTO {
         this.categoryId = categoryId;
         this.likes = likes;
         this.userId = userId;
+        this.nickname = nickname;
     }
 }
