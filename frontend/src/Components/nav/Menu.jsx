@@ -25,7 +25,7 @@ const MenuLeft = styled.ul`
         cursor: pointer;
 
         &:hover {
-            color: ${({ theme }) => theme.colors.secondary};
+            color: ${({ theme }) => theme.colors.primary};
         }
     }
 `;
@@ -40,16 +40,16 @@ const MenuRight = styled.ul`
         cursor: pointer;
 
         a, svg {
-            color: #333;
+            color: black;
             text-decoration: none;
             font-size: 1rem;
         }
 
         &:hover {
-            color: #3498db;
+            color: ${({ theme }) => theme.colors.primary};
         }
         a:hover {
-            color: ${({ theme }) => theme.colors.secondary};
+            color: ${({ theme }) => theme.colors.primary};
         }
     }
 `;
