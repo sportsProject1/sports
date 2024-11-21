@@ -165,4 +165,11 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    // 유저아이디로 닉네임가져오기
+    public String getNicknameByUserId(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        return user.getNickname();
+    }
+
 }

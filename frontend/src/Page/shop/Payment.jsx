@@ -5,45 +5,154 @@ import * as Yup from "yup";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 
+const Container = styled.div`
+    max-width: 800px;
+    margin: 30px auto;
+    padding: 30px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+`;
+
+const Title = styled.h1`
+    text-align: center;
+    font-size: 28px;
+    margin-bottom: 30px;
+    color: #333;
+`;
+
 const FormBox = styled(Form)`
     display: flex;
     flex-direction: column;
-    width: 50%;
-    justify-content: center;
-    margin: auto;
-    > div {
-        margin-bottom: 15px;
+    gap: 20px;
+`;
+
+const InputField = styled.div`
+    display: flex;
+    flex-direction: column;
+`;
+
+const Input = styled(Field)`
+    padding: 12px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-top: 5px;
+    outline: none;
+    transition: border-color 0.3s;
+    &:focus {
+        border-color: #007bff;
     }
-    > input, select {
-        padding: 15px;
-        margin-bottom: 15px;
+`;
+
+const Button = styled.button`
+    padding: 12px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    &:hover {
+        background-color: #0056b3;
     }
-    > p {
-        padding: 15px;
+    &:disabled {
+        background-color: #ddd;
+        cursor: not-allowed;
     }
-    > button {
-        padding: 15px;
-        background-color: #007bff;
-        color: #fff;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-    }
+`;
+
+const ErrorText = styled.div`
+    color: red;
+    font-size: 14px;
 `;
 
 const ItemContainer = styled.div`
     display: flex;
-    align-items: center;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
+    justify-content: space-between;
+    background-color: #fff;
     padding: 15px;
     border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 5px;
 `;
 
 const ItemImage = styled.img`
     width: 50px;
     height: 50px;
+    object-fit: cover;
+    border-radius: 5px;
     margin-right: 15px;
+`;
+
+const ItemDetails = styled.div`
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+`;
+
+const ItemPrice = styled.p`
+    font-size: 16px;
+    color: #007bff;
+    font-weight: bold;
+`;
+
+const TotalPrice = styled.p`
+    text-align: right;
+    font-size: 20px;
+    color: #333;
+    font-weight: bold;
+    margin-top: 20px;
+`;
+
+const CheckoutButtonContainer = styled.div`
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+`;
+
+const AddressSearchContainer = styled.div`
+    display: flex;
+    gap: 10px;
+    align-items: center;
+`;
+
+const AddressSearchButton = styled(Button)`
+    padding: 8px 12px;
+    font-size: 14px;
+    background-color: #e0e0e0;
+    color: #333;
+    border-radius: 5px;
+    &:hover {
+        background-color: #ccc;
+    }
+`;
+
+const PaymentMethodField = styled(InputField)`
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+`;
+
+const PaymentMethodSelect = styled(Field)`
+    padding: 12px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+    outline: none;
+    transition: border-color 0.3s;
+    &:focus {
+        border-color: #007bff;
+    }
+`;
+
+const Label = styled.label`
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #333;
 `;
 
 const validationSchema = Yup.object({
@@ -99,8 +208,8 @@ function Payment() {
     const totalPrice = paymentItem.cartItems.reduce((sum, item) => item.checked ? sum + (item.itemPrice * item.count) : sum, 0);
 
     return (
-        <div>
-            <h1>결제페이지</h1>
+        <Container>
+            <Title>결제 페이지</Title>
             <Formik
                 initialValues={{
                     name: paymentItem.name || '',
@@ -136,51 +245,62 @@ function Payment() {
             >
                 {({ isSubmitting, setFieldValue }) => (
                     <FormBox>
-                        <div>
-                            <Field name="name" placeholder="이름" />
+                        <InputField>
+                            <Label>이름</Label>
+                            <Input name="name" placeholder="이름을 입력해주세요" />
                             <ErrorMessage name="name" component="div" style={{ color: 'red' }} />
-                        </div>
-                        <div>
-                            <Field name="phone" placeholder="핸드폰" />
+                        </InputField>
+                        <InputField>
+                            <Label>전화번호</Label>
+                            <Input name="phone" placeholder="전화번호를 입력해주세요" />
                             <ErrorMessage name="phone" component="div" style={{ color: 'red' }} />
-                        </div>
-                        <div>
-                            <Field name="zipCode" placeholder="우편번호" disabled />
-                            <button type="button" onClick={() => handleAddressSearch(setFieldValue)}>주소 검색</button>
+                        </InputField>
+                        <InputField>
+                            <Label>주소</Label>
+                            <AddressSearchContainer>
+                                <Input name="zipCode" placeholder="우편번호" disabled />
+                                <AddressSearchButton type="button" onClick={() => handleAddressSearch(setFieldValue)}>주소 검색</AddressSearchButton>
+                            </AddressSearchContainer>
                             <ErrorMessage name="zipCode" component="div" style={{ color: 'red' }} />
-                        </div>
-                        <div>
-                            <Field name="roadAddress" placeholder="도로명 주소" disabled />
+                        </InputField>
+                        <InputField>
+                            <Input name="roadAddress" placeholder="도로명 주소" disabled />
                             <ErrorMessage name="roadAddress" component="div" style={{ color: 'red' }} />
-                        </div>
-                        <div>
-                            <Field name="detailAddress" placeholder="상세 주소" />
+                        </InputField>
+                        <InputField>
+                            <Input name="detailAddress" placeholder="상세 주소" />
                             <ErrorMessage name="detailAddress" component="div" style={{ color: 'red' }} />
-                        </div>
-                        <div>
-                            <Field as="select" name="paymentMethod">
-                                <option value="신용카드">신용카드</option>
-                                <option value="무통장입금">무통장입금</option>
-                                <option value="카카오페이">카카오페이</option>
-                            </Field>
-                        </div>
-                        <p>결제상품</p>
+                        </InputField>
+                        <InputField>
+                                <Label>결제 수단</Label>
+                                <PaymentMethodSelect as="select" name="paymentMethod">
+                                    <option value="신용카드">신용카드</option>
+                                    <option value="무통장입금">무통장입금</option>
+                                    <option value="카카오페이">카카오페이</option>
+                                </PaymentMethodSelect>
+                        </InputField>
+
+                        <Label>결제 상품</Label>
                         {paymentItem.cartItems.filter(item => item.checked).map((item) => (
                             <ItemContainer key={item.cartId}>
                                 <ItemImage src={item.itemImgUrl.split(",")[0]} alt={item.itemTitle} />
-                                <div>
+                                <ItemDetails>
                                     <p>상품명: {item.itemTitle}</p>
                                     <p>수량: {item.count}</p>
-                                    <p>가격: {item.itemPrice}원</p>
-                                </div>
+                                    <ItemPrice>{item.itemPrice.toLocaleString()}원</ItemPrice>
+                                </ItemDetails>
                             </ItemContainer>
                         ))}
-                        <p>최종 가격: {totalPrice}원</p>
-                        <button type="submit" disabled={isSubmitting}>결제하기</button>
+
+                        <TotalPrice>총 결제금액: {totalPrice.toLocaleString()}원</TotalPrice>
+
+                        <CheckoutButtonContainer>
+                            <Button type="submit" disabled={isSubmitting}>결제하기</Button>
+                        </CheckoutButtonContainer>
                     </FormBox>
                 )}
             </Formik>
-        </div>
+        </Container>
     );
 }
 

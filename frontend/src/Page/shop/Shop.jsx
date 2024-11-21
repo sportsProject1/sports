@@ -31,6 +31,7 @@ function Shop() {
                     fetchData("/shop/list"),
                     fetchData("/category/get")
                 ]);
+                console.log(itemsResponse.data.items);
                 setItems(itemsResponse.data.items);
                 setCategory(categoryResponse.data);
             } catch (error) {

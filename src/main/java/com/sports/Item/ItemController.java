@@ -8,6 +8,7 @@ import com.sports.Item.DTO.ItemResponseDTO;
 import com.sports.like.LikeService;
 import com.sports.user.entito.User;
 import com.sports.user.service.UserContextService;
+import com.sports.user.service.UserService;
 import io.jsonwebtoken.MalformedJwtException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -31,23 +32,29 @@ public class ItemController {
     private final S3Service s3Service;
     private final UserContextService userContextService;
     private final LikeService likeService;
+    private final UserService userService;
 
     // 상품 목록 조회
     @GetMapping("/list")
     public ResponseEntity<ItemResponseDTO> shopList() {
         List<Item> items = itemRepository.findAllByIsDeletedFalse();
         List<ItemDTO> itemDTOs = items.stream()
-                .map(item -> new ItemDTO(
-                        item.getId(),
-                        item.getTitle(),
-                        item.getPrice(),
-                        item.getDesc(),
-                        item.getImgurl(),
-                        item.getStock(),
-                        item.getCategory() != null ? item.getCategory().getId() : null,
-                        item.getLikes(),
-                        item.getUserId()
-                ))
+                .map(item -> {
+                    String nickname = userService.getNicknameByUserId(item.getUserId());
+
+                    return new ItemDTO(
+                            item.getId(),
+                            item.getTitle(),
+                            item.getPrice(),
+                            item.getDesc(),
+                            item.getImgurl(),
+                            item.getStock(),
+                            item.getCategory() != null ? item.getCategory().getId() : null,
+                            item.getLikes(),
+                            item.getUserId(),
+                            nickname
+                    );
+                })
                 .collect(Collectors.toList());
 
         // 성공 시 message와 items만 반환

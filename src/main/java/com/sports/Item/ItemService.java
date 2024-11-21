@@ -5,6 +5,7 @@ import com.sports.Category.CategoryService;
 import com.sports.Item.DTO.ItemDTO;
 import com.sports.user.entito.User;
 import com.sports.user.repository.UserRepository;
+import com.sports.user.service.UserService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -25,6 +26,7 @@ public class ItemService {
     private final CategoryService categoryService;
     private final S3Service s3Service;
     private final UserRepository userRepository;
+    private final UserService userService;
 
     @Transactional
     public Item addItem(ItemDTO itemDTO, List<MultipartFile> files, Long userId) throws IOException {
@@ -65,6 +67,7 @@ public class ItemService {
     }
 
     private ItemDTO convertToDTO(Item item) {
+        String nickname = userService.getNicknameByUserId(item.getUserId());
         return new ItemDTO(
                 item.getId(),
                 item.getTitle(),
@@ -74,7 +77,8 @@ public class ItemService {
                 item.getStock(),
                 item.getCategory() != null ? item.getCategory().getId() : null,
                 item.getLikes(),
-                item.getUserId()
+                item.getUserId(),
+                nickname
         );
     }
 

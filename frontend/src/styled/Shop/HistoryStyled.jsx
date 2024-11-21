@@ -7,6 +7,7 @@ export const HistoryContainer = styled.div`
     background-color: #f9f9f9;
     margin-left: 10%;
     margin-right: 10%;
+    margin-top: 50px;
 `;
 
 // 제목 스타일
@@ -39,6 +40,7 @@ export const PaymentHeader = styled.div`
     align-items: center;
     margin-bottom: 10px;
     gap: 30px;
+    padding: 10px;
 `;
 
 // 결제 날짜
@@ -58,20 +60,22 @@ export const PaymentPrice = styled.span`
     font-size: 1.2rem;
     font-weight: bold;
     color: #333;
+    padding-left: 10px;
 `;
 
 // 결제 상세 정보
 export const PaymentDetails = styled.div`
     margin-top: 10px;
-    margin-bottom: 0px;
+    margin-bottom: 10px;
     padding-left: 20px;
     padding-bottom: 20px;
     font-size: 0.9rem;
+    line-height: 1.1rem;
 `;
 
 export const PaymentDetailsTitle = styled.h3`
     margin-top: 10px;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
 `;
 
 // 결제 항목 상세 정보
@@ -113,7 +117,7 @@ export const PaymentDetailContent = styled.div`
 // 더 보기 버튼
 export const LoadMoreButton = styled.button`
     padding: 10px 20px;
-    background-color: #4CAF50;
+    background-color: ${(props) => props.theme.colors.primary};
     color: white;
     border: none;
     border-radius: 4px;
@@ -126,4 +130,14 @@ export const LoadMoreButton = styled.button`
     &:hover {
         background-color: #45a049;
     }
+`;
+
+export const ToggleDetailsButton = styled.button`
+    display: block;
+    margin-top: 10px;
+    background-color: transparent;
+    border: none;
+    color: #555;
+    font-size: 1rem;
+    pointer: cursor;
 `;
