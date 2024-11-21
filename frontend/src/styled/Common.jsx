@@ -121,7 +121,7 @@ export const Card = styled.div`
 
 export const CardImage = styled.img`
     width: 100%;
-    height: 300px;
+    height: 250px;
     object-fit: cover;
 `;
 

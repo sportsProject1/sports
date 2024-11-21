@@ -1,9 +1,8 @@
 import styled from "styled-components";
 
 export const MainContainer = styled.div`
-    max-width: 1400px;
     margin: 0 auto;
-    padding: 0 20px;
+    padding: 0 30px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -11,26 +10,26 @@ export const MainContainer = styled.div`
 `;
 
 export const BannerContainer = styled.div`
-    width: 85%;
-    height: 300px;
+    width: 82.5%;
+    height: 200px;
     display: flex;
     overflow: hidden;
+    margin-top: 20px;
+    align-self: flex-start;
     position: relative;
-    background-color: #000;
-    left: -8%;
-    margin: 0 auto;
+    left:0;
 `;
 
 export const Banner = styled.div`
     flex: 0 0 100%;
-    background-size: cover;
+    background-size: 80%;
     background-repeat: no-repeat;
     background-position: center;
-    transition: transform 0.5s ease, filter 0.5s ease;
+    transition: background-size 3s ease, filter 1s ease;
 
     &:hover {
         filter: brightness(0.8);
-        transform: scale(1.1);
+        background-size: 120%;
     }
 `;
 
@@ -52,13 +51,13 @@ export const BannerInfo = styled.div`
 
     .small-text {
         color: rgba(255, 255, 255, 0.8);
-        font-size: 1.5rem;
+        font-size: 1.3rem;
         font-weight: 500;
     }
 
     .large-text {
         color: white;
-        font-size: 3rem;
+        font-size: 2.6rem;
         font-weight: bold;
     }
 
@@ -80,8 +79,8 @@ export const NavButton = styled.button`
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    background: rgba(0, 0, 0, 0.5);
-    color: white;
+    background: #E7EDF0;
+    color: black;
     border: none;
     border-radius: 50%;
     padding: 5px 10px 10px 10px;
@@ -93,12 +92,12 @@ export const NavButton = styled.button`
 
 // 섹션 제목
 export const SectionTitle = styled.h2`
-  font-size: 24px;
-  margin: 20px 0;
+    font-size: 24px;
+    margin: 10px 0;
 `;
 
 export const SectionContainer = styled.div`
-    width: 70%;
+    width: 67%;
     margin: auto;
     overflow: hidden;
     position: relative;
@@ -124,7 +123,7 @@ export const ListContainer = styled.div`
 
 export const TagTitleContainer = styled.div`
      height:12%;
-     background-color:#ccc;
+     background-color:#E7EDF0;
      border-radius:15px;
      text-align: center;
      width:100%;
@@ -133,6 +132,11 @@ export const TagTitleContainer = styled.div`
      justify-content:flex-start;
      padding-left:5%;
      font-weight:bold;
+     cursor:pointer;
+
+     &:hover {
+         color: ${(props) => props.theme.colors.primary};
+     }
  `;
 
 export const ListItem = styled.div`
@@ -172,19 +176,25 @@ export const ItemRight = styled.div`
     color: #555;
     position:relative;
     width: calc(100% - 50px);
+`;
 
-    span {
-        position: absolute;
-        font-size: 10px;
-    }
+export const PostAuthorBox = styled.div`
+    width: 100%;
+    display:flex;
+    margin-bottom: 5px;
 `;
 
 export const PostAuthor = styled.div`
     font-size: 14px;
-    color: #868e96;
-    margin-bottom: 10px;
-    position:relative;
     width: fit-content;
+    margin-right: 5px;
+    color: black;
+`;
+
+export const PostTime = styled.div`
+    font-size: 14px;
+    color: gray;
+    font-weight: 600;
 `;
 
 export const PostPostTitle = styled.h3`
@@ -196,6 +206,19 @@ export const PostPostTitle = styled.h3`
     overflow: hidden;
     text-overflow: ellipsis;
     width: 80%;
+    line-height:20px;
+`;
+
+export const PostCategoryTag = styled.span`
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #d3e1ee99;
+    color: #495057;
+    font-size: 12px;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 10px;
 `;
 
 // 카테고리 태그 스타일
@@ -210,16 +233,6 @@ export const CategoryTag = styled.span`
     border-radius: 12px;
 `;
 
-export const PostCategoryTag = styled.span`
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background-color: #f1f3f5;
-    color: #495057;
-    font-size: 12px;
-    padding: 4px 8px;
-    border-radius: 12px;
-`;
 //// 리스트 추가
 
 export const CardWrapper = styled.div`
