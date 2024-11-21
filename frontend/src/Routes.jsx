@@ -58,8 +58,8 @@ const Routes = createBrowserRouter([
             },
 
             { path: '/chat', element:<Chat/>},
-            { path: '/chat/:invite', element:<Chat/>},
-            { path: '/chat/:id', element:<ChatRoom/>},
+            { path: '/chat/invite', element:<Chat/>},
+            { path: '/chat/chatroom', element:<Chat/>},
 
 
             { path: '/admin', element: <AdminPage /> },

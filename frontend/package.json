@@ -5,6 +5,7 @@
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
     "@reduxjs/toolkit": "^2.3.0",
+    "@stomp/stompjs": "^7.0.0",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -27,6 +28,7 @@
     "react-scripts": "5.0.1",
     "react-simplemde-editor": "^5.2.0",
     "reset-css": "^5.0.2",
+    "sockjs-client": "^1.6.1",
     "styled-components": "^6.1.13",
     "web-vitals": "^2.1.4",
     "yup": "^1.4.0"
