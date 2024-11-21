@@ -4,12 +4,11 @@ import {
     Author,
     CategoryTag, PlaceholderImg,
     PostCard,
-    PostContent,
-    PostImage,
+    BoardPostImage,
     PostTitle
 } from "../../styled/main/MainPageStyled";
 import React, { useMemo, useState } from "react";
-import { ListWrap } from "../../styled/List/ListStyled";
+import { ListWrap, PostInfo, PostContent } from "../../styled/List/ListStyled"; /////******** */
 import PagePagination from "../../Components/Pagination/PagePagination";
 import { useNavigate } from "react-router-dom";
 
@@ -38,6 +37,31 @@ function BoardWrapper({ boardItem, handleSortChange }) {
         return imgTag ? imgTag.src : null;
     };
 
+    const formatTimeAgo = (createdAt) => {
+        const createdTime = new Date(createdAt);
+        const now = new Date();
+        const diffInMinutes = Math.floor((now - createdTime) / 60000);
+
+        if (diffInMinutes < 60) {
+            return `${diffInMinutes}분 전`;
+        } else if (diffInMinutes < 1440) {
+            return `${Math.floor(diffInMinutes / 60)}시간 전`;
+        } else {
+            return `${Math.floor(diffInMinutes / 1440)}일 전`;
+        }
+    };
+
+    const formatDate = (createdAt) => {
+        const createdTime = new Date(createdAt);
+        return createdTime.toLocaleDateString("ko-KR", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit"
+        });
+    };
+
     const onNavigate = () => {
         navigate("/board/add");
     };
@@ -48,10 +72,12 @@ function BoardWrapper({ boardItem, handleSortChange }) {
             <ItemContainer>
                 {currentPosts.map((post) => {
                     const thumbnailUrl = extractFirstImageUrl(post.content);
+                    const timeAgo = formatTimeAgo(post.createdAt);
+                    const formattedDate = formatDate(post.createdAt);
 
                     return (
                         <PostCard onClick={() => navigate(`/board/detail/${post.id}`)} key={post.id}>
-                            <PostImage>
+                            <BoardPostImage>
                                 {thumbnailUrl ? (
                                     <img
                                         src={thumbnailUrl}
@@ -62,10 +88,20 @@ function BoardWrapper({ boardItem, handleSortChange }) {
                                     <PlaceholderImg />
                                 )}
                                 <CategoryTag>{post.category}</CategoryTag>
-                            </PostImage>
+                            </BoardPostImage>
                             <PostContent>
                                 <PostTitle>{post.title}</PostTitle>
                                 <Author>{post.author}</Author>
+                                <PostInfo>
+                                    <span className="time-ago">{timeAgo}</span>
+                                    <div className="details">
+                                        <span> 👀 {post.views}</span>
+                                        <span>{post.likes > 0 ? "❤️" : "🤍"} {post.likes}</span>
+                                    </div>
+                                </PostInfo>
+                                <div style={{ fontSize: "12px", color: "gray", marginTop: "4px" }}>
+                                    {formattedDate}
+                                </div>
                             </PostContent>
                         </PostCard>
                     );

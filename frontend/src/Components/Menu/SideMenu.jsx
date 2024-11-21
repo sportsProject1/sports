@@ -28,7 +28,7 @@ export const SidebarFixed = styled.div.withConfig({
 export const SectionTitle = styled.h2`
     font-size: 18px;
     margin-bottom: 10px;
-    color: ${({ theme }) => theme.colors.text};
+    color: ${({ theme }) => theme.colors.primary};
 `;
 
 // 각 섹션 컨테이너

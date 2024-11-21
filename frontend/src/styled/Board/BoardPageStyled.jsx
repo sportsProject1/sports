@@ -33,6 +33,14 @@ export const Title = styled.h1`
   margin: 0;
 `;
 
+export const SideMenu = styled.h1`
+  font-size: 18px;
+  color: ${({ theme }) => theme.colors.primary};
+  margin-bottom: 10px;
+  text-align: left;
+  font-weight: bold;
+`;
+
 export const DateText = styled.span`
   font-size: 0.9rem;
   color: #888;
@@ -55,6 +63,16 @@ export const SlideImage = styled.img`
   width: 100px;
   height: 100px;
   object-fit: cover;
+`;
+
+export const BoardPostImage = styled.img`
+    width: 100%;
+    height: 180px;
+    background-color: #e9ecef;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
 `;
 
 // 본문 섹션

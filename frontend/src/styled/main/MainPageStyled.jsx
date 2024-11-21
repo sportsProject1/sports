@@ -274,6 +274,18 @@ export const PostImage = styled.div`
     position: relative;
 `;
 
+export const BoardPostImage = styled.div`
+    width: 100%;
+    height: 180px;
+    overflow:hidden;
+    background-color: #e9ecef;
+    background-size: contain;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+`;
+
 // 기본 이미지 (없을 경우 보여줄 이미지)
 export const PlaceholderImg = styled.img`
     width: 100%;
@@ -292,10 +304,14 @@ export const PostContent = styled.div`
 
 // 제목 스타일
 export const PostTitle = styled.h3`
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     font-size: 16px;
     font-weight: bold;
     color: #212529;
     margin: 0;
+    line-height:1.8rem;
 `;
 
 // 작성자 스타일

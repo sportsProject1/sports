@@ -37,9 +37,10 @@ const Paragraph = styled.p`
 
 const Email = styled.p`
     font-size: 14px;
-    font-weight: bold;
+    font-weight: lighter;
     color: ${({ theme }) => theme.colors.secondary};
     margin-top: 10px;
+    line-height:1.5rem;
 `;
 
 function Advertisement() {
@@ -53,10 +54,7 @@ function Advertisement() {
             <Paragraph>
                 아래 이메일로 지원하시면<br/> 검토후 양식을 보내드립니다.
             </Paragraph>
-            <Paragraph>
-                입점 문의
-            </Paragraph>
-            <Email>apply@movocommunity.com</Email>
+            <Email>입점지원 문의<br/> apply@movocommunity.com</Email>
         </AdvertisementContainer>
     );
 }
