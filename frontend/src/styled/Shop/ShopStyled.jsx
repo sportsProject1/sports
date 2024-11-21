@@ -43,6 +43,7 @@ export const ProductInfoContainer = styled.div`
     justify-content: flex-start;
     max-width: 540px;
     padding-top: 20px;
+    padding-right: 30px;
 `;
 
 // 상품명 스타일 (크기 키우기)
@@ -170,6 +171,7 @@ export const ActionButton = styled.button`
     }
 `;
 
+// 총 금액 컨테이너
 export const TotalPriceContainer = styled.div`
     display: flex;
     justify-content: space-between;
@@ -178,8 +180,28 @@ export const TotalPriceContainer = styled.div`
     font-weight: bold;
 `;
 
+//총 금액 글씨
 export const TotalPriceText = styled.span`
     color: #e60023;  // 총 가격을 강조하는 색상
+`;
+
+//좋아요버튼
+export const LikeButton = styled.button`
+    padding: 10px 20px;
+    background-color: #e63946;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 50px;
+
+    &:hover {
+        background-color: #d62828;
+    }
+
+    &:active {
+        background-color: #c81e1e;
+    }
 `;
 
 // 상품 상세페이지 끝

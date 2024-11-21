@@ -131,6 +131,7 @@ export const ProductName = styled.div`
     padding: 10px 5px;
     height: 50px;
     overflow: hidden; // 텍스트가 길 때 잘림 처리
+    margin-top: 10px;
 `;
 
 export const Price = styled.div`
@@ -138,7 +139,33 @@ export const Price = styled.div`
     color: #555;
     padding: 5px;
     height: 50px;
+    flex: 1;
+    text-align: center;
 `;
+
+export const PriceContainer = styled.div`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 16px;
+    color: #555;
+    padding: 5px 0;
+    height: 40px;
+    width: 100%;
+    position: relative;
+`;
+
+export const LikeCount = styled.span`
+    font-size: 14px;
+    color: #ff4c4c;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    white-space: nowrap;
+    padding-right: 5px;
+`;
+
 export const PaginationContainer = styled.div`
     display: flex;
     justify-content: center; /* 페이지네이션을 중앙에 정렬 */

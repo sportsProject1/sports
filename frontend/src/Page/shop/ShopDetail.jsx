@@ -16,7 +16,8 @@ import {
     ProductImageGallery,
     ProductBenefits,
     TotalPriceContainer,
-    TotalPriceText
+    TotalPriceText,
+    LikeButton
 } from "../../styled/Shop/ShopStyled";
 import { deleteTokenData, postTokenData } from "../../Server/ApiService";
 import ShopDetailImages from "./ShopDetailImages";
@@ -25,8 +26,15 @@ import styled from "styled-components";
 const DetailForm = styled.form`
     width: 100%;
     display: flex;
-    align-items: center; /* 수량 및 버튼들을 세로로 정렬 */
+    align-items: center;
     gap: 20px;
+`;
+
+const PriceLikeContainer = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
 `;
 
 function ShopDetail() {
@@ -35,6 +43,8 @@ function ShopDetail() {
     const [totalPrice, setTotalPrice] = useState(0);
     const [userId, setUserId] = useState(null);
     const [userRole, setUserRole] = useState(null);
+    const [isLiked, setIsLiked] = useState(false);
+    const [likeCount, setLikeCount] = useState(0);
     const navigate = useNavigate();
     const { id } = useParams();
 
@@ -47,6 +57,7 @@ function ShopDetail() {
 
             fetchData(`/shop/detail/${id}`).then((res) => {
                 setFetchItem(res.data.item);
+                setLikeCount(res.data.item.likes);
             });
         }, [id]);
 
@@ -85,6 +96,26 @@ function ShopDetail() {
         navigate(`/shop/update/${id}`);
     };
 
+    const toggleLike = async () => {
+        try {
+            const response = await postTokenData(`/shop/like/${id}`);
+            const updatedItem = response.data;
+
+            setLikeCount(updatedItem.likes);
+        } catch (err) {
+            console.error("좋아요 처리 중 오류 발생:", err);
+            try {
+                const fetchItemResponse = await fetchData(`/shop/detail/${id}`);
+                const updatedItemFromDb = fetchItemResponse.data.item;
+                setLikeCount(updatedItemFromDb.likes);
+            } catch (fetchError) {
+                console.error("상품 정보를 가져오는 데 오류 발생:", fetchError);
+            }
+        }
+    };
+
+
+
     if (fetchItem) {
         const imageData = fetchItem.imgurl;
         const imageUrlArray = imageData ? imageData.split(",") : [];
@@ -101,7 +132,14 @@ function ShopDetail() {
                 {/* 우측 정보 */}
                 <ProductInfoContainer>
                     <ProductName>{fetchItem.title}</ProductName>
-                    <ProductPrice>{fetchItem.price?.toLocaleString()}원</ProductPrice>
+                    <PriceLikeContainer>
+                        <ProductPrice>{fetchItem.price?.toLocaleString()}원</ProductPrice>
+
+                    {/* 좋아요 버튼 */}
+                    <LikeButton onClick={toggleLike}>
+                        ♡ {likeCount}
+                    </LikeButton>
+                </PriceLikeContainer>
 
                     <ProductBenefits>
                         <p>배송비: {fetchItem.shippingCost ? fetchItem.shippingCost.toLocaleString() : '0'}원</p>

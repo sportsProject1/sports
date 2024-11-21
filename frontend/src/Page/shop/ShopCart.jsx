@@ -101,9 +101,27 @@ function ShopCart() {
         return <LoadingPage />;
     }
 
+    //선택항목삭제함수
+    const handleDeleteCheckedItems = async () => {
+        try {
+            const response = await deleteTokenData('/mypage/cart/delete/checked');
+
+            if (response.status === 200) {
+                console.log("선택한 항목이 삭제되었습니다.");
+            } else {
+                console.error("선택 항목 삭제 실패", response);
+            }
+        } catch (error) {
+            console.error("선택 항목 삭제 중 오류 발생:", error);
+        } finally {
+            fetchUpdatedCart();
+        }
+    };
+
+
     return (
         <CartContainer>
-            <DeleteAllButton>선택 항목 삭제</DeleteAllButton>
+            <DeleteAllButton onClick={handleDeleteCheckedItems}>선택 항목 삭제</DeleteAllButton>
             <CartTable>
                 <thead>
                     <tr>
