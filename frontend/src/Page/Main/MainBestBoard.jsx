@@ -23,7 +23,6 @@ function MainBestBoard() {
     const [mainBoards, setMainBoards] = useState({}); // 태그별 데이터를 저장
     const [loading, setLoading] = useState(true); // 로딩 상태
     const navigate = useNavigate();
-
     const fixedTitlesMap = {
         "운동": "운동 게시판",
         "공지사항": "공지사항",

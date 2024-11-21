@@ -1,9 +1,8 @@
 import styled from "styled-components";
 
 export const MainContainer = styled.div`
-    max-width: 1400px;
     margin: 0 auto;
-    padding: 0 20px;
+    padding: 0 30px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -11,13 +10,14 @@ export const MainContainer = styled.div`
 `;
 
 export const BannerContainer = styled.div`
-    width: 80%;
+    width: 82.5%;
     height: 200px;
     display: flex;
     overflow: hidden;
+    margin-top: 20px;
+    align-self: flex-start;
     position: relative;
-    left: -7%;
-    margin: 20px auto;
+    left:0;
 `;
 
 export const Banner = styled.div`
@@ -97,7 +97,7 @@ export const SectionTitle = styled.h2`
 `;
 
 export const SectionContainer = styled.div`
-    width: 70%;
+    width: 67%;
     margin: auto;
     overflow: hidden;
     position: relative;
