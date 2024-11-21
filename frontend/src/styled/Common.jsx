@@ -175,7 +175,7 @@ export const CreateButton = styled.button`
 
 export const FooterContainer = styled.footer`
     width: 100%;
-    padding: 10px 0;
+    padding: 5px 0;
     margin: 100px 0 0 0;
     background-color: #2c2c2c;
     color: #ffffff;
@@ -184,8 +184,8 @@ export const FooterContainer = styled.footer`
 export const FooterContent = styled.div`
     display: flex;
     justify-content: space-around;
-    gap: 2rem;
-    padding: 20px 0;
+    gap:15rem;
+    padding: 10px 0;
     max-width: 1200px;
     margin: 0 auto;
 `;
@@ -193,8 +193,8 @@ export const FooterContent = styled.div`
 export const Section = styled.div`
     flex: 2;
     text-align: left;
-    font-size: 0.9rem;
-    line-height: 2.5;
+    font-size: 0.8rem;
+    line-height: 2;
     color: #cccccc;
     white-space: nowrap;
 `;
@@ -202,9 +202,9 @@ export const Section = styled.div`
 export const FooterSection = styled.div`
     flex: 1.5;
     text-align: center;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     color: #cccccc;
-    line-height: 1.8;
+    line-height: 1.5;
     white-space: nowrap;
 `;
 
@@ -222,7 +222,7 @@ export const SocialIcons = styled.div`
     display: flex;
     justify-content: center;
     gap: 15px;
-    margin: 15px auto;
+    margin: 10px auto 5px auto;
     a {
         color: #ffffff;
         font-size: 1.2rem;
@@ -232,8 +232,8 @@ export const SocialIcons = styled.div`
         color: #ff6347;
     }
     img {
-        width: 30px;
-        height: 30px;
+        width: 25px;
+        height: 25px;
         transition: transform 0.3s;
     }
     img:hover {
@@ -243,9 +243,9 @@ export const SocialIcons = styled.div`
 
 export const Copyright = styled.div`
     text-align: center;
-    padding: 10px;
-    font-size: 0.8rem;
+    padding: 5px;
+    font-size: 0.7rem;
     color: #777;
-    margin-top: 20px;
+    padding-top: 10px;
     border-top: 1px solid #444;
 `;

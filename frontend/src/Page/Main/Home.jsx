@@ -6,6 +6,7 @@ import MainBestItem from "./MainBestItem";
 import UserInfoBox from "./UserInfoBox";
 import Advertisement from "./Advertisement";
 function Home() {
+
     return (
         <MainContainer>
             <MainBanner/>
