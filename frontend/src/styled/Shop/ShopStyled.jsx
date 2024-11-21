@@ -130,6 +130,7 @@ export const StyledQuantityInput = styled.input`
     background-color: #fff;
     color: #333;
     font-weight: bold;
+    margin-right: 10px;
 `;
 
 // 장바구니 버튼 스타일
@@ -264,7 +265,7 @@ export const ItemImage = styled.img`
 // 수량 입력 스타일
 export const QuantityInput = styled.input`
     width: 40px;
-    padding: 5px;
+    padding: 5px 0 5px 14px;
     text-align: center;
     border: 1px solid #ddd;
     border-radius: 4px;
@@ -323,11 +324,26 @@ export const DeleteAllButton = styled.button`
     padding: 8px 16px;
     border-radius: 5px;
     cursor: pointer;
-    margin-bottom: 10px;
+    margin: 10px;
     float: right;
     transition: background-color 0.3s;
 
     &:hover {
         background-color: #c9302c;
     }
+`;
+
+export const EmptyCartMessage = styled.div`
+    text-align: center;
+    font-size: 18px;
+    color: #555;
+    margin-top: 50px;
+`;
+
+export const ShopLink  = styled.div`
+    text-align: center;
+    font-size: 18px;
+    color: #0C48C5;
+    margin-top: 50px;
+    cursor: pointer;
 `;

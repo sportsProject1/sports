@@ -11,7 +11,10 @@ import {
     DeleteButton,
     CartSummary,
     TotalPrice,
-    CheckoutButton, DeleteAllButton
+    CheckoutButton,
+    DeleteAllButton,
+    EmptyCartMessage,
+    ShopLink
 } from "../../styled/Shop/ShopStyled";
 import { useNavigate } from "react-router-dom";
 import LoadingPage from "../../Components/LoadingPage";
@@ -97,10 +100,6 @@ function ShopCart() {
         .filter(item => item.isChecked)  // isChecked로 상태 확인
         .reduce((total, item) => total + item.itemPrice * item.count, 0);
 
-    if (userCart.length === 0) {
-        return <LoadingPage />;
-    }
-
     //선택항목삭제함수
     const handleDeleteCheckedItems = async () => {
         try {
@@ -117,6 +116,15 @@ function ShopCart() {
             fetchUpdatedCart();
         }
     };
+
+    if (userCart.length === 0) {
+        return (
+                <div>
+                   <EmptyCartMessage>장바구니가 비었습니다.</EmptyCartMessage>
+                   <ShopLink onClick={() => navigate('/shop')}>쇼핑하러 가기</ShopLink>
+                </div>
+        );
+    }
 
 
     return (
