@@ -1,5 +1,8 @@
 package com.sports.like;
 
+import com.sports.Security.auth.PrincipalUserDetails;
+import com.sports.Security.auth.PrincipalUserDetailsService;
+import com.sports.Security.jwt.JwtTokenProvider;
 import com.sports.comment.Comment;
 import com.sports.comment.CommentRepository;
 import com.sports.Item.Item;
@@ -13,8 +16,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +30,8 @@ public class LikeService {
     private final BoardRepository boardRepository;
     private final ItemRepository itemRepository;
     private final CommentRepository commentRepository;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final PrincipalUserDetailsService principalUserDetailsService;
 
     // Board 좋아요 토글
     @Transactional
@@ -94,4 +101,46 @@ public class LikeService {
 
         return response;
     }
+
+    // 현재 로그인한 사용자의 좋아요 상태 제공
+    public Map<Long, Boolean> getLikeStatusWithToken(List<Long> boardIds, String authorization) {
+        User user = null;
+
+        // 토큰이 존재하고 유효할 경우 사용자 정보 가져오기
+        if (authorization != null && authorization.startsWith("Bearer ")) {
+            String token = authorization.substring(7);
+
+            if (jwtTokenProvider.validateToken(token)) {
+                String username = jwtTokenProvider.getUsername(token);
+                PrincipalUserDetails userDetails = (PrincipalUserDetails) principalUserDetailsService.loadUserByUsername(username);
+
+                if (userDetails != null) {
+                    user = userDetails.getUser(); // PrincipalUserDetails에서 User 객체 추출
+                }
+            }
+        }
+
+        // 좋아요 상태 계산
+        return getUserLikeStatusForBoards(boardIds, user);
+    }
+
+    // 현재 로그인한 사용자의 좋아요 상태 제공
+    public Map<Long, Boolean> getUserLikeStatusForBoards(List<Long> boardIds, User user) {
+        // 좋아요 데이터 가져오기
+        List<Likes> likes = likeRepository.findByUserAndTargetIdInAndTargetType(
+                user, boardIds, "Board"
+        );
+
+        // 좋아요 상태를 Map으로 변환
+        Map<Long, Boolean> likeStatus = new HashMap<>();
+        for (Long boardId : boardIds) {
+            likeStatus.put(boardId, false); // 기본적으로 false로 초기화
+        }
+        for (Likes like : likes) {
+            likeStatus.put(like.getTargetId(), true); // 좋아요가 존재하는 경우 true로 설정
+        }
+
+        return likeStatus;
+    }
+
 }
