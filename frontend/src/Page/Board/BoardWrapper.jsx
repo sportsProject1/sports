@@ -97,7 +97,7 @@ function BoardWrapper({ boardItem, handleSortChange, likeStatus }) {
                                     <span className="time-ago">{timeAgo}</span>
                                     <div className="details">
                                         <span> 👀 {post.views}</span>
-                                        <span>{isLiked ? "❤️" : "🤍"}{post.likes}</span>
+                                        <span>{isLiked ? "❤️ " : "🤍 "}{post.likes}</span>
                                     </div>
                                 </PostInfo>
                                 <div style={{ fontSize: "12px", color: "gray", marginTop: "4px" }}>

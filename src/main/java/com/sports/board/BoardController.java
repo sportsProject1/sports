@@ -6,6 +6,7 @@ import com.sports.Chat.ChatRoom.ChatRoomRepository;
 import com.sports.like.LikeService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -53,6 +54,17 @@ public class BoardController {
     @PostMapping("/fileAdd")
     public ResponseEntity<String> responseUploadUrl(@RequestParam("file") MultipartFile file) throws IOException {
         return ResponseEntity.ok(boardService.processImage(file));
+    }
+
+    // 썸네일 url 반환
+    @PostMapping("/thumbnails")
+    public ResponseEntity<List<BoardThumbnailDTO>> getThumbnails(@RequestBody List<Long> boardIds) {
+        List<BoardThumbnailDTO> thumbnails = boardService.extractThumbnailsForBoards(boardIds);
+        if (!thumbnails.isEmpty()) {
+            return ResponseEntity.ok(thumbnails);
+        } else {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build(); // 데이터가 없을 경우
+        }
     }
 
     // 글 수정
