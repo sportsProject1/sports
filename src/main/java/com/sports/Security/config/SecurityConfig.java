@@ -56,7 +56,7 @@ public class SecurityConfig {
                         .requestMatchers((request) ->
                                 request.getRequestURI().endsWith("/add") && "POST".equals(request.getMethod())
                         ).authenticated() // 모든 POST /add 요청에 인증 필요
-                        .requestMatchers("/", "/register", "/login","/oauth", "/oauth2/**", "/refresh", "/user", "/shop", "/shop/**", "/board/**", "/category/get", "/comment/get/**").permitAll()
+                        .requestMatchers("/", "/register", "/login","/oauth", "/oauth2/**", "/refresh", "/user", "/shop", "/shop/**", "/board/**", "/category/get", "/comment/get/**", "/map/**", "/kakao/**").permitAll()
                         .anyRequest().authenticated())
                 .exceptionHandling(exceptionHandling -> exceptionHandling
                         .authenticationEntryPoint((request, response, authException) -> {
@@ -92,6 +92,7 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowCredentials(true);
         configuration.addAllowedOrigin("http://localhost:3000"); // React 앱의 주소
+        configuration.addAllowedOrigin("https://localhost:3000");
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
         configuration.setExposedHeaders(List.of("Authorization", "Refresh-Token"));

@@ -22,6 +22,8 @@ public class BoardResponseDTO {
     private String author;              // 작성자
     private String category;            // 게시글 카테고리
     private boolean chatroom;
+    private Double latitude;            // 위도
+    private Double longitude;           // 경도
 
 //    // 메세지 반환용
 //    public BoardResponseDTO(String massage) {

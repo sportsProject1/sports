@@ -59,4 +59,8 @@ public class Board {
 
     // 채팅용 필드
     private boolean chatroom;
+
+    // 위치 정보
+    private Double latitude;   // 위도, 기본값 null
+    private Double longitude;  // 경도, 기본값 null
 }
