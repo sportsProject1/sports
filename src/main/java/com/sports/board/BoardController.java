@@ -41,9 +41,8 @@ public class BoardController {
     // 메인페이지 게시글 보내기 (최신글 기준)
     @GetMapping("/main")
     public Map<String, List<BoardResponseDTO>> getMainBoards() {
-        // 원하는 카테고리 태그 설정
-        List<String> tags = Arrays.asList("운동", "공지사항", "모집", "자유");
-        return boardService.getMainBoardsByTags(tags);
+        // 운동, 공지사항, 모집, 자유 / 4개의 카테고리 글 / 5개씩 불러옴
+        return boardService.getMainBoardsByTags();
     }
 
     // 글쓰기

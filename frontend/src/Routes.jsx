@@ -53,7 +53,7 @@ const Routes = createBrowserRouter([
                 children: [
                     { index: true, element: <UserList /> }, // /admin으로 접근 시 /admin/users로
                     { path: "users", element: <UserList /> }, // 사용자 관리
-                    { path: "posts", element: <div>Post Management Coming Soon!</div> }, // 게시물 관리
+                    { path: "posts", element: <div>나중에머 추가할가~</div> }, // 게시물 관리
                 ],
             },
 

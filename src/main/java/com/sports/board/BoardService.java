@@ -15,10 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -52,17 +49,28 @@ public class BoardService {
     }
 
     // 카테고리 태그별 게시글 가져오기
-    public Map<String, List<BoardResponseDTO>> getMainBoardsByTags(List<String> tags) {
+    public Map<String, List<BoardResponseDTO>> getMainBoardsByTags() {
         Map<String, List<BoardResponseDTO>> result = new LinkedHashMap<>();
-        for (String tag : tags) {
-            // 특정 태그의 게시글 5개 가져오기
-            List<Board> boards = boardRepository.findTop5ByCategoryTagOrderByCreatedAtDesc(tag);
+
+        // 운동 데이터 가져오기
+        List<Board> sportsBoards = boardRepository.findTop5ByCategoryTagOrderByCreatedAtDesc("운동");
+        List<BoardResponseDTO> sportsDtos = sportsBoards.stream()
+                .map(this::toResponseDTO)
+                .limit(5)
+                .toList();
+        result.put("운동", sportsDtos);
+
+        // 공지사항, 모집, 자유 데이터를 가져오기
+        List<String> etcCategories = List.of("공지사항", "모집", "자유");
+        for (String categoryName : etcCategories) {
+            List<Board> boards = boardRepository.findTop5ByCategoryNameOrderByCreatedAtDesc(categoryName);
             List<BoardResponseDTO> dtos = boards.stream()
                     .map(this::toResponseDTO)
                     .limit(5)
                     .toList();
-            result.put(tag, dtos); // 태그를 키로 사용
+            result.put(categoryName, dtos); // 카테고리 이름을 키로 사용
         }
+
         return result;
     }
 

@@ -11,7 +11,10 @@ import {
     DeleteButton,
     CartSummary,
     TotalPrice,
-    CheckoutButton, DeleteAllButton
+    CheckoutButton,
+    DeleteAllButton,
+    EmptyCartMessage,
+    ShopLink
 } from "../../styled/Shop/ShopStyled";
 import { useNavigate } from "react-router-dom";
 import LoadingPage from "../../Components/LoadingPage";
@@ -97,13 +100,36 @@ function ShopCart() {
         .filter(item => item.isChecked)  // isChecked로 상태 확인
         .reduce((total, item) => total + item.itemPrice * item.count, 0);
 
+    //선택항목삭제함수
+    const handleDeleteCheckedItems = async () => {
+        try {
+            const response = await deleteTokenData('/mypage/cart/delete/checked');
+
+            if (response.status === 200) {
+                console.log("선택한 항목이 삭제되었습니다.");
+            } else {
+                console.error("선택 항목 삭제 실패", response);
+            }
+        } catch (error) {
+            console.error("선택 항목 삭제 중 오류 발생:", error);
+        } finally {
+            fetchUpdatedCart();
+        }
+    };
+
     if (userCart.length === 0) {
-        return <LoadingPage />;
+        return (
+                <div>
+                   <EmptyCartMessage>장바구니가 비었습니다.</EmptyCartMessage>
+                   <ShopLink onClick={() => navigate('/shop')}>쇼핑하러 가기</ShopLink>
+                </div>
+        );
     }
+
 
     return (
         <CartContainer>
-            <DeleteAllButton>선택 항목 삭제</DeleteAllButton>
+            <DeleteAllButton onClick={handleDeleteCheckedItems}>선택 항목 삭제</DeleteAllButton>
             <CartTable>
                 <thead>
                     <tr>

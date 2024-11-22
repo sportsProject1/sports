@@ -13,8 +13,9 @@ import {
     PaymentItemImage,
     PaymentDetailContent,
     LoadMoreButton,
-    PaymentDetailsTitle
-} from '../../styled/Shop/HistoryStyles';
+    PaymentDetailsTitle,
+    ToggleDetailsButton
+} from '../../styled/Shop/HistoryStyled';
 
 function History() {
     const [paymentHistory, setPaymentHistory] = useState([]);  // 결제 내역 상태
@@ -58,6 +59,12 @@ function History() {
         );
     };
 
+    // Toggle 버튼 클릭 시, 클릭 이벤트 전파 방지 (부모 요소의 onClick 이벤트 실행되지 않도록)
+    const handleToggleClick = (e, id) => {
+        e.stopPropagation();  // 클릭 이벤트가 부모로 전파되지 않도록 막기
+        togglePaymentDetails(id);  // 세부 정보 토글
+    };
+
     if (loading) return <div>로딩 중...</div>;  // 로딩 중이면 표시
     if (error) return <div>{error}</div>;  // 에러가 있으면 표시
 
@@ -97,6 +104,20 @@ function History() {
                                     ))}
                                 </ul>
                             </PaymentDetails>
+                        )}
+
+                        {/* 세부 정보 펼치기 버튼 (isOpen이 false일 때만) */}
+                        {!paymentItem.isOpen && (
+                            <ToggleDetailsButton onClick={(e) => handleToggleClick(e, paymentData.id)}>
+                                ▼ [세부 정보 펼치기]
+                            </ToggleDetailsButton>
+                        )}
+
+                        {/* 세부 정보 접기 버튼 (isOpen이 true일 때만) */}
+                        {paymentItem.isOpen && (
+                            <ToggleDetailsButton onClick={(e) => handleToggleClick(e, paymentData.id)}>
+                                ▲ [세부 정보 접기]
+                            </ToggleDetailsButton>
                         )}
                     </PaymentItem>
                 );
