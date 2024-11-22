@@ -12,7 +12,7 @@ import { ListWrap, PostInfo, PostContent } from "../../styled/List/ListStyled"; 
 import PagePagination from "../../Components/Pagination/PagePagination";
 import { useNavigate } from "react-router-dom";
 
-function BoardWrapper({ boardItem, handleSortChange }) {
+function BoardWrapper({ boardItem, handleSortChange, likeStatus }) {
     const navigate = useNavigate();
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 9;
@@ -74,6 +74,7 @@ function BoardWrapper({ boardItem, handleSortChange }) {
                     const thumbnailUrl = extractFirstImageUrl(post.content);
                     const timeAgo = formatTimeAgo(post.createdAt);
                     const formattedDate = formatDate(post.createdAt);
+                    const isLiked = likeStatus[post.id];
 
                     return (
                         <PostCard onClick={() => navigate(`/board/detail/${post.id}`)} key={post.id}>
@@ -96,7 +97,7 @@ function BoardWrapper({ boardItem, handleSortChange }) {
                                     <span className="time-ago">{timeAgo}</span>
                                     <div className="details">
                                         <span> 👀 {post.views}</span>
-                                        <span>{post.likes > 0 ? "❤️" : "🤍"} {post.likes}</span>
+                                        <span>{isLiked ? "❤️" : "🤍"} {post.likes}</span>
                                     </div>
                                 </PostInfo>
                                 <div style={{ fontSize: "12px", color: "gray", marginTop: "4px" }}>

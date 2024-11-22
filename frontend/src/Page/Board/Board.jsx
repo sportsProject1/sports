@@ -1,6 +1,7 @@
 import { useEffect, useState, useMemo } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { fetchData } from "../../Server/ApiServiceNoToken";
+import { fetchTokenData } from "../../Server/ApiService";
 import { BoardContainer } from "../../styled/Board/BoardPageStyled";
 import SideMenu from "../../Components/Menu/SideMenu";
 import BoardWrapper from "./BoardWrapper";
@@ -14,6 +15,7 @@ function Board() {
     const [searchQuery, setSearchQuery] = useState('');
     const navigate = useNavigate();
     const location = useLocation();
+    const [likeStatus, setLikeStatus] = useState({});
 
     // 쿼리 파라미터에서 검색어 추출
     useEffect(() => {
@@ -48,6 +50,23 @@ function Board() {
 
         fetchBoardData();
     }, [searchQuery]);  // 검색어가 변경될 때마다 실행
+
+    // 좋아요 상태를 가져오는 useEffect
+    useEffect(() => {
+        const fetchLikeStatus = async () => {
+            try {
+                if (boardItem.length > 0) {
+                    const boardIds = boardItem.map(item => item.id); // 게시글 ID 목록 추출
+                    const response = await fetchTokenData(`/board/likes/status?boardIds=${boardIds.join(",")}`);
+                    setLikeStatus(response.data); // 좋아요 상태 저장
+                }
+            } catch (error) {
+                console.error("좋아요 상태 로딩 중 오류:", error);
+            }
+        };
+
+        fetchLikeStatus();
+    }, [boardItem]); // boardItem이 변경될 때마다 실행
 
     // 카테고리 필터링 로직
     const filterByCategory = useMemo(() => {
@@ -118,7 +137,7 @@ function Board() {
                 subCategoryTitle={"그 외"}
                 subCategory={etcCategories}
             />
-            <BoardWrapper handleSortChange={handleSortChange} boardItem={sortedBoardItems} />
+            <BoardWrapper handleSortChange={handleSortChange} boardItem={sortedBoardItems} likeStatus={likeStatus} />
         </BoardContainer>
     );
 }

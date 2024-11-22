@@ -10,7 +10,6 @@ import com.sports.user.refresh.UserRefreshTokenRepository;
 import com.sports.user.repository.ValidationGroups;
 import com.sports.user.service.UserContextService;
 import com.sports.user.service.UserService;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

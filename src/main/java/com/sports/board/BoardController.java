@@ -1,9 +1,10 @@
 package com.sports.board;
 
 import com.sports.Chat.ChatRoom.ChatRoom;
-import com.sports.Chat.ChatRoom.ChatRoomDto;
 import com.sports.Chat.ChatRoom.ChatRoomIdDto;
 import com.sports.Chat.ChatRoom.ChatRoomRepository;
+import com.sports.Security.auth.PrincipalUserDetailsService;
+import com.sports.Security.jwt.JwtTokenProvider;
 import com.sports.like.LikeService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -84,6 +84,19 @@ public class BoardController {
         Map<String, Object> response = likeService.toggleBoardLike(id); // 좋아요 상태와 좋아요 수 반환
         return ResponseEntity.ok(response);
     }
+
+    // 현재 로그인된 사용자에 대한 좋아요 상태반환
+    @GetMapping("/likes/status")
+    public ResponseEntity<Map<Long, Boolean>> getLikesStatus(
+            @RequestParam List<Long> boardIds,
+            @RequestHeader(value = "Authorization", required = false) String authorization) {
+
+        // 좋아요 상태 가져오기
+        Map<Long, Boolean> likeStatus = likeService.getLikeStatusWithToken(boardIds, authorization);
+        return ResponseEntity.ok(likeStatus);
+    }
+
+
 
     // 검색(게시판)
     @GetMapping("/search")
