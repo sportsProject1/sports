@@ -14,6 +14,14 @@ const MenuContainer = styled.div`
     gap: 20px;
 `;
 
+const AdminNav = styled(Link)`
+    text-shadow: 5px 5px 4px rgba(49, 46, 255, 0.5);
+`;
+
+const StyledIcon = styled(FaPersonChalkboard)`
+    filter: drop-shadow(5px 5px 4px rgba(49, 46, 255, 0.5));
+`;
+
 const MenuLeft = styled.ul`
     display: flex;
     align-items: center;
@@ -97,7 +105,7 @@ function Menu (){
               </li>
                {user?.role === "ROLE_ADMIN" && (
                    <li>
-                       <Link to={"/admin"}>관리자 <FaPersonChalkboard /></Link>
+                       <AdminNav to={"/admin"}>관리자 <StyledIcon /></AdminNav>
                    </li>
                )}
            </MenuLeft>

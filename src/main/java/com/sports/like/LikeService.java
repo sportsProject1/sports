@@ -102,8 +102,8 @@ public class LikeService {
         return response;
     }
 
-    // 현재 로그인한 사용자의 좋아요 상태 제공
-    public Map<Long, Boolean> getLikeStatusWithToken(List<Long> boardIds, String authorization) {
+    // 현재 로그인한 사용자의 좋아요 상태를 대상 id들 기준으로 제공
+    public Map<Long, Boolean> getLikeStatusWithToken(List<Long> targetIds, String targetType, String authorization) {
         User user = null;
 
         // 토큰이 존재하고 유효할 경우 사용자 정보 가져오기
@@ -120,21 +120,21 @@ public class LikeService {
             }
         }
 
-        // 좋아요 상태 계산
-        return getUserLikeStatusForBoards(boardIds, user);
+        // 좋아요 상태 계산 (타겟 타입 포함)
+        return getUserLikeStatusForTargets(targetIds, targetType, user);
     }
 
-    // 현재 로그인한 사용자의 좋아요 상태 제공
-    public Map<Long, Boolean> getUserLikeStatusForBoards(List<Long> boardIds, User user) {
+    // 현재 로그인한 사용자의 좋아요 상태를 대상 ID와 타입 기준으로 제공
+    public Map<Long, Boolean> getUserLikeStatusForTargets(List<Long> targetIds, String targetType, User user) {
         // 좋아요 데이터 가져오기
         List<Likes> likes = likeRepository.findByUserAndTargetIdInAndTargetType(
-                user, boardIds, "Board"
+                user, targetIds, targetType
         );
 
         // 좋아요 상태를 Map으로 변환
         Map<Long, Boolean> likeStatus = new HashMap<>();
-        for (Long boardId : boardIds) {
-            likeStatus.put(boardId, false); // 기본적으로 false로 초기화
+        for (Long targetId : targetIds) {
+            likeStatus.put(targetId, false); // 기본적으로 false로 초기화
         }
         for (Likes like : likes) {
             likeStatus.put(like.getTargetId(), true); // 좋아요가 존재하는 경우 true로 설정
@@ -142,5 +142,6 @@ public class LikeService {
 
         return likeStatus;
     }
+
 
 }

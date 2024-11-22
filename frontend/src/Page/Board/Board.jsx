@@ -6,6 +6,7 @@ import { BoardContainer } from "../../styled/Board/BoardPageStyled";
 import SideMenu from "../../Components/Menu/SideMenu";
 import BoardWrapper from "./BoardWrapper";
 import { Title } from "../../styled/Common";
+import useLikeStatus from "../../hooks/useLikeStatus";
 
 function Board() {
     const [boardItem, setBoardItem] = useState([]);
@@ -15,7 +16,11 @@ function Board() {
     const [searchQuery, setSearchQuery] = useState('');
     const navigate = useNavigate();
     const location = useLocation();
-    const [likeStatus, setLikeStatus] = useState({});
+
+    // boardItem에서 게시글 ID 추출
+    const boardIds = useMemo(() => boardItem.map((item) => item.id), [boardItem]);
+    const { likeStatus, error } = useLikeStatus(boardIds, "Board", "board");
+
 
     // 쿼리 파라미터에서 검색어 추출
     useEffect(() => {
@@ -50,23 +55,6 @@ function Board() {
 
         fetchBoardData();
     }, [searchQuery]);  // 검색어가 변경될 때마다 실행
-
-    // 좋아요 상태를 가져오는 useEffect
-    useEffect(() => {
-        const fetchLikeStatus = async () => {
-            try {
-                if (boardItem.length > 0) {
-                    const boardIds = boardItem.map(item => item.id); // 게시글 ID 목록 추출
-                    const response = await fetchTokenData(`/board/likes/status?boardIds=${boardIds.join(",")}`);
-                    setLikeStatus(response.data); // 좋아요 상태 저장
-                }
-            } catch (error) {
-                console.error("좋아요 상태 로딩 중 오류:", error);
-            }
-        };
-
-        fetchLikeStatus();
-    }, [boardItem]); // boardItem이 변경될 때마다 실행
 
     // 카테고리 필터링 로직
     const filterByCategory = useMemo(() => {
