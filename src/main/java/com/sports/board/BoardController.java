@@ -3,8 +3,6 @@ package com.sports.board;
 import com.sports.Chat.ChatRoom.ChatRoom;
 import com.sports.Chat.ChatRoom.ChatRoomIdDto;
 import com.sports.Chat.ChatRoom.ChatRoomRepository;
-import com.sports.Security.auth.PrincipalUserDetailsService;
-import com.sports.Security.jwt.JwtTokenProvider;
 import com.sports.like.LikeService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -51,7 +49,7 @@ public class BoardController {
         return ResponseEntity.ok(boardService.createBoard(boardRequestDTO));
     }
 
-    // 이미지만
+    // 이미지만 S3 업로드, 반환
     @PostMapping("/fileAdd")
     public ResponseEntity<String> responseUploadUrl(@RequestParam("file") MultipartFile file) throws IOException {
         return ResponseEntity.ok(boardService.processImage(file));
@@ -88,15 +86,13 @@ public class BoardController {
     // 현재 로그인된 사용자에 대한 좋아요 상태반환
     @GetMapping("/likes/status")
     public ResponseEntity<Map<Long, Boolean>> getLikesStatus(
-            @RequestParam List<Long> boardIds,
+            @RequestParam List<Long> targetIds,
             @RequestHeader(value = "Authorization", required = false) String authorization) {
 
         // 좋아요 상태 가져오기
-        Map<Long, Boolean> likeStatus = likeService.getLikeStatusWithToken(boardIds, authorization);
+        Map<Long, Boolean> likeStatus = likeService.getLikeStatusWithToken(targetIds, "Board", authorization);
         return ResponseEntity.ok(likeStatus);
     }
-
-
 
     // 검색(게시판)
     @GetMapping("/search")

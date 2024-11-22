@@ -23,15 +23,7 @@ public interface LikeRepository extends JpaRepository<Likes, Long> {
             "GROUP BY l.targetId")
     Map<Long, Long> findLikeCounts(@Param("targetType") String targetType, @Param("targetIds") List<Long> targetIds);
 
-    // 여러 게시글의 좋아요 '상태'를 한 번에 조회
-    @Query("SELECT l FROM Likes l WHERE l.user = :user AND l.targetType = :targetType AND l.targetId IN :targetIds")
-    List<Likes> findAllByUserAndTargetTypeAndTargetIdIn(
-            @Param("user") User user,
-            @Param("targetType") String targetType,
-            @Param("targetIds") List<Long> targetIds
-    );
-
-    // boardIds를 기준으로 좋아요를 가져옴
+    // 대상 id들을 기준으로 좋아요를 가져옴
     List<Likes> findByUserAndTargetIdInAndTargetType(User user, List<Long> targetIds, String targetType);
 
 }
