@@ -1,4 +1,5 @@
 import {postTokenJsonData} from "../../Server/ApiService";
+import {ListContainer} from "../../styled/Chat/ChatStyled";
 
 function ChatInvite({inviteList}){
 
@@ -20,17 +21,19 @@ function ChatInvite({inviteList}){
 
     if(inviteList){
         return(
-            <div>
+            <ListContainer>
                 {inviteList.map((invite,idx)=>{
                     return(
                         <div key={invite.id}>
                             <h1>{invite.roomName}</h1>
-                            <button onClick={()=>onAccept(invite.chatRoomId,invite.userId)}>수락</button>
-                            <button onClick={()=>onRemove(invite.chatRoomId,invite.userId)}>거절</button>
+                            <div>
+                            <button className={"accept"} onClick={()=>onAccept(invite.chatRoomId,invite.userId)}>수락</button>
+                            <button className={"reject"} onClick={()=>onRemove(invite.chatRoomId,invite.userId)}>거절</button>
+                            </div>
                         </div>
                     )
                 })}
-            </div>
+            </ListContainer>
         )
     }else{
         return(

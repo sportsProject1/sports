@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -46,5 +47,12 @@ public class ChatMessageController {
     ) {
         List<ChatMessageDto> messages = chatMessageService.getMessages(chatRoomId, page, size);
         return ResponseEntity.ok(messages); // Spring Boot가 자동으로 JSON 배열로 변환
+    }
+
+    @GetMapping("/{chatRoomId}/lastMessageTimestamp")
+    public ResponseEntity<LocalDateTime> getLastMessageTimestamp(@PathVariable Long chatRoomId) {
+        return chatMessageService.getLastMessageTimestamp(chatRoomId)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.noContent().build());
     }
 }
