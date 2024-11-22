@@ -76,6 +76,12 @@ function SubMenu({ handleSortChange }) {
         handleSortChange(buttonName); // 버튼 클릭 시 정렬 함수 호출, 버튼 이름을 그대로 전달
     };
 
+    const handleKeyDown = (e) => {
+        if (e.key === "Enter") {
+            handleSearch();
+        }
+    };
+
     return (
         <SubMenuContainer>
             {/* 검색창 */}
@@ -84,6 +90,7 @@ function SubMenu({ handleSortChange }) {
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
+                    onKeyDown={handleKeyDown} // 엔터 키 이벤트 추가
                     placeholder="검색어를 입력하세요"
                 />
                 <SearchIcon onClick={handleSearch}>🔍</SearchIcon>
