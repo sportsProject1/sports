@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Client } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
+import {ChatHeader, ChatHistory, ChatInputArea} from "../../styled/Chat/ChatStyled";
 
 function ChatRoom({ chatRoomId, userId }) {
     const [messages, setMessages] = useState([]); // 메시지 상태
@@ -117,8 +118,8 @@ function ChatRoom({ chatRoomId, userId }) {
 
     return (
         <div style={{ padding: "20px", border: "1px solid #ddd" }}>
-            <h2>Chat Room {chatRoomId}</h2>
-            <div
+            <ChatHeader>Chat Room {chatRoomId}</ChatHeader>
+            <ChatHistory
                 style={{
                     height: "300px",
                     overflowY: "scroll",
@@ -133,7 +134,8 @@ function ChatRoom({ chatRoomId, userId }) {
                         <strong>{msg.senderId === userId ? "You" : `User ${msg.senderId}`}:</strong> {msg.content}
                     </div>
                 ))}
-            </div>
+            </ChatHistory>
+            <ChatInputArea>
             <input
                 type="text"
                 value={newMessage}
@@ -145,6 +147,7 @@ function ChatRoom({ chatRoomId, userId }) {
             <button onClick={sendMessage} style={{ width: "90px" }}>
                 Send
             </button>
+            </ChatInputArea>
         </div>
     );
 }

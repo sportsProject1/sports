@@ -1,11 +1,11 @@
-import { useState, useEffect } from "react";
-import { fetchTokenData } from "../../Server/ApiService";
-import { Link, useLocation } from "react-router-dom";
+import {useEffect, useState} from "react";
+import {fetchTokenData} from "../../Server/ApiService";
+import {Link, useLocation} from "react-router-dom";
 import ChatInvite from "./ChatInvite";
 import ChatList from "./ChatList";
 import ChatRoom from "./ChatRoom";
-import { ChatContainer, ChatSidebar, ChatSection } from "../../styled/Chat/ChatStyled";
-import { useSelector } from "react-redux";
+import {ChatAppContainer, MainContainer, Sidebar, SidebarItem} from "../../styled/Chat/ChatStyled";
+import {useSelector} from "react-redux";
 
 function Chat() {
     const [chatRoomList, setChatRoomList] = useState([]);
@@ -20,9 +20,25 @@ function Chat() {
 
     useEffect(() => {
         // 채팅방 목록 가져오기
-        fetchTokenData('/chat/my-rooms').then((res) => {
-            setChatRoomList(res.data);
+        fetchTokenData('/chat/my-rooms').then(async (res) => {
+            const rooms = res.data;
+
+            // 각 채팅방의 마지막 메시지 타임스탬프 가져오기
+            const roomsWithLastMessage = await Promise.all(
+                rooms.map(async (room) => {
+                    const lastMessageTimestamp = await fetchTokenData(
+                        `${room.id}/lastMessageTimestamp`
+                    ).then((res) => res.data).catch(() => "메시지 없음"); // 에러 처리
+                    return {
+                        ...room,
+                        lastMessageTimestamp,
+                    };
+                })
+            );
+
+            setChatRoomList(roomsWithLastMessage);
         });
+
 
         // 초대 내역 가져오기
         if (userId) {
@@ -44,15 +60,19 @@ function Chat() {
     };
 
     return (
-        <ChatContainer>
-            <ChatSidebar>
-                <Link to="/chat">채팅방 목록</Link>
-                <Link to="/chat/invite">초대 내역</Link>
-            </ChatSidebar>
-            <ChatSection>
+        <ChatAppContainer>
+            <Sidebar>
+                <SidebarItem>
+                    <Link to="/chat">채팅방 목록</Link>
+                </SidebarItem>
+                <SidebarItem>
+                    <Link to="/chat/invite">초대 내역</Link>
+                </SidebarItem>
+            </Sidebar>
+            <MainContainer>
                 {renderContent()}
-            </ChatSection>
-        </ChatContainer>
+            </MainContainer>
+        </ChatAppContainer>
     );
 }
 

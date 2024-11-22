@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -60,6 +61,12 @@ public class ChatMessageServiceImpl implements ChatMessageService {
         return chatMessages.getContent().stream()
                 .map(ChatMessageDto::fromEntity)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<LocalDateTime> getLastMessageTimestamp(Long chatRoomId) {
+        return chatMessageRepository.findTopByChatRoomIdOrderByTimestampDesc(chatRoomId)
+                .map(ChatMessage::getTimestamp);
     }
 
 
