@@ -61,7 +61,7 @@ function ChatRoom({ chatRoomId, userId }) {
         try {
             const token = localStorage.getItem("token");
             const response = await fetch(
-                `http://localhost:8090/api/chatRoom/${chatRoomId}/messages?page=${page}&size=20`,
+                `http://localhost:8090/${chatRoomId}/messages?page=${page}&size=20`,
                 { headers: { Authorization: `Bearer ${token}` } }
             );
             const data = await response.json();

@@ -50,12 +50,14 @@ public class ChatMessageServiceImpl implements ChatMessageService {
 
     @Override
     public List<ChatMessageDto> getMessages(Long chatRoomId, int page, int size) {
-        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "timestamp")); // 최신순 정렬
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "timestamp"));
         Page<ChatMessage> chatMessages = chatMessageRepository.findByChatRoomId(chatRoomId, pageRequest);
 
-        // 엔티티를 DTO로 변환하여 반환
-        return chatMessages.getContent()
-                .stream()
+        if (chatMessages == null || chatMessages.isEmpty()) {
+            return List.of(); // 비어 있는 경우 빈 리스트 반환
+        }
+
+        return chatMessages.getContent().stream()
                 .map(ChatMessageDto::fromEntity)
                 .collect(Collectors.toList());
     }

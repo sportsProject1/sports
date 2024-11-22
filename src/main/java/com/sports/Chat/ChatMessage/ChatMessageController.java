@@ -9,6 +9,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,11 +26,16 @@ public class ChatMessageController {
     private final ChatRoomService chatRoomService;
     private final UserContextService userContextService;
     private final ChatMessageRepository chatMessageRepository;
+    private final SimpMessagingTemplate messagingTemplate;
 
-    @MessageMapping("/chatRoom/sendMessage") // 클라이언트가 메시지 전송
-    @SendTo("/topic/chat/chatRoom/{chatRoomId}") // 특정 채팅방 구독자에게 메시지 전달
-    public ChatMessageDto sendMessage(ChatMessageDto messageDto) {
-        return chatMessageService.saveMessage(messageDto);
+    @MessageMapping("/chatRoom/sendMessage")
+    public void sendMessage(ChatMessageDto messageDto) {
+        // 메시지 저장
+        ChatMessageDto savedMessage = chatMessageService.saveMessage(messageDto);
+
+        // 동적으로 채팅방 경로에 메시지 전송
+        String destination = String.format("/topic/chat/chatRoom/%d", messageDto.getChatRoomId());
+        messagingTemplate.convertAndSend(destination, savedMessage);
     }
 
     @GetMapping("/{chatRoomId}/messages")
@@ -39,6 +45,6 @@ public class ChatMessageController {
             @RequestParam int size
     ) {
         List<ChatMessageDto> messages = chatMessageService.getMessages(chatRoomId, page, size);
-        return ResponseEntity.ok(messages);
+        return ResponseEntity.ok(messages); // Spring Boot가 자동으로 JSON 배열로 변환
     }
 }

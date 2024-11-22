@@ -19,13 +19,13 @@ public class ChatMessageDto {
 
     // 엔티티를 DTO로 변환하는 메소드
     public static ChatMessageDto fromEntity(ChatMessage chatMessage) {
-        return new ChatMessageDto(
-                chatMessage.getId(),
-                chatMessage.getChatRoom().getId(), // ChatRoom ID
-                chatMessage.getSender().getId(), // sender ID
-                chatMessage.getSender().getUsername(), // sender 이름
-                chatMessage.getContent(), // 메시지 내용
-                chatMessage.getTimestamp() // 메시지 생성 시간
-        );
+        ChatMessageDto dto = new ChatMessageDto();
+        dto.setId(chatMessage.getId());
+        dto.setChatRoomId(chatMessage.getChatRoom().getId());
+        dto.setSenderId(chatMessage.getSender().getId());
+        dto.setSenderName(chatMessage.getSender().getUsername());
+        dto.setContent(chatMessage.getContent());
+        dto.setTimestamp(chatMessage.getTimestamp());
+        return dto;
     }
 }
