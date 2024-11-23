@@ -1,44 +1,50 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Client } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
-import {ChatHeader, ChatHistory, ChatInputArea} from "../../styled/Chat/ChatStyled";
+import {
+    ChatHeader,
+    ChatHistory,
+    ChatInputArea,
+    ChatRoomContainer,
+    MessageBubble,
+} from "../../styled/Chat/ChatStyled";
+import { AiOutlineSend } from "react-icons/ai";
 
 function ChatRoom({ chatRoomId, userId }) {
-    const [messages, setMessages] = useState([]); // 메시지 상태
-    const [newMessage, setNewMessage] = useState(""); // 새 메시지 입력 상태
-    const [client, setClient] = useState(null); // STOMP 클라이언트
-    const [page, setPage] = useState(0); // 페이지 번호
-    const [hasMore, setHasMore] = useState(true); // 더 불러올 메시지가 있는지 여부
-    const [loading, setLoading] = useState(false); // 로딩 상태
+    const [messages, setMessages] = useState([]);
+    const [newMessage, setNewMessage] = useState("");
+    const [client, setClient] = useState(null);
+    const [page, setPage] = useState(0);
+    const [hasMore, setHasMore] = useState(true);
+    const [loading, setLoading] = useState(false);
 
-    useEffect(() => {
-        if (!chatRoomId) {
-            console.error("유효하지 않은 chatRoomId:", chatRoomId);
-            return;
+    const chatHistoryRef = useRef(null);
+    const isInitialLoad = useRef(true); // 첫 로드 여부 플래그
+
+    // 스크롤을 최하단으로 이동시키는 함수
+    const scrollToBottom = useCallback(() => {
+        const chatHistory = chatHistoryRef.current;
+        if (chatHistory) {
+            chatHistory.scrollTop = chatHistory.scrollHeight;
         }
+    }, []);
+
+    // WebSocket 클라이언트 설정
+    useEffect(() => {
+        if (!chatRoomId) return;
 
         const token = localStorage.getItem("token");
-        if (!token) {
-            console.error("액세스 토큰이 없습니다.");
-            return;
-        }
+        if (!token) return;
 
-        // STOMP 클라이언트 생성
         const stompClient = new Client({
-            webSocketFactory: () => new SockJS("http://localhost:8090/chat/ws"), // SockJS WebSocket 연결
+            webSocketFactory: () => new SockJS("http://localhost:8090/chat/ws"),
             connectHeaders: { Authorization: `Bearer ${token}` },
-            debug: (str) => console.log("STOMP Debug:", str),
             reconnectDelay: 5000,
             onConnect: () => {
-                console.log("WebSocket 연결 성공");
-
-                // WebSocket 구독
                 stompClient.subscribe(`/topic/chat/chatRoom/${chatRoomId}`, (message) => {
                     const receivedMessage = JSON.parse(message.body);
-                    console.log("실시간 메시지 수신:", receivedMessage);
-
-                    // 실시간으로 메시지를 추가
                     setMessages((prevMessages) => [...prevMessages, receivedMessage]);
+                    scrollToBottom(); // 새 메시지 도착 시 스크롤 최하단
                 });
             },
             onStompError: (error) => {
@@ -46,17 +52,17 @@ function ChatRoom({ chatRoomId, userId }) {
             },
         });
 
-        stompClient.activate(); // WebSocket 활성화
+        stompClient.activate();
         setClient(stompClient);
 
         return () => {
-            if (stompClient) stompClient.deactivate(); // WebSocket 연결 해제
+            stompClient.deactivate();
         };
-    }, [chatRoomId]);
+    }, [chatRoomId, scrollToBottom]);
 
-    // 기존 메시지 불러오기
-    const loadInitialMessages = async () => {
-        if (loading || !hasMore) return; // 이미 로딩 중이거나 더 이상 메시지가 없으면 중단
+    // 초기 메시지 로드 및 스크롤 이동
+    const loadInitialMessages = useCallback(async () => {
+        if (loading || !hasMore) return;
         setLoading(true);
 
         try {
@@ -73,33 +79,44 @@ function ChatRoom({ chatRoomId, userId }) {
             }
 
             if (data.length < 20) {
-                setHasMore(false); // 더 이상 불러올 메시지가 없음을 표시
+                setHasMore(false);
             }
 
-            // 메시지 상태 업데이트 (과거 메시지를 맨 앞에 추가)
             setMessages((prevMessages) => [...data.reverse(), ...prevMessages]);
             setPage((prevPage) => prevPage + 1);
+
+            // 첫 로드 시 스크롤 최하단
+            if (isInitialLoad.current) {
+                isInitialLoad.current = false; // 플래그 변경
+                setTimeout(scrollToBottom, 0);
+            }
         } catch (error) {
-            console.error("기존 메시지 불러오기 실패:", error);
+            console.error("메시지를 불러오는 중 오류 발생:", error);
         } finally {
             setLoading(false);
         }
-    };
+    }, [chatRoomId, page, hasMore, loading, scrollToBottom]);
 
-    // 컴포넌트 마운트 시 초기 메시지 로드
+    // 메시지가 추가될 때 스크롤 최하단
     useEffect(() => {
-        loadInitialMessages();
-    }, []);
-
-    // 스크롤 이벤트 핸들러
-    const handleScroll = (event) => {
-        const { scrollTop } = event.target;
-        if (scrollTop === 0 && hasMore && !loading) {
-            loadInitialMessages(); // 스크롤이 상단에 도달하면 추가 메시지 로드
+        if (!isInitialLoad.current) {
+            scrollToBottom();
         }
-    };
+    }, [messages, scrollToBottom]);
 
-    const sendMessage = () => {
+    // 스크롤 이벤트 처리
+    const handleScroll = useCallback(
+        (event) => {
+            const { scrollTop } = event.target;
+            if (scrollTop === 0 && hasMore && !loading) {
+                loadInitialMessages();
+            }
+        },
+        [hasMore, loading, loadInitialMessages]
+    );
+
+    // 메시지 전송
+    const sendMessage = useCallback(() => {
         if (client && newMessage.trim() !== "") {
             const message = {
                 chatRoomId,
@@ -108,47 +125,46 @@ function ChatRoom({ chatRoomId, userId }) {
             };
 
             client.publish({
-                destination: "/app/chatRoom/sendMessage", // 메시지 전송 경로
+                destination: "/app/chatRoom/sendMessage",
                 body: JSON.stringify(message),
             });
 
-            setNewMessage(""); // 입력창 초기화
+            setNewMessage("");
         }
-    };
+    }, [client, newMessage, chatRoomId, userId]);
+
+    // 초기 메시지 로드
+    useEffect(() => {
+        loadInitialMessages();
+    }, [loadInitialMessages]);
 
     return (
-        <div style={{ padding: "20px", border: "1px solid #ddd" }}>
-            <ChatHeader>Chat Room {chatRoomId}</ChatHeader>
-            <ChatHistory
-                style={{
-                    height: "300px",
-                    overflowY: "scroll",
-                    border: "1px solid #ccc",
-                    padding: "10px",
-                    marginBottom: "10px",
-                }}
-                onScroll={handleScroll}
-            >
+        <ChatRoomContainer>
+            <ChatHeader>
+                <h1> Chat Room {chatRoomId}</h1>
+            </ChatHeader>
+            <ChatHistory ref={chatHistoryRef} onScroll={handleScroll}>
                 {messages.map((msg, index) => (
-                    <div key={index}>
-                        <strong>{msg.senderId === userId ? "You" : `User ${msg.senderId}`}:</strong> {msg.content}
-                    </div>
+                    <MessageBubble key={index} isSender={msg.senderId === userId}>
+                        <span>{msg.senderId === userId ? "나" : `${msg.senderName}`}:</span>
+                        {msg.content}
+                    </MessageBubble>
                 ))}
             </ChatHistory>
             <ChatInputArea>
-            <input
-                type="text"
-                value={newMessage}
-                onChange={(e) => setNewMessage(e.target.value)}
-                onKeyPress={(e) => e.key === "Enter" && sendMessage()}
-                placeholder="Type your message..."
-                style={{ width: "calc(100% - 100px)", marginRight: "10px" }}
-            />
-            <button onClick={sendMessage} style={{ width: "90px" }}>
-                Send
-            </button>
+                <input
+                    type="text"
+                    value={newMessage}
+                    onChange={(e) => setNewMessage(e.target.value)}
+                    onKeyPress={(e) => e.key === "Enter" && sendMessage()}
+                    placeholder="Type your message..."
+                    style={{ width: "calc(100% - 100px)", marginRight: "10px" }}
+                />
+                <button onClick={sendMessage}>
+                    <AiOutlineSend />
+                </button>
             </ChatInputArea>
-        </div>
+        </ChatRoomContainer>
     );
 }
 
