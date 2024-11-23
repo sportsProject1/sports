@@ -13,6 +13,7 @@ function Shop() {
     const location = useLocation(); // 현재 위치 (쿼리 파라미터 추출용)
     const navigate = useNavigate();
     const [searchQuery, setSearchQuery] = useState(''); // 검색어 상태
+    const [sortOption, setSortOption] = useState("latest"); // 정렬 옵션 상태
 
     // 쿼리 파라미터에서 검색어 추출
     useEffect(() => {
@@ -27,11 +28,7 @@ function Shop() {
     useEffect(() => {
         const fetchAllData = async () => {
             try {
-                const [itemsResponse, categoryResponse] = await Promise.all([
-                    fetchData("/shop/list"),
-                    fetchData("/category/get")
-                ]);
-                console.log(itemsResponse.data.items);
+                const [itemsResponse, categoryResponse] = await Promise.all([fetchData("/shop/list"), fetchData("/category/get")]);
                 setItems(itemsResponse.data.items);
                 setCategory(categoryResponse.data);
             } catch (error) {
@@ -42,9 +39,7 @@ function Shop() {
     }, []); // 처음에 한 번만 데이터 로드
 
     // 카테고리 필터링 (shop 태그가 달린 카테고리만)
-    const shopCategories = useMemo(() => {
-        return category.filter(cat => cat.tag === "shop");
-    }, [category]);
+    const shopCategories = useMemo(() => category.filter(cat => cat.tag === "shop"), [category]);
 
     // 검색어 필터링
     const filteredItemsBySearch = useMemo(() => {
@@ -69,6 +64,30 @@ function Shop() {
         return filteredItemsByCategory; // 검색어 없으면 카테고리 필터링된 결과 반환
     }, [filteredItemsBySearch, filteredItemsByCategory, searchQuery]);
 
+    // 정렬 변경 처리 함수
+    const handleSortChange = (newSortOption) => {
+        setSortOption(newSortOption); // 정렬 기준 업데이트
+    };
+
+    // 아이템 정렬
+    const sortedItems = useMemo(() => {
+        const itemsCopy = [...finalFilteredItems];
+        switch (sortOption) {
+            case "latest":
+                return itemsCopy.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            case "oldest":
+                return itemsCopy.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+            case "likes":
+                return itemsCopy.sort((a, b) => b.likes - a.likes);
+            case "priceAsc":
+                return itemsCopy.sort((a, b) => a.price - b.price); // 가격 낮은 순
+            case "priceDesc":
+                return itemsCopy.sort((a, b) => b.price - a.price); // 가격 높은 순
+            default:
+                return itemsCopy;
+        }
+    }, [finalFilteredItems, sortOption]);
+
     // 카테고리 클릭 시 URL 변경
     const handleCategoryClick = (category) => {
         if (category && category.enName) {
@@ -89,7 +108,12 @@ function Shop() {
                 categoryTitle={"카테고리"}
                 handleCategoryClick={handleCategoryClick}
             />
-            <ItemWrapper items={finalFilteredItems} />
+            <ItemWrapper
+                items={sortedItems} // 정렬된 아이템 전달
+                handleSortChange={handleSortChange}
+                isShop={true}
+                sortOption={sortOption} // 정렬 옵션 전달
+            />
         </ShopContainer>
     );
 }

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
@@ -40,13 +40,13 @@ const SearchIcon = styled.span`
 
 // 필터 버튼 스타일
 const FilterButton = styled.button.withConfig({
-    shouldForwardProp: (prop) => prop !== '$active'
+    shouldForwardProp: (prop) => prop !== "$active",
 })`
     border: none;
     padding: 8px 15px;
     border-radius: 20px;
-    background-color: ${({ $active }) => ($active ? '#333' : '#f5f5f5')};
-    color: ${({ $active }) => ($active ? '#fff' : '#333')};
+    background-color: ${({ $active }) => ($active ? "#333" : "#f5f5f5")};
+    color: ${({ $active }) => ($active ? "#fff" : "#333")};
     font-size: 14px;
     cursor: pointer;
     transition: background-color 0.3s ease;
@@ -56,24 +56,23 @@ const FilterButton = styled.button.withConfig({
     }
 `;
 
-function SubMenu({ handleSortChange }) {
-    const [searchQuery, setSearchQuery] = useState('');
-    const [activeButton, setActiveButton] = useState("latest");
+function SubMenu({ handleSortChange, isShop = false, sortOption }) {
+    const [searchQuery, setSearchQuery] = useState("");
+    const [activeButton, setActiveButton] = useState(sortOption || "latest");  // sortOption으로 초기화
     const navigate = useNavigate();
 
     // 검색어를 URL로 전달하는 함수
     const handleSearch = () => {
         if (searchQuery.trim()) {
-            // 현재 페이지가 /board 인지 /shop 인지에 따라 적절한 경로로 이동
-            const path = window.location.pathname.includes('/board') ? '/board' : '/shop';
+            const path = window.location.pathname.includes("/board") ? "/board" : "/shop";
             navigate(`${path}/search?keyword=${searchQuery}`);
         }
     };
 
     // 필터 버튼 클릭 시 처리 함수
     const handleButtonClick = (buttonName) => {
-        setActiveButton(buttonName);
-        handleSortChange(buttonName); // 버튼 클릭 시 정렬 함수 호출, 버튼 이름을 그대로 전달
+        setActiveButton(buttonName); // 버튼 활성화 상태 업데이트
+        handleSortChange(buttonName); // 정렬 변경 처리
     };
 
     const handleKeyDown = (e) => {
@@ -81,6 +80,11 @@ function SubMenu({ handleSortChange }) {
             handleSearch();
         }
     };
+
+    // sortOption이 변경될 때마다 activeButton을 동기화
+    useEffect(() => {
+        setActiveButton(sortOption);
+    }, [sortOption]);
 
     return (
         <SubMenuContainer>
@@ -98,30 +102,63 @@ function SubMenu({ handleSortChange }) {
 
             {/* 필터 버튼들 */}
             <div>
-                <FilterButton
-                    $active={activeButton === "latest"}
-                    onClick={() => handleButtonClick("latest")}
-                >
-                    최신순
-                </FilterButton>
-                <FilterButton
-                    $active={activeButton === "oldest"}
-                    onClick={() => handleButtonClick("oldest")}
-                >
-                    오래된순
-                </FilterButton>
-                <FilterButton
-                    $active={activeButton === "views"}
-                    onClick={() => handleButtonClick("views")}
-                >
-                    조회수순
-                </FilterButton>
-                <FilterButton
-                    $active={activeButton === "likes"}
-                    onClick={() => handleButtonClick("likes")}
-                >
-                    좋아요순
-                </FilterButton>
+                {isShop ? (
+                    // Shop용 필터 버튼 (가격순, 좋아요순)
+                    <>
+                        <FilterButton
+                            $active={activeButton === "latest"}
+                            onClick={() => handleButtonClick("latest")}
+                        >
+                            최신순
+                        </FilterButton>
+                        <FilterButton
+                            $active={activeButton === "priceDesc"}
+                            onClick={() => handleButtonClick("priceDesc")}
+                        >
+                            높은 가격순
+                        </FilterButton>
+                        <FilterButton
+                            $active={activeButton === "priceAsc"}
+                            onClick={() => handleButtonClick("priceAsc")}
+                        >
+                            낮은 가격순
+                        </FilterButton>
+                        <FilterButton
+                            $active={activeButton === "likes"}
+                            onClick={() => handleButtonClick("likes")}
+                        >
+                            좋아요순
+                        </FilterButton>
+                    </>
+                ) : (
+                    // Board용 필터 버튼 (최신순, 오래된순, 조회수순, 좋아요순)
+                    <>
+                        <FilterButton
+                            $active={activeButton === "latest"}
+                            onClick={() => handleButtonClick("latest")}
+                        >
+                            최신순
+                        </FilterButton>
+                        <FilterButton
+                            $active={activeButton === "oldest"}
+                            onClick={() => handleButtonClick("oldest")}
+                        >
+                            오래된순
+                        </FilterButton>
+                        <FilterButton
+                            $active={activeButton === "views"}
+                            onClick={() => handleButtonClick("views")}
+                        >
+                            조회수순
+                        </FilterButton>
+                        <FilterButton
+                            $active={activeButton === "likes"}
+                            onClick={() => handleButtonClick("likes")}
+                        >
+                            좋아요순
+                        </FilterButton>
+                    </>
+                )}
             </div>
         </SubMenuContainer>
     );
