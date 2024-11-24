@@ -1,83 +1,171 @@
-import React, { useState, useEffect } from "react";
-import { Stomp } from "@stomp/stompjs";
+import React, { useState, useEffect, useRef, useCallback } from "react";
+import { Client } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
+import {
+    ChatHeader,
+    ChatHistory,
+    ChatInputArea,
+    ChatRoomContainer,
+    MessageBubble,
+} from "../../styled/Chat/ChatStyled";
+import { AiOutlineSend } from "react-icons/ai";
 
-function ChatRoom({chatRoomId,userId}){
-    const [messages, setMessages] = useState([]); // 채팅 메시지 목록
-    const [newMessage, setNewMessage] = useState(""); // 새 메시지 입력
-    const [stompClient, setStompClient] = useState(null); // STOMP 클라이언트
+function ChatRoom({ chatRoomId, userId }) {
+    const [messages, setMessages] = useState([]);
+    const [newMessage, setNewMessage] = useState("");
+    const [client, setClient] = useState(null);
+    const [page, setPage] = useState(0);
+    const [hasMore, setHasMore] = useState(true);
+    const [loading, setLoading] = useState(false);
 
-    console.log("123123")
+    const chatHistoryRef = useRef(null);
+    const isInitialLoad = useRef(true); // 첫 로드 여부 플래그
 
+    // 스크롤을 최하단으로 이동시키는 함수
+    const scrollToBottom = useCallback(() => {
+        const chatHistory = chatHistoryRef.current;
+        if (chatHistory) {
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+        }
+    }, []);
 
-
+    // WebSocket 클라이언트 설정
     useEffect(() => {
-        // WebSocket 연결 설정
-        const socket = new SockJS("http://localhost:8090/chat/ws");
-        const client = Stomp.over(socket);
+        if (!chatRoomId) return;
 
-        client.connect({}, () => {
-            console.log("Connected to WebSocket");
+        const token = localStorage.getItem("token");
+        if (!token) return;
 
-            // 특정 채팅방 구독
-            client.subscribe(`/topic/chatroom/${chatRoomId}`, (message) => {
-                const receivedMessage = JSON.parse(message.body);
-                setMessages((prevMessages) => [...prevMessages, receivedMessage]);
-            });
-
-            setStompClient(client);
+        const stompClient = new Client({
+            webSocketFactory: () => new SockJS("http://localhost:8090/chat/ws"),
+            connectHeaders: { Authorization: `Bearer ${token}` },
+            reconnectDelay: 5000,
+            onConnect: () => {
+                stompClient.subscribe(`/topic/chat/chatRoom/${chatRoomId}`, (message) => {
+                    const receivedMessage = JSON.parse(message.body);
+                    setMessages((prevMessages) => [...prevMessages, receivedMessage]);
+                    scrollToBottom(); // 새 메시지 도착 시 스크롤 최하단
+                });
+            },
+            onStompError: (error) => {
+                console.error("STOMP 연결 오류:", error);
+            },
         });
 
-        return () => {
-            // 컴포넌트가 언마운트되면 WebSocket 연결 해제
-            if (client) client.disconnect();
-        };
-    }, [chatRoomId]);
+        stompClient.activate();
+        setClient(stompClient);
 
-    const sendMessage = () => {
-        if (stompClient && newMessage.trim() !== "") {
+        return () => {
+            stompClient.deactivate();
+        };
+    }, [chatRoomId, scrollToBottom]);
+
+    // 초기 메시지 로드 및 스크롤 이동
+    const loadInitialMessages = useCallback(async () => {
+        if (loading || !hasMore) return;
+        setLoading(true);
+
+        try {
+            const token = localStorage.getItem("token");
+            const response = await fetch(
+                `http://localhost:8090/${chatRoomId}/messages?page=${page}&size=20`,
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+            const data = await response.json();
+
+            if (!Array.isArray(data)) {
+                console.error("API로부터 받은 데이터가 배열이 아닙니다:", data);
+                return;
+            }
+
+            if (data.length < 20) {
+                setHasMore(false);
+            }
+
+            setMessages((prevMessages) => [...data.reverse(), ...prevMessages]);
+            setPage((prevPage) => prevPage + 1);
+
+            // 첫 로드 시 스크롤 최하단
+            if (isInitialLoad.current) {
+                isInitialLoad.current = false; // 플래그 변경
+                setTimeout(scrollToBottom, 0);
+            }
+        } catch (error) {
+            console.error("메시지를 불러오는 중 오류 발생:", error);
+        } finally {
+            setLoading(false);
+        }
+    }, [chatRoomId, page, hasMore, loading, scrollToBottom]);
+
+    // 메시지가 추가될 때 스크롤 최하단
+    useEffect(() => {
+        if (!isInitialLoad.current) {
+            scrollToBottom();
+        }
+    }, [messages, scrollToBottom]);
+
+    // 스크롤 이벤트 처리
+    const handleScroll = useCallback(
+        (event) => {
+            const { scrollTop } = event.target;
+            if (scrollTop === 0 && hasMore && !loading) {
+                loadInitialMessages();
+            }
+        },
+        [hasMore, loading, loadInitialMessages]
+    );
+
+    // 메시지 전송
+    const sendMessage = useCallback(() => {
+        if (client && newMessage.trim() !== "") {
             const message = {
-                chatRoomId: chatRoomId,
+                chatRoomId,
                 senderId: userId,
                 content: newMessage,
             };
-            stompClient.send("/app/chat/chatRoom/sendMessage", {}, JSON.stringify(message));
-            setNewMessage(""); // 메시지 전송 후 입력창 초기화
+
+            client.publish({
+                destination: "/app/chatRoom/sendMessage",
+                body: JSON.stringify(message),
+            });
+
+            setNewMessage("");
         }
-    };
+    }, [client, newMessage, chatRoomId, userId]);
+
+    // 초기 메시지 로드
+    useEffect(() => {
+        loadInitialMessages();
+    }, [loadInitialMessages]);
 
     return (
-        <div style={{ padding: "20px", border: "1px solid #ddd" }}>
-            <h2>Chat Room {chatRoomId}</h2>
-            <div
-                style={{
-                    height: "300px",
-                    overflowY: "scroll",
-                    border: "1px solid #ccc",
-                    padding: "10px",
-                    marginBottom: "10px",
-                }}
-            >
+        <ChatRoomContainer>
+            <ChatHeader>
+                <h1> Chat Room {chatRoomId}</h1>
+            </ChatHeader>
+            <ChatHistory ref={chatHistoryRef} onScroll={handleScroll}>
                 {messages.map((msg, index) => (
-                    <div key={index}>
-                        <strong>{msg.senderId === userId ? "You" : `User ${msg.senderId}`}:</strong>{" "}
+                    <MessageBubble key={index} isSender={msg.senderId === userId}>
+                        <span>{msg.senderId === userId ? "나" : `${msg.senderName}`}:</span>
                         {msg.content}
-                    </div>
+                    </MessageBubble>
                 ))}
-            </div>
-            <input
-                type="text"
-                value={newMessage}
-                onChange={(e) => setNewMessage(e.target.value)}
-                onKeyPress={(e) => e.key === "Enter" && sendMessage()}
-                placeholder="Type your message..."
-                style={{ width: "calc(100% - 100px)", marginRight: "10px" }}
-            />
-            <button onClick={sendMessage} style={{ width: "90px" }}>
-                Send
-            </button>
-        </div>
+            </ChatHistory>
+            <ChatInputArea>
+                <input
+                    type="text"
+                    value={newMessage}
+                    onChange={(e) => setNewMessage(e.target.value)}
+                    onKeyPress={(e) => e.key === "Enter" && sendMessage()}
+                    placeholder="Type your message..."
+                    style={{ width: "calc(100% - 100px)", marginRight: "10px" }}
+                />
+                <button onClick={sendMessage}>
+                    <AiOutlineSend />
+                </button>
+            </ChatInputArea>
+        </ChatRoomContainer>
     );
-};
+}
 
 export default ChatRoom;

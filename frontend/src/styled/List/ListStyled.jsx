@@ -50,3 +50,8 @@ export const PostInfo = styled.div`
         }
     }
 `;
+
+export const BoardWrapperImg = styled.img`
+    width: 100%;
+    height: 100%;
+`;

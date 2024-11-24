@@ -1,6 +1,5 @@
 package com.sports.user.controller;
 
-import com.sports.Item.S3Service;
 import com.sports.user.entito.User;
 import com.sports.user.entito.UserDTO;
 import com.sports.user.repository.ValidationGroups;
@@ -22,7 +21,6 @@ import java.io.IOException;
 public class UserController {
 
     private final UserService userService;
-    private final S3Service s3Service;
     private final UserContextService userContextService;
 
     // 마이페이지에 띄울 유저정보 보내기

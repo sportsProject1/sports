@@ -7,15 +7,17 @@ import {
     BoardPostImage,
     PostTitle
 } from "../../styled/main/MainPageStyled";
-import React, { useMemo, useState } from "react";
-import { ListWrap, PostInfo, PostContent } from "../../styled/List/ListStyled"; /////******** */
+import React, { useMemo, useState, useEffect } from "react";
+import { ListWrap, PostInfo, PostContent, BoardWrapperImg } from "../../styled/List/ListStyled"; /////******** */
 import PagePagination from "../../Components/Pagination/PagePagination";
 import { useNavigate } from "react-router-dom";
+import { postJsonData } from "../../Server/ApiServiceNoToken";
 
-function BoardWrapper({ boardItem, handleSortChange }) {
+function BoardWrapper({ boardItem, handleSortChange, likeStatus }) {
     const navigate = useNavigate();
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 9;
+    const [thumbnails, setThumbnails] = useState({});
 
     // 현재 페이지의 게시글 슬라이싱을 useMemo로 메모이제이션
     const currentPosts = useMemo(() => {
@@ -29,13 +31,27 @@ function BoardWrapper({ boardItem, handleSortChange }) {
         setCurrentPage(page);
     };
 
-    // 콘텐츠에서 첫 번째 이미지 URL 가져오기
-    const extractFirstImageUrl = (content) => {
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(content, "text/html");
-        const imgTag = doc.querySelector("img");
-        return imgTag ? imgTag.src : null;
-    };
+    // 썸네일 요청 로직 추가
+    useEffect(() => {
+        async function fetchThumbnails() {
+            try {
+                const boardIds = boardItem.map((post) => post.id); // 모든 게시글 ID 추출
+                const thumbnailData = await postJsonData("/board/thumbnails", boardIds);
+
+                // ID별 썸네일 URL 매핑
+                const thumbnailsMap = thumbnailData.reduce((acc, { boardId, thumbnailUrl }) => {
+                    acc[boardId] = thumbnailUrl;
+                    return acc;
+                }, {});
+
+                setThumbnails(thumbnailsMap); // 썸네일 데이터 상태로 저장
+            } catch (error) {
+                console.error("Error fetching thumbnails:", error);
+            }
+        }
+
+        fetchThumbnails();
+    }, [boardItem]);
 
     const formatTimeAgo = (createdAt) => {
         const createdTime = new Date(createdAt);
@@ -71,22 +87,15 @@ function BoardWrapper({ boardItem, handleSortChange }) {
             <SubMenu handleSortChange={handleSortChange} />
             <ItemContainer>
                 {currentPosts.map((post) => {
-                    const thumbnailUrl = extractFirstImageUrl(post.content);
+                    const thumbnailUrl = thumbnails[post.id];
                     const timeAgo = formatTimeAgo(post.createdAt);
                     const formattedDate = formatDate(post.createdAt);
+                    const isLiked = likeStatus[post.id];
 
                     return (
                         <PostCard onClick={() => navigate(`/board/detail/${post.id}`)} key={post.id}>
                             <BoardPostImage>
-                                {thumbnailUrl ? (
-                                    <img
-                                        src={thumbnailUrl}
-                                        alt={`thumbnail ${post.title}`}
-                                        style={{ width: '100%', height: 'auto' }}
-                                    />
-                                ) : (
-                                    <PlaceholderImg />
-                                )}
+                                <BoardWrapperImg src={thumbnailUrl} alt={`thumbnail ${post.title}`} />
                                 <CategoryTag>{post.category}</CategoryTag>
                             </BoardPostImage>
                             <PostContent>
@@ -96,7 +105,7 @@ function BoardWrapper({ boardItem, handleSortChange }) {
                                     <span className="time-ago">{timeAgo}</span>
                                     <div className="details">
                                         <span> 👀 {post.views}</span>
-                                        <span>{post.likes > 0 ? "❤️" : "🤍"} {post.likes}</span>
+                                        <span>{isLiked ? "❤️ " : "🤍 "}{post.likes}</span>
                                     </div>
                                 </PostInfo>
                                 <div style={{ fontSize: "12px", color: "gray", marginTop: "4px" }}>

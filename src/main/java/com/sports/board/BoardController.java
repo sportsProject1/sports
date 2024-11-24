@@ -1,18 +1,17 @@
 package com.sports.board;
 
 import com.sports.Chat.ChatRoom.ChatRoom;
-import com.sports.Chat.ChatRoom.ChatRoomDto;
 import com.sports.Chat.ChatRoom.ChatRoomIdDto;
 import com.sports.Chat.ChatRoom.ChatRoomRepository;
 import com.sports.like.LikeService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -51,10 +50,21 @@ public class BoardController {
         return ResponseEntity.ok(boardService.createBoard(boardRequestDTO));
     }
 
-    // 이미지만
+    // 이미지만 S3 업로드, 반환
     @PostMapping("/fileAdd")
     public ResponseEntity<String> responseUploadUrl(@RequestParam("file") MultipartFile file) throws IOException {
         return ResponseEntity.ok(boardService.processImage(file));
+    }
+
+    // 썸네일 url 반환
+    @PostMapping("/thumbnails")
+    public ResponseEntity<List<BoardThumbnailDTO>> getThumbnails(@RequestBody List<Long> boardIds) {
+        List<BoardThumbnailDTO> thumbnails = boardService.extractThumbnailsForBoards(boardIds);
+        if (!thumbnails.isEmpty()) {
+            return ResponseEntity.ok(thumbnails);
+        } else {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build(); // 데이터가 없을 경우
+        }
     }
 
     // 글 수정
@@ -83,6 +93,17 @@ public class BoardController {
     public ResponseEntity<Map<String, Object>> toggleLike(@PathVariable Long id) {
         Map<String, Object> response = likeService.toggleBoardLike(id); // 좋아요 상태와 좋아요 수 반환
         return ResponseEntity.ok(response);
+    }
+
+    // 현재 로그인된 사용자에 대한 좋아요 상태반환
+    @GetMapping("/likes/status")
+    public ResponseEntity<Map<Long, Boolean>> getLikesStatus(
+            @RequestParam List<Long> targetIds,
+            @RequestHeader(value = "Authorization", required = false) String authorization) {
+
+        // 좋아요 상태 가져오기
+        Map<Long, Boolean> likeStatus = likeService.getLikeStatusWithToken(targetIds, "Board", authorization);
+        return ResponseEntity.ok(likeStatus);
     }
 
     // 검색(게시판)

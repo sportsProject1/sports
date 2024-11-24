@@ -17,10 +17,11 @@ import {
     PostTime,
     PostAuthorBox
 } from "../../styled/main/MainPageStyled";
-import { fetchTokenData } from "../../Server/ApiService";
+import { fetchData, postJsonData } from "../../Server/ApiServiceNoToken";
 
 function MainBestBoard() {
     const [mainBoards, setMainBoards] = useState({}); // 태그별 데이터를 저장
+    const [thumbnails, setThumbnails] = useState({}); // 썸네일 데이터를 저장
     const [loading, setLoading] = useState(true); // 로딩 상태
     const navigate = useNavigate();
     const fixedTitlesMap = {
@@ -39,11 +40,29 @@ function MainBestBoard() {
     useEffect(() => {
         async function fetchMainBoards() {
             try {
-                const response = await fetchTokenData("/board/main");
+                // 메인 게시판 데이터 요청
+                const response = await fetchData("/board/main");
                 setMainBoards(response.data); // 서버 데이터를 상태로 저장
+
+
+                // 게시글 ID 목록 추출 (썸네일 요청용)
+                const boardIds = Object.values(response.data)
+                    .flat()
+                    .map((post) => post.id); // 게시글 ID만 추출
+
+                // 썸네일 URL 요청 (토큰 없이 요청)
+                const thumbnailData = await postJsonData("/board/thumbnails", boardIds);
+
+                // 썸네일 데이터를 상태로 저장
+                const thumbnailsMap = thumbnailData.reduce((acc, { boardId, thumbnailUrl }) => {
+                    acc[boardId] = thumbnailUrl; // ID별 썸네일 URL 매핑
+                    return acc;
+                }, {});
+
+                setThumbnails(thumbnailsMap);
                 setLoading(false);
             } catch (error) {
-                console.error("Error fetching main boards:", error);
+                console.error("Error fetching main boards or thumbnails:", error);
                 setLoading(false);
             }
         }
@@ -92,17 +111,13 @@ function MainBestBoard() {
                     </TagTitleContainer>
                     <PostCardWrapper>
                         {posts.map((post) => {
-                            const thumbnailUrl = extractFirstImageUrl(post.content);
+                            const thumbnailUrl = thumbnails[post.id];
                             const timeElapsed = getTimeElapsed(post.createdAt);
                             const postRoute = `/board/detail/${post.id}`;
                             return (
                                 <ListItem key={`${categoryName}-${post.id}`} onClick={() => navigate(postRoute)}>
                                     <ItemLeft>
-                                        {thumbnailUrl ? (
-                                            <img src={thumbnailUrl} alt={`thumbnail ${post.title}`} />
-                                        ) : (
-                                            <PlaceholderImg />
-                                        )}
+                                        <img src={thumbnailUrl} alt={`thumbnail ${post.title}`} />
                                     </ItemLeft>
                                     <ItemRight>
                                         <PostCategoryTag>{post.category}</PostCategoryTag>
