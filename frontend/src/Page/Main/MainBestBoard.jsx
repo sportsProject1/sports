@@ -17,8 +17,7 @@ import {
     PostTime,
     PostAuthorBox
 } from "../../styled/main/MainPageStyled";
-import { fetchTokenData } from "../../Server/ApiService";
-import { postJsonData } from "../../Server/ApiServiceNoToken";
+import { fetchData, postJsonData } from "../../Server/ApiServiceNoToken";
 
 function MainBestBoard() {
     const [mainBoards, setMainBoards] = useState({}); // 태그별 데이터를 저장
@@ -42,7 +41,7 @@ function MainBestBoard() {
         async function fetchMainBoards() {
             try {
                 // 메인 게시판 데이터 요청
-                const response = await fetchTokenData("/board/main");
+                const response = await fetchData("/board/main");
                 setMainBoards(response.data); // 서버 데이터를 상태로 저장
 
 
