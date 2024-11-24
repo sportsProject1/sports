@@ -57,7 +57,7 @@ public class SecurityConfig {
                         .requestMatchers((request) ->
                                 request.getRequestURI().endsWith("/add") && "POST".equals(request.getMethod())
                         ).authenticated() // 모든 POST /add 요청에 인증 필요
-                        .requestMatchers("/", "/register", "/login","/oauth", "/oauth2/**", "/refresh", "/user", "/shop", "/shop/**", "/board/**", "/category/get", "/comment/get/**","/chat/ws/**").permitAll()
+                        .requestMatchers("/", "/register", "/login","/oauth", "/oauth2/**", "/refresh", "/user", "/shop", "/shop/**", "/board/**", "/board/thumbnails", "/category/get", "/comment/get/**","/chat/ws/**").permitAll()
                         .anyRequest().authenticated())
                 .exceptionHandling(exceptionHandling -> exceptionHandling
                         .authenticationEntryPoint((request, response, authException) -> {

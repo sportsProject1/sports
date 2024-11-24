@@ -28,10 +28,11 @@ export const postData = async (url,formData) => {
     }
 }
 
-export const postJsonData = async (url,formData) => {
-    try{
-        const response = await axios.post(`http://localhost:8090/${url}`, formData)
-    }catch (error) {
-        console.log(error)
+export const postJsonData = async (url, formData) => {
+    try {
+        const response = await apiNoToken.post(url, formData);
+        return response.data;
+    } catch (error) {
+        console.error(error);
     }
-}
+};
