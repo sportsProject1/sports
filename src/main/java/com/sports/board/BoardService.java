@@ -224,7 +224,7 @@ public class BoardService {
             String content = board.getContent();
             String firstImageSrc = extractFirstImageSrcFromContent(content);
 
-            // 첫 번째 이미지가 없으면 기본 이미지 URL 설정
+            // 이미지가 없으면 기본 이미지 URL 설정
             if (firstImageSrc == null || firstImageSrc.isEmpty()) {
                 firstImageSrc = s3Service.defaultPath(); // 기본 이미지 경로 반환
             }
