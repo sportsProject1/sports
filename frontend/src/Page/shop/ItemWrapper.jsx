@@ -5,7 +5,7 @@ import { Card, ItemContainer, Price, ProductName, CardImage, PriceContainer, Lik
 import { useNavigate } from "react-router-dom";
 import PagePagination from "../../Components/Pagination/PagePagination";
 
-function ItemWrapper({ items, likeStatus }) {
+function ItemWrapper({ items, handleSortChange, isShop }) {
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 9;
 
@@ -29,25 +29,22 @@ function ItemWrapper({ items, likeStatus }) {
 
     return (
         <ListWrap>
-            <SubMenu />
+            <SubMenu isShop={isShop} handleSortChange={handleSortChange} />
             <ItemContainer>
-                {currentItems.map((item) => {
-                    const isLiked = likeStatus[item.id];
-                    return (
-                        <Card key={item.id} onClick={() => navigate(`/shop/detail/${item.id}`)}>
-                            <CardImage
-                                    src={item.imgurl ? item.imgurl.split(',')[0] : 'default-image-url.jpg'}
-                                    alt={item.name}
-                                />
-                            <ProductName>{item.title}</ProductName>
-                            <BrandName>{item.nickname}</BrandName>
-                            <PriceContainer>
-                                <Price>{item.price.toLocaleString()}원</Price>
-                                <LikeCount>{isLiked ? "❤️" : "🤍"}</LikeCount>
-                            </PriceContainer>
-                        </Card>
-                    );
-                })}
+                {currentItems.map((item) => (
+                    <Card key={item.id} onClick={() => navigate(`/shop/detail/${item.id}`)}>
+                        <CardImage
+                            src={item.imgurl ? item.imgurl.split(',')[0] : 'default-image-url.jpg'}
+                            alt={item.name}
+                        />
+                        <ProductName>{item.title}</ProductName>
+                        <BrandName>{item.nickname}</BrandName>
+                        <PriceContainer>
+                            <Price>{item.price.toLocaleString()}원</Price>
+                            <LikeCount>♡ {item.likes}</LikeCount>
+                        </PriceContainer>
+                    </Card>
+                ))}
             </ItemContainer>
 
             <PagePagination

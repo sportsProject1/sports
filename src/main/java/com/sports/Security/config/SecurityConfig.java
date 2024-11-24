@@ -42,8 +42,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        http
-                .csrf(csrf -> csrf.disable())
+        http	.csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .httpBasic(httpBasic -> httpBasic.disable())
                 .sessionManagement(session -> session
@@ -53,11 +52,11 @@ public class SecurityConfig {
                         .requestMatchers("/admin").hasRole("ADMIN")
                         .requestMatchers("/manager").hasRole("MANAGER")
                         .requestMatchers("/seller").hasRole("SELLER")
-                        .requestMatchers("/board/fileAdd", "/board/{id}/like", "/shop/like/{id}").authenticated() // 첫 번째 매칭되는 조건이 적용, 아래에서 permitAll 해줘도 인증이 적용됨
+                        .requestMatchers("/board/fileAdd", "/board/{id}/like").authenticated() // 첫 번째 매칭되는 조건이 적용, 아래에서 permitAll 해줘도 인증이 적용됨
                         .requestMatchers((request) ->
                                 request.getRequestURI().endsWith("/add") && "POST".equals(request.getMethod())
                         ).authenticated() // 모든 POST /add 요청에 인증 필요
-                        .requestMatchers("/", "/register", "/login","/oauth", "/oauth2/**", "/refresh", "/user", "/shop", "/shop/**", "/board/**", "/board/thumbnails", "/category/get", "/comment/get/**","/chat/ws/**").permitAll()
+                        .requestMatchers("/", "/register", "/login","/oauth", "/oauth2/**", "/refresh", "/user", "/shop", "/shop/**", "/board/**", "/category/get", "/comment/get/**", "/map/**", "/kakao/**").permitAll()
                         .anyRequest().authenticated())
                 .exceptionHandling(exceptionHandling -> exceptionHandling
                         .authenticationEntryPoint((request, response, authException) -> {
@@ -93,6 +92,7 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowCredentials(true);
         configuration.addAllowedOrigin("http://localhost:3000"); // React 앱의 주소
+        configuration.addAllowedOrigin("https://localhost:3000");
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
         configuration.setExposedHeaders(List.of("Authorization", "Refresh-Token"));

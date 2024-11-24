@@ -13,6 +13,7 @@ import {fetchData} from "../../Server/ApiServiceNoToken";
 import {useNavigate, useParams} from "react-router-dom";
 import {deleteTokenData, postTokenJsonData} from "../../Server/ApiService";
 import Comment from "../../Components/Comment";
+import Map from '../../Components/Map/Map';
 
 function BoardDetail(){
     const [detailBoard,setDetailBoard] = useState(null);
@@ -26,6 +27,7 @@ function BoardDetail(){
 
     useEffect(() => {
         fetchData(`/board/${id}`).then((res)=>{
+            console.log(res.data);
             setDetailBoard(res.data);
         })
         fetchData(`/comment/get/board/${id}`).then((res)=>{
@@ -104,6 +106,15 @@ function BoardDetail(){
                 {/* 본문 */}
                 <ContentSection>
                     <div dangerouslySetInnerHTML={{ __html: detailBoard.content }}></div>
+
+                    {/* 지도 섹션 */}
+                    {detailBoard.latitude && detailBoard.longitude && (
+                        <Map
+                            latitude={detailBoard.latitude}
+                            longitude={detailBoard.longitude}
+                        />
+                    )}
+
                     <InteractionSection>
                         <LikeButton onClick={onLike}>좋아요 {detailBoard.likes}</LikeButton>
                         <div>
@@ -114,6 +125,8 @@ function BoardDetail(){
                         </div>
                     </InteractionSection>
                 </ContentSection>
+
+
 
                 {/* 댓글 섹션 */}
                 <Comment

@@ -164,6 +164,8 @@ public class BoardService {
                 .updatedAt(board.getUpdatedAt())
                 .imgUrl(board.getImgUrl())
                 .chatroom(board.isChatroom())
+                .latitude(board.getLatitude())
+                .longitude(board.getLongitude())
                 .build();
     }
 
@@ -175,6 +177,8 @@ public class BoardService {
                 .author(author)
                 .category(category)
                 .chatroom(dto.isChatroom())
+                .latitude(dto.getLatitude())
+                .longitude(dto.getLongitude())
                 .build();
     }
 

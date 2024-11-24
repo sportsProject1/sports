@@ -121,11 +121,11 @@ const AddressSearchContainer = styled.div`
 const AddressSearchButton = styled(Button)`
     padding: 8px 12px;
     font-size: 14px;
-    background-color: #e0e0e0;
-    color: #333;
+    background-color: #007bff;
+    color: white;
     border-radius: 5px;
     &:hover {
-        background-color: #ccc;
+        background-color: #0056b3;
     }
 `;
 
