@@ -16,7 +16,7 @@ const GlobalStyle = createGlobalStyle`
     }
     
     a {
-        color: ${({ theme }) => theme.colors.primary};
+        color: black;
         text-decoration: none;
         &:hover {
             color: ${({ theme }) => theme.colors.secondary};

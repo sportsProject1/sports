@@ -3,11 +3,13 @@ package com.sports.board;
 import com.sports.Category.Category;
 import com.sports.Category.CategoryRepository;
 import com.sports.Item.S3Service;
-import com.sports.like.LikeRepository;
 import com.sports.user.entito.User;
 import com.sports.user.repository.UserRepository;
 import com.sports.user.service.UserContextService;
 import lombok.RequiredArgsConstructor;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
@@ -15,8 +17,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.UUID;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -47,6 +51,32 @@ public class BoardService {
         boardRepository.save(board);
 
         return toResponseDTO(board);
+    }
+
+    // 카테고리 태그별 게시글 가져오기
+    public Map<String, List<BoardResponseDTO>> getMainBoardsByTags() {
+        Map<String, List<BoardResponseDTO>> result = new LinkedHashMap<>();
+
+        // 운동 데이터 가져오기
+        List<Board> sportsBoards = boardRepository.findTop5ByCategoryTagOrderByCreatedAtDesc("운동");
+        List<BoardResponseDTO> sportsDtos = sportsBoards.stream()
+                .map(this::toResponseDTO)
+                .limit(5)
+                .toList();
+        result.put("운동", sportsDtos);
+
+        // 공지사항, 모집, 자유 데이터를 가져오기
+        List<String> etcCategories = List.of("공지사항", "모집", "자유");
+        for (String categoryName : etcCategories) {
+            List<Board> boards = boardRepository.findTop5ByCategoryNameOrderByCreatedAtDesc(categoryName);
+            List<BoardResponseDTO> dtos = boards.stream()
+                    .map(this::toResponseDTO)
+                    .limit(5)
+                    .toList();
+            result.put(categoryName, dtos); // 카테고리 이름을 키로 사용
+        }
+
+        return result;
     }
 
     // 글쓰기
@@ -133,6 +163,7 @@ public class BoardService {
                 .createdAt(board.getCreatedAt())
                 .updatedAt(board.getUpdatedAt())
                 .imgUrl(board.getImgUrl())
+                .chatroom(board.isChatroom())
                 .build();
     }
 
@@ -183,26 +214,46 @@ public class BoardService {
         return null;
     }
 
+
+
+    public List<BoardThumbnailDTO> extractThumbnailsForBoards(List<Long> boardIds) {
+        List<Board> boards = boardRepository.findAllById(boardIds);
+        List<BoardThumbnailDTO> thumbnails = new ArrayList<>();
+
+        for (Board board : boards) {
+            String content = board.getContent();
+            String firstImageSrc = extractFirstImageSrcFromContent(content);
+
+            // 첫 번째 이미지가 없으면 기본 이미지 URL 설정
+            if (firstImageSrc == null || firstImageSrc.isEmpty()) {
+                firstImageSrc = s3Service.defaultPath(); // 기본 이미지 경로 반환
+            }
+
+            thumbnails.add(new BoardThumbnailDTO(board.getId(), firstImageSrc));
+        }
+
+        return thumbnails;
+    }
+
+    private String extractFirstImageSrcFromContent(String content) {
+        if (content == null || content.isEmpty()) {
+            return null;
+        }
+
+        // HTML 파싱 및 첫 번째 img 태그의 src 추출
+        Document doc = Jsoup.parse(content);
+        Element firstImg = doc.selectFirst("img");
+        return firstImg != null ? firstImg.attr("src") : null;
+    }
+
+
+
     //검색기능(보드)
     public List<BoardResponseDTO> searchBoardByTitle(String keyword) {
         List<Board> boards = boardRepository.searchByTitle(keyword);
         return boards.stream()
-                .map(this::convertToDTO)
+                .map(this::toResponseDTO)
                 .collect(Collectors.toList());
     }
 
-    private BoardResponseDTO convertToDTO(Board board) {
-        return new BoardResponseDTO(
-                board.getId(),
-                board.getTitle(),
-                board.getContent(),
-                board.getImgUrl(),
-                board.getCreatedAt(),
-                board.getUpdatedAt(),
-                board.getLikes(),
-                board.getViews(),
-                board.getAuthor().getUsername(),
-                board.getCategory().getName()
-        );
-    }
 }

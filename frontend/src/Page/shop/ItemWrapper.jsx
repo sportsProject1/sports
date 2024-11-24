@@ -1,11 +1,11 @@
 import { ListWrap } from "../../styled/List/ListStyled";
 import SubMenu from "../../Components/Menu/SubMenu";
 import React, { useMemo, useState } from "react";
-import { Card, ItemContainer, Price, ProductName, CardImage } from "../../styled/Common";
+import { Card, ItemContainer, Price, ProductName, CardImage, PriceContainer, LikeCount, BrandName } from "../../styled/Common";
 import { useNavigate } from "react-router-dom";
 import PagePagination from "../../Components/Pagination/PagePagination";
 
-function ItemWrapper({ items }) {
+function ItemWrapper({ items, likeStatus }) {
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 9;
 
@@ -31,13 +31,23 @@ function ItemWrapper({ items }) {
         <ListWrap>
             <SubMenu />
             <ItemContainer>
-                {currentItems.map((item) => (
-                    <Card key={item.id} onClick={() => navigate(`/shop/detail/${item.id}`)}>
-                        <CardImage src={item.imgurl} alt={item.name} />
-                        <ProductName>{item.title}</ProductName>
-                        <Price>{item.price}</Price>
-                    </Card>
-                ))}
+                {currentItems.map((item) => {
+                    const isLiked = likeStatus[item.id];
+                    return (
+                        <Card key={item.id} onClick={() => navigate(`/shop/detail/${item.id}`)}>
+                            <CardImage
+                                    src={item.imgurl ? item.imgurl.split(',')[0] : 'default-image-url.jpg'}
+                                    alt={item.name}
+                                />
+                            <ProductName>{item.title}</ProductName>
+                            <BrandName>{item.nickname}</BrandName>
+                            <PriceContainer>
+                                <Price>{item.price.toLocaleString()}원</Price>
+                                <LikeCount>{isLiked ? "❤️" : "🤍"}</LikeCount>
+                            </PriceContainer>
+                        </Card>
+                    );
+                })}
             </ItemContainer>
 
             <PagePagination

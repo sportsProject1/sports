@@ -21,6 +21,7 @@ public class BoardResponseDTO {
     private int views;                  // 조회수
     private String author;              // 작성자
     private String category;            // 게시글 카테고리
+    private boolean chatroom;
 
 //    // 메세지 반환용
 //    public BoardResponseDTO(String massage) {

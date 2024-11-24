@@ -1,9 +1,8 @@
 import styled from "styled-components";
 
 export const MainContainer = styled.div`
-    max-width: 1400px;
     margin: 0 auto;
-    padding: 0 20px;
+    padding: 0 30px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -11,26 +10,26 @@ export const MainContainer = styled.div`
 `;
 
 export const BannerContainer = styled.div`
-    width: 85%;
-    height: 300px;
+    width: 82.5%;
+    height: 200px;
     display: flex;
     overflow: hidden;
+    margin-top: 20px;
+    align-self: flex-start;
     position: relative;
-    background-color: #000;
-    left: -8%;
-    margin: 0 auto;
+    left:0;
 `;
 
 export const Banner = styled.div`
     flex: 0 0 100%;
-    background-size: cover;
+    background-size: 80%;
     background-repeat: no-repeat;
     background-position: center;
-    transition: transform 0.5s ease, filter 0.5s ease;
+    transition: background-size 3s ease, filter 1s ease;
 
     &:hover {
         filter: brightness(0.8);
-        transform: scale(1.1);
+        background-size: 120%;
     }
 `;
 
@@ -52,13 +51,13 @@ export const BannerInfo = styled.div`
 
     .small-text {
         color: rgba(255, 255, 255, 0.8);
-        font-size: 1.5rem;
+        font-size: 1.3rem;
         font-weight: 500;
     }
 
     .large-text {
         color: white;
-        font-size: 3rem;
+        font-size: 2.6rem;
         font-weight: bold;
     }
 
@@ -80,8 +79,8 @@ export const NavButton = styled.button`
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    background: rgba(0, 0, 0, 0.5);
-    color: white;
+    background: #E7EDF0;
+    color: black;
     border: none;
     border-radius: 50%;
     padding: 5px 10px 10px 10px;
@@ -93,30 +92,55 @@ export const NavButton = styled.button`
 
 // 섹션 제목
 export const SectionTitle = styled.h2`
-  font-size: 24px;
-  margin: 20px 0;
+    font-size: 24px;
+    margin: 10px 0;
 `;
 
 export const SectionContainer = styled.div`
-    width: 70%;
+    width: 67%;
     margin: auto;
     overflow: hidden;
     position: relative;
 `;
 
+export const PostSectionContainer = styled.div`
+    width: 70%;
+    margin: auto;
+    display: flex;
+    flex-wrap: wrap;
+    position: relative;
+`;
+
 //// 리스트 추가
 export const ListContainer = styled.div`
-    width: 100%;
-    margin: 20px auto;
+    width: 49%;
+    height: 600px;
+    margin-top: 20px;
+    margin-right: 9px;
     padding: 20px;
-    background-color: #f9f9f9;
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 `;
+
+export const TagTitleContainer = styled.div`
+     height:12%;
+     background-color:#E7EDF0;
+     border-radius:15px;
+     text-align: center;
+     width:100%;
+     display:flex;
+     align-items:center;
+     justify-content:flex-start;
+     padding-left:5%;
+     font-weight:bold;
+     cursor:pointer;
+
+     &:hover {
+         color: ${(props) => props.theme.colors.primary};
+     }
+ `;
 
 export const ListItem = styled.div`
     display: flex;
-    justify-content: space-between;
     align-items: center;
     padding: 15px;
     border-bottom: 1px solid #ddd;
@@ -132,48 +156,83 @@ export const ListItem = styled.div`
 `;
 
 export const ItemLeft = styled.div`
-    display: flex;
-    align-items: center;
-    gap: 10px;
+    width: 50px;
+    position:relative;
+    margin-right: 10px;
 
-    .thumbnail {
-        width: 50px;
+    img {
+        display:block;
+        width: 100%;
         height: 50px;
-        background-color: #e9ecef;
+        background-color: rgba(0,0,0,0.05);
         border-radius: 8px;
         object-fit: cover;
     }
 
-    .text {
-        display: flex;
-        flex-direction: column;
-
-        .title {
-            font-weight: bold;
-            color: #333;
-            font-size: 14px;
-        }
-
-        .author {
-            font-size: 12px;
-            color: #777;
-        }
-    }
 `;
 
 export const ItemRight = styled.div`
     font-size: 12px;
     color: #555;
-    text-align: right;
-
-    .date {
-        margin-bottom: 5px;
-    }
-
-    .views {
-        font-weight: bold;
-    }
+    position:relative;
+    width: calc(100% - 50px);
 `;
+
+export const PostAuthorBox = styled.div`
+    width: 100%;
+    display:flex;
+    margin-bottom: 5px;
+`;
+
+export const PostAuthor = styled.div`
+    font-size: 14px;
+    width: fit-content;
+    margin-right: 5px;
+    color: black;
+`;
+
+export const PostTime = styled.div`
+    font-size: 14px;
+    color: gray;
+    font-weight: 600;
+`;
+
+export const PostPostTitle = styled.h3`
+    font-size: 16px;
+    font-weight: bold;
+    color: #212529;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 80%;
+    line-height:20px;
+`;
+
+export const PostCategoryTag = styled.span`
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #d3e1ee99;
+    color: #495057;
+    font-size: 12px;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 10px;
+`;
+
+// 카테고리 태그 스타일
+export const CategoryTag = styled.span`
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #f1f3f5;
+    color: #495057;
+    font-size: 12px;
+    padding: 4px 8px;
+    border-radius: 12px;
+`;
+
 //// 리스트 추가
 
 export const CardWrapper = styled.div`
@@ -181,6 +240,13 @@ export const CardWrapper = styled.div`
     transition: transform 0.5s ease-in-out;
     transform: translateX(${props => props.$translateX}%);
     width: 200%; // 2 페이지 분량으로 설정
+`;
+
+export const PostCardWrapper = styled.div`
+    display: flex;
+    flex-direction:column;
+    gap: 20px;
+    transition: transform 0.5s ease-in-out;
 `;
 
 export const PostCard = styled.div`
@@ -197,23 +263,23 @@ export const PostCard = styled.div`
     cursor: pointer;
 `;
 
-// 카테고리 태그 스타일
-export const CategoryTag = styled.span`
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background-color: #f1f3f5;
-    color: #495057;
-    font-size: 12px;
-    padding: 4px 8px;
-    border-radius: 12px;
-`;
-
 // 이미지 스타일
 export const PostImage = styled.div`
     width: 100%;
     height: 180px;
     background-color: #e9ecef;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+`;
+
+export const BoardPostImage = styled.div`
+    width: 100%;
+    height: 180px;
+    overflow:hidden;
+    background-color: #e9ecef;
+    background-size: contain;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -228,16 +294,6 @@ export const PlaceholderImg = styled.img`
     border-radius: 8px;
 `;
 
-// 보드 이미지 (없을 경우 보여줄 이미지)
-export const BoardImg = styled.img`
-    width: 10%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 8px;
-`;
-
-
-
 // 콘텐츠 영역 스타일
 export const PostContent = styled.div`
     padding: 16px;
@@ -248,10 +304,14 @@ export const PostContent = styled.div`
 
 // 제목 스타일
 export const PostTitle = styled.h3`
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     font-size: 16px;
     font-weight: bold;
     color: #212529;
     margin: 0;
+    line-height:1.8rem;
 `;
 
 // 작성자 스타일

@@ -8,45 +8,38 @@ import {ThemeProvider} from "styled-components";
 import {darkTheme, lightTheme} from "./styled/theme";
 import GlobalStyle from "./styled/GlobalStyle";
 import {setCredentials} from "./Store/authSlice";
-import {jwtDecode} from "jwt-decode";
 
 function App() {
 
     const [themeState, setThemeState] = useState("light");
-
     const dispatch = useDispatch();
 
     useEffect(() => {
-
-        const token = localStorage.getItem("token"); // 로컬스토리지에 token 가져오기
+        const token = localStorage.getItem("token");
         const user = JSON.parse(localStorage.getItem("user"));
 
-        dispatch(setCredentials({user,token}));
+        if (token && user) { // token과 user가 존재할 때만 디스패치
+            dispatch(setCredentials({ user, token }));
+        }
 
         const clearStorageAfter24Hours = () => {
             const loginTime = localStorage.getItem("loginTime");
 
-            // 로그인 시간이 저장되지 않았으면 return
-            if (!loginTime) return;
+            if (!loginTime) return; // 로그인 시간이 없으면 함수 종료
 
             const currentTime = new Date().getTime();
-            const timeElapsed = currentTime - parseInt(loginTime);
+            const timeElapsed = currentTime - parseInt(loginTime, 10);
 
-            // 24시간(밀리초로 24 * 60 * 60 * 1000)이 경과한 경우
             if (timeElapsed > 24 * 60 * 60 * 1000) {
-                localStorage.clear(); // 로컬 스토리지 비우기
+                localStorage.clear(); // 로컬 스토리지 초기화
                 alert("24시간이 지나 자동으로 로그아웃되었습니다.");
-                // 필요시 추가 로직 (예: 로그인 페이지로 리다이렉트)
+                // 리다이렉트 로직을 추가할 수 있습니다.
             }
         };
 
-        // 페이지 로드 시 확인
         clearStorageAfter24Hours();
-
-        // 매 시간마다 24시간 경과 여부 확인
         const interval = setInterval(clearStorageAfter24Hours, 60 * 60 * 1000);
 
-        // 컴포넌트 언마운트 시 interval 해제
         return () => clearInterval(interval);
 
     }, [dispatch]);

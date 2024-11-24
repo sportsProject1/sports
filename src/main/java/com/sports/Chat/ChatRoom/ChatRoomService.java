@@ -1,7 +1,12 @@
 package com.sports.Chat.ChatRoom;
 
+import java.util.List;
+
 public interface ChatRoomService {
-    ChatRoom createChatRoomWithCurrentUser(ChatRoomDto chatRoomDto);
-    ChatRoom inviteUser(Long chatRoomId, Long userId);
+    ChatRoomDto createChatRoomWithCurrentUser(ChatRoomDto chatRoomDto);
+
     ChatRoom getChatRoom(Long id);
+    List<ChatRoomDto> getChatRoomsForCurrentUser();
+
+    ChatRoomDto convertToChatRoomDto(ChatRoom chatRoom);
 }

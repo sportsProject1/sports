@@ -1,10 +1,12 @@
 import { useEffect, useState, useMemo } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { fetchData } from "../../Server/ApiServiceNoToken";
+import { fetchTokenData } from "../../Server/ApiService";
 import { BoardContainer } from "../../styled/Board/BoardPageStyled";
 import SideMenu from "../../Components/Menu/SideMenu";
 import BoardWrapper from "./BoardWrapper";
 import { Title } from "../../styled/Common";
+import useLikeStatus from "../../hooks/useLikeStatus";
 
 function Board() {
     const [boardItem, setBoardItem] = useState([]);
@@ -14,6 +16,11 @@ function Board() {
     const [searchQuery, setSearchQuery] = useState('');
     const navigate = useNavigate();
     const location = useLocation();
+
+    // boardItem에서 게시글 ID 추출
+    const boardIds = useMemo(() => boardItem.map((item) => item.id), [boardItem]);
+    const { likeStatus, error } = useLikeStatus(boardIds, "Board", "board");
+
 
     // 쿼리 파라미터에서 검색어 추출
     useEffect(() => {
@@ -89,7 +96,7 @@ function Board() {
 
     // 'sports' 태그가 있는 카테고리만 필터링
     const sportCategories = useMemo(() => {
-        return category.filter(item => item.tag === "sports" && item.enName); // 'sports' 태그 및 enName이 있는 항목만 필터링
+        return category.filter(item => item.tag === "운동" && item.enName); // 'sports' 태그 및 enName이 있는 항목만 필터링
     }, [category]);
 
     // 'etc' 태그가 있는 카테고리만 필터링
@@ -118,7 +125,7 @@ function Board() {
                 subCategoryTitle={"그 외"}
                 subCategory={etcCategories}
             />
-            <BoardWrapper handleSortChange={handleSortChange} boardItem={sortedBoardItems} />
+            <BoardWrapper handleSortChange={handleSortChange} boardItem={sortedBoardItems} likeStatus={likeStatus} />
         </BoardContainer>
     );
 }

@@ -8,6 +8,7 @@ import com.sports.Item.DTO.ItemResponseDTO;
 import com.sports.like.LikeService;
 import com.sports.user.entito.User;
 import com.sports.user.service.UserContextService;
+import com.sports.user.service.UserService;
 import io.jsonwebtoken.MalformedJwtException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -31,22 +32,29 @@ public class ItemController {
     private final S3Service s3Service;
     private final UserContextService userContextService;
     private final LikeService likeService;
+    private final UserService userService;
 
     // 상품 목록 조회
     @GetMapping("/list")
     public ResponseEntity<ItemResponseDTO> shopList() {
         List<Item> items = itemRepository.findAllByIsDeletedFalse();
         List<ItemDTO> itemDTOs = items.stream()
-                .map(item -> new ItemDTO(
-                        item.getId(),
-                        item.getTitle(),
-                        item.getPrice(),
-                        item.getDesc(),
-                        item.getImgurl(),
-                        item.getStock(),
-                        item.getCategory() != null ? item.getCategory().getId() : null,
-                        item.getLikes()
-                ))
+                .map(item -> {
+                    String nickname = userService.getNicknameByUserId(item.getUserId());
+
+                    return new ItemDTO(
+                            item.getId(),
+                            item.getTitle(),
+                            item.getPrice(),
+                            item.getDesc(),
+                            item.getImgurl(),
+                            item.getStock(),
+                            item.getCategory() != null ? item.getCategory().getId() : null,
+                            item.getLikes(),
+                            item.getUserId(),
+                            nickname
+                    );
+                })
                 .collect(Collectors.toList());
 
         // 성공 시 message와 items만 반환
@@ -175,6 +183,7 @@ public class ItemController {
         }
     }
 
+    // 좋아요 토글
     @PostMapping("/like/{itemId}")
     public ResponseEntity<ItemDTO> toggleItemLike(@PathVariable Long itemId) {
         try {
@@ -196,6 +205,17 @@ public class ItemController {
             response.setTitle("상품을 찾을 수 없습니다.");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
+    }
+
+    // 현재 로그인된 사용자에 대한 좋아요 상태반환
+    @GetMapping("/likes/status")
+    public ResponseEntity<Map<Long, Boolean>> getLikesStatus(
+            @RequestParam List<Long> targetIds,
+            @RequestHeader(value = "Authorization", required = false) String authorization) {
+
+        // 좋아요 상태 가져오기
+        Map<Long, Boolean> likeStatus = likeService.getLikeStatusWithToken(targetIds, "Item", authorization);
+        return ResponseEntity.ok(likeStatus);
     }
 
     //검색(쇼핑몰)

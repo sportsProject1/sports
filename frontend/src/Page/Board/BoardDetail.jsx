@@ -22,6 +22,8 @@ function BoardDetail(){
     const [comment,setComment] = useState('');
     const [commentData, setCommentData] = useState()
 
+    const [chatRoomId,setChatRoomId] = useState();
+
     useEffect(() => {
         fetchData(`/board/${id}`).then((res)=>{
             setDetailBoard(res.data);
@@ -30,6 +32,13 @@ function BoardDetail(){
             setCommentData(res.data.commentItems)
         }).catch((err)=>{
             console.log("불러 올 댓글 없어")
+        })
+        fetchData(`/board/${id}/chatroom`).then((res)=>{
+            if(res){
+                setChatRoomId(res.data.id)
+            }
+        }).catch(()=>{
+
         })
     }, []);
     const formattedDate = detailBoard?.createdAt.split('T')[0].substring(2);
@@ -112,7 +121,10 @@ function BoardDetail(){
                     setComment={setComment}
                     onCreateComment={onCreateComment}
                     commentData={commentData}
-                    setCommentData={setCommentData}/>
+                    setCommentData={setCommentData}
+                    boardId={id}
+                    chatRoomId={chatRoomId}/>
+
             </PageContainer>
         )
     }

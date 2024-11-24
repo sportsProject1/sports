@@ -104,4 +104,11 @@ public class S3Service {
         return String.join(",", fileUrls);
     }
 
+    // 기본 이미지 경로 뽑기 -> 사진 바꾸고싶으면 defaultImagePath 파일이름 변경하기
+    public String defaultPath () {
+        // logowhitebg, MovoLogo, MovoLogo시안
+        String defaultImagePath = "MovoLogo";
+        return "https://" + bucket + ".s3.amazonaws.com/" + defaultImagePath;
+    }
+
 }

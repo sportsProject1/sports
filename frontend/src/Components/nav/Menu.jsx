@@ -14,6 +14,14 @@ const MenuContainer = styled.div`
     gap: 20px;
 `;
 
+const AdminNav = styled(Link)`
+    text-shadow: 5px 5px 4px rgba(49, 46, 255, 0.5);
+`;
+
+const StyledIcon = styled(FaPersonChalkboard)`
+    filter: drop-shadow(5px 5px 4px rgba(49, 46, 255, 0.5));
+`;
+
 const MenuLeft = styled.ul`
     display: flex;
     align-items: center;
@@ -25,7 +33,7 @@ const MenuLeft = styled.ul`
         cursor: pointer;
 
         &:hover {
-            color: ${({ theme }) => theme.colors.secondary};
+            color: ${({ theme }) => theme.colors.primary};
         }
     }
 `;
@@ -40,16 +48,12 @@ const MenuRight = styled.ul`
         cursor: pointer;
 
         a, svg {
-            color: #333;
             text-decoration: none;
             font-size: 1rem;
         }
 
         &:hover {
-            color: #3498db;
-        }
-        a:hover {
-            color: ${({ theme }) => theme.colors.secondary};
+            color: ${({ theme }) => theme.colors.primary};
         }
     }
 `;
@@ -92,14 +96,16 @@ function Menu (){
                <li>
                    <Link to={"/board"}>운동</Link>
                </li>
-               <li>자유</li>
-               <li>모집</li>
+               <li>
+                  <Link to={"/board/recruit"}>모집</Link>
+              </li>
+               <li><Link to={"/chat"}>채팅</Link></li>
                <li>
                   <Link to={"/shop"}>상점</Link>
               </li>
                {user?.role === "ROLE_ADMIN" && (
                    <li>
-                       <Link to={"/admin"}>관리자 <FaPersonChalkboard /></Link>
+                       <AdminNav to={"/admin"}>관리자 <StyledIcon /></AdminNav>
                    </li>
                )}
            </MenuLeft>
@@ -110,34 +116,33 @@ function Menu (){
                    <>
                        <li>
                            <Link to={"/register"}>
-                               회원가입<FaUserPlus /> {/* 회원가입 아이콘 */}
+                               회원가입<FaUserPlus />
                            </Link>
                        </li>
                        <li>
                            <Link to={"/login"}>
-                               로그인<FaSignInAlt /> {/* 로그인 아이콘 */}
+                               로그인<FaSignInAlt />
                            </Link>
                        </li>
                    </>
                ) : (
                    <>
                        <li onClick={handleLogout} >
-                           로그아웃<FaSignOutAlt/> {/* 로그아웃 아이콘 */}
+                           로그아웃<FaSignOutAlt/>
                        </li>
                        <li>
                            <Link to={"/mypage"}>
-                               마이페이지<FaUserGear /> {/* 마이페이지 아이콘 */}
+                               마이페이지<FaUserGear />
                            </Link>
                        </li>
                    </>
                )}
                <li onClick={handleCartClick}>
-                   장바구니<FaShoppingCart /> {/* 장바구니 아이콘 */}
+                   장바구니<FaShoppingCart />
                </li>
            </MenuRight>
        </MenuContainer>
    );
 }
-
 
 export default Menu;

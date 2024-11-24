@@ -3,19 +3,22 @@ import { MainContainer, SectionTitle} from "../../styled/main/MainPageStyled";
 import MainBanner from "./MainBanner";
 import MainBestBoard from "./MainBestBoard";
 import MainBestItem from "./MainBestItem";
+import UserInfoBox from "./UserInfoBox";
+import Advertisement from "./Advertisement";
 function Home() {
+
     return (
         <MainContainer>
             <MainBanner/>
-            <Divider/>
+            <Advertisement/>
+            <UserInfoBox/>
 
-            <SectionTitle>최신 게시글</SectionTitle>
+{/*         <SectionTitle>최신 게시글</SectionTitle> */}
             <MainBestBoard/>
             <Divider/>
 
-            <SectionTitle>최신 게시글</SectionTitle>
+{/*         <SectionTitle>최신 게시글</SectionTitle> */}
             <MainBestItem/>
-
 
         </MainContainer>
     )

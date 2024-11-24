@@ -15,7 +15,12 @@ import Payment from "./Page/shop/Payment";
 import BoardAdd from "./Page/Board/BoardAdd";
 import BoardDetail from "./Page/Board/BoardDetail";
 import AdminPage from "./Page/user/userComponents/admin/AdminPage";
+import Chat from "./Page/Chat/Chat";
+import ChatRoom from "./Page/Chat/ChatRoom";
+import History from "./Page/shop/History";
+
 import UserList from "./Page/user/userComponents/admin/UserList";
+import ChatInvite from "./Page/Chat/ChatInvite";
 
 const Routes = createBrowserRouter([
     {
@@ -39,6 +44,7 @@ const Routes = createBrowserRouter([
             { path: '/shop/payment', element: <Payment/>},
 
             { path: '/mypage', element: <MyPage/>},
+            { path: '/history', element: <History/>},
 
             // Admin 관련 라우트
             {
@@ -47,9 +53,16 @@ const Routes = createBrowserRouter([
                 children: [
                     { index: true, element: <UserList /> }, // /admin으로 접근 시 /admin/users로
                     { path: "users", element: <UserList /> }, // 사용자 관리
-                    { path: "posts", element: <div>Post Management Coming Soon!</div> }, // 게시물 관리
+                    { path: "posts", element: <div>나중에머 추가할가~</div> }, // 게시물 관리
                 ],
             },
+
+            { path: '/chat', element:<Chat/>},
+            { path: '/chat/invite', element:<Chat/>},
+            { path: '/chat/chatroom', element:<Chat/>},
+
+
+            { path: '/admin', element: <AdminPage /> },
 
             { path: '/oauth2/redirect', element: <OAuth2RedirectHandler/>}
         ]

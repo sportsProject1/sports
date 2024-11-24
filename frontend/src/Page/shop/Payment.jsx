@@ -1,49 +1,158 @@
 import { useEffect, useState, useRef } from "react";
-import {fetchTokenData, postTokenJsonData} from "../../Server/ApiService";
+import { fetchTokenData, postTokenJsonData } from "../../Server/ApiService";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import styled from "styled-components";
-import LoadingPage from "../../Components/LoadingPage";
+import { useNavigate } from "react-router-dom";
+
+const Container = styled.div`
+    max-width: 800px;
+    margin: 30px auto;
+    padding: 30px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+`;
+
+const Title = styled.h1`
+    text-align: center;
+    font-size: 28px;
+    margin-bottom: 30px;
+    color: #333;
+`;
 
 const FormBox = styled(Form)`
     display: flex;
     flex-direction: column;
-    width: 50%;
-    justify-content: center;
-    margin: auto;
-    > div {
-        margin-bottom: 15px;
+    gap: 20px;
+`;
+
+const InputField = styled.div`
+    display: flex;
+    flex-direction: column;
+`;
+
+const Input = styled(Field)`
+    padding: 12px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-top: 5px;
+    outline: none;
+    transition: border-color 0.3s;
+    &:focus {
+        border-color: #007bff;
     }
-    > input, select {
-        padding: 15px;
-        margin-bottom: 15px;
+`;
+
+const Button = styled.button`
+    padding: 12px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    &:hover {
+        background-color: #0056b3;
     }
-    > p {
-        padding: 15px;
+    &:disabled {
+        background-color: #ddd;
+        cursor: not-allowed;
     }
-    > button {
-        padding: 15px;
-        background-color: #007bff;
-        color: #fff;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-    }
+`;
+
+const ErrorText = styled.div`
+    color: red;
+    font-size: 14px;
 `;
 
 const ItemContainer = styled.div`
     display: flex;
-    align-items: center;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
+    justify-content: space-between;
+    background-color: #fff;
     padding: 15px;
     border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 5px;
 `;
 
 const ItemImage = styled.img`
     width: 50px;
     height: 50px;
+    object-fit: cover;
+    border-radius: 5px;
     margin-right: 15px;
+`;
+
+const ItemDetails = styled.div`
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+`;
+
+const ItemPrice = styled.p`
+    font-size: 16px;
+    color: #007bff;
+    font-weight: bold;
+`;
+
+const TotalPrice = styled.p`
+    text-align: right;
+    font-size: 20px;
+    color: #333;
+    font-weight: bold;
+    margin-top: 20px;
+`;
+
+const CheckoutButtonContainer = styled.div`
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+`;
+
+const AddressSearchContainer = styled.div`
+    display: flex;
+    gap: 10px;
+    align-items: center;
+`;
+
+const AddressSearchButton = styled(Button)`
+    padding: 8px 12px;
+    font-size: 14px;
+    background-color: #e0e0e0;
+    color: #333;
+    border-radius: 5px;
+    &:hover {
+        background-color: #ccc;
+    }
+`;
+
+const PaymentMethodField = styled(InputField)`
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+`;
+
+const PaymentMethodSelect = styled(Field)`
+    padding: 12px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+    outline: none;
+    transition: border-color 0.3s;
+    &:focus {
+        border-color: #007bff;
+    }
+`;
+
+const Label = styled.label`
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #333;
 `;
 
 const validationSchema = Yup.object({
@@ -52,21 +161,24 @@ const validationSchema = Yup.object({
         .max(5, '이름은 5글자 이하이어야 합니다.')
         .required('이름을 입력해주세요.'),
     phone: Yup.string()
-        .matches(/^(\d{3})-(\d{3,4})-(\d{4})$/, '올바른 핸드폰 번호 양식이어야 합니다. (예: 010-1234-5678)')
+        .matches(/^\d{3}-\d{3,4}-\d{4}$/, '올바른 핸드폰 번호 양식이어야 합니다. (예: 010-1234-5678)')
         .required('핸드폰 번호를 입력해주세요.'),
     detailAddress: Yup.string().required('상세 주소를 입력해주세요.'),
 });
 
 function Payment() {
-    const [paymentItem, setPaymentItem] = useState();
+    const [paymentItem, setPaymentItem] = useState(null);
     const postcodeRef = useRef();
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        fetchTokenData("/mypage/cart/checkout").then((res) => {
+            setPaymentItem(res.data);
+        });
+    }, []);
 
     const handleAddressSearch = (setFieldValue) => {
-        const openPostcode = () => {
-            if (postcodeRef.current) {
-                postcodeRef.current.open();
-            }
-        };
+        const openPostcode = () => postcodeRef.current && postcodeRef.current.open();
 
         if (!postcodeRef.current) {
             const script = document.createElement('script');
@@ -75,8 +187,8 @@ function Payment() {
             script.onload = () => {
                 postcodeRef.current = new window.daum.Postcode({
                     oncomplete: (data) => {
-                        setFieldValue("zipCode", data.zonecode); // 우편번호 설정
-                        setFieldValue("roadAddress", data.roadAddress); // 도로명 주소 설정
+                        setFieldValue("zipCode", data.zonecode);
+                        setFieldValue("roadAddress", data.roadAddress);
                     },
                 });
                 openPostcode();
@@ -87,146 +199,109 @@ function Payment() {
         }
     };
 
-    const formatPhoneNumber = (phone) => {
-        const cleaned = ('' + phone).replace(/\D/g, '');
-        if (cleaned.length <= 3) {
-            return cleaned;
-        } else if (cleaned.length <= 7) {
-            return `${cleaned.slice(0, 3)}-${cleaned.slice(3)}`;
-        } else {
-            return `${cleaned.slice(0, 3)}-${cleaned.slice(3, 7)}-${cleaned.slice(7)}`;
-        }
-    };
+    const formatPhoneNumberForDisplay = (phoneNumber) => phoneNumber.replace(/(\d{3})(\d{3,4})(\d{4})/, '$1-$2-$3');
+    const removePhoneNumberHyphens = (phoneNumber) => phoneNumber.replace(/-/g, '');
 
-    useEffect(() => {
-        fetchTokenData("/mypage/cart/checkout").then((res) => {
-            const [zipcode, roadAddress, detailAddress] = res.data.deliveryAddress.split(',').map(part => part.trim());
-            const userData = {
-                name: res.data.name,
-                phone: formatPhoneNumber(res.data.phoneNumber),
-                zipcode: zipcode,
-                roadAddress: roadAddress,
-                detailAddress: detailAddress
-            };
-            const totalPrice = res.data.cartItems.reduce((acc, item) => acc + item.itemPrice * item.count, 0);
-            setPaymentItem({ ...res.data, ...userData, totalPrice });
-        });
-    }, []);
+    if (!paymentItem) return <div>로딩중...</div>;
 
-    const handlePhoneChange = (event, setFieldValue) => {
-        let value = event.target.value.replace(/[^0-9]/g, ''); // 숫자 이외의 문자는 제거합니다.
+    const [zipCode, roadAddress, detailAddress] = paymentItem.deliveryAddress.split(',').map(addr => addr.trim());
+    const totalPrice = paymentItem.cartItems.reduce((sum, item) => item.checked ? sum + (item.itemPrice * item.count) : sum, 0);
 
-        if (value.length <= 3) {
-            // 3자리 이하일 경우 그대로 유지
-            setFieldValue('phone', value);
-        } else if (value.length <= 7) {
-            // 3-4 형식
-            setFieldValue('phone', `${value.slice(0, 3)}-${value.slice(3)}`);
-        } else {
-            // 3-4-4 형식
-            setFieldValue('phone', `${value.slice(0, 3)}-${value.slice(3, 7)}-${value.slice(7, 11)}`);
-        }
-    };
+    return (
+        <Container>
+            <Title>결제 페이지</Title>
+            <Formik
+                initialValues={{
+                    name: paymentItem.name || '',
+                    phone: formatPhoneNumberForDisplay(paymentItem.phoneNumber) || '',
+                    zipCode: zipCode || '',
+                    roadAddress: roadAddress || '',
+                    detailAddress: detailAddress || '',
+                    paymentMethod: '카드결제',
+                }}
+                validationSchema={validationSchema}
+                onSubmit={(values) => {
+                    const formattedPhone = removePhoneNumberHyphens(values.phone);
+                    const deliveryAddress = `${values.zipCode}, ${values.roadAddress}, ${values.detailAddress}`;
+                    const cartItems = paymentItem.cartItems.filter(item => item.checked);
 
-    if (paymentItem) {
-        return (
-            <div>
-                결제페이지
-                <Formik
-                    initialValues={{
-                        name: paymentItem.name || '',
-                        phone: paymentItem.phone || '',
-                        zipCode: paymentItem.zipcode || '', // 우편번호 필드
-                        roadAddress: paymentItem.roadAddress || '', // 도로명 주소 필드
-                        detailAddress: paymentItem.detailAddress || '', // 상세 주소 필드
-                        paymentMethod: '카드결제',
-                        Address: '' // 주소 전체를 담을 필드
-                    }}
-                    validationSchema={validationSchema}
-                    onSubmit={(values) => {
-                        console.log(123)
-                        const paymentMethod = {
-                            name: values.name,
-                            phoneNumber: values.phone,
-                            paymentMethod: values.paymentMethod,
-                            deliveryAddress: `${values.zipCode}, ${values.roadAddress}, ${values.detailAddress}`
-                        };
-                        postTokenJsonData("/payment/process", paymentMethod).then((res) => {
-                            console.log(res)
-                        })
-                    }}
-                >
-                    {({ isSubmitting, setFieldValue }) => (
-                        <FormBox>
-                            <div>
-                                <Field name="name" placeholder="이름" />
-                                <ErrorMessage name="name" component="div" style={{ color: 'red' }} />
-                            </div>
-                            <div>
-                                <Field name="phone" placeholder="핸드폰">
-                                    {({ field }) => (
-                                        <input
-                                            {...field}
-                                            placeholder="핸드폰"
-                                            onChange={(e) => handlePhoneChange(e, setFieldValue)}
-                                        />
-                                    )}
-                                </Field>
-                                <ErrorMessage name="phone" component="div" style={{ color: 'red' }} />
-                            </div>
-                            <div>
-                                <Field
-                                    name="zipCode"
-                                    placeholder="우편번호"
-                                    disabled // 수정 불가능
-                                />
-                                <button type="button" onClick={() => handleAddressSearch(setFieldValue)}>주소 검색</button>
-                                <ErrorMessage name="zipCode" component="div" style={{ color: 'red' }} />
-                            </div>
-                            <div>
-                                <Field
-                                    name="roadAddress"
-                                    placeholder="도로명 주소"
-                                    disabled // 수정 불가능
-                                />
-                                <ErrorMessage name="roadAddress" component="div" style={{ color: 'red' }} />
-                            </div>
-                            <div>
-                                <Field name="detailAddress" placeholder="상세 주소" />
-                                <ErrorMessage name="detailAddress" component="div" style={{ color: 'red' }} />
-                            </div>
-                            <Field as="select" name="paymentMethod">
-                                <option value="카드결제">카드결제</option>
-                            </Field>
-                            <p>체크된 상품들</p>
-                            <ItemContainer>
-                                {paymentItem.cartItems.map((item, idx) => {
-                                    return (
-                                        <div key={idx}>
-                                            <ItemImage src={item.itemImgUrl} alt="상품 이미지" />
-                                            <div>
-                                                <p>상품명: {item.itemTitle}</p>
-                                                <p>수량: {item.count}</p>
-                                                <p>가격: {item.itemPrice}</p>
-                                            </div>
-                                        </div>
-                                    );
-                                })}
+                    const dataToSend = {
+                        message: paymentItem.message,
+                        cartItems,
+                        deliveryAddress,
+                        phoneNumber: formattedPhone,
+                        name: values.name,
+                        paymentMethod: values.paymentMethod,
+                        totalPrice,
+                    };
+
+                    postTokenJsonData("/payment/process", dataToSend).then((res) => {
+                        console.log(res);
+                        navigate('/history');
+                    }).catch((err) => {
+                        console.log(err);
+                    });
+                }}
+            >
+                {({ isSubmitting, setFieldValue }) => (
+                    <FormBox>
+                        <InputField>
+                            <Label>이름</Label>
+                            <Input name="name" placeholder="이름을 입력해주세요" />
+                            <ErrorMessage name="name" component="div" style={{ color: 'red' }} />
+                        </InputField>
+                        <InputField>
+                            <Label>전화번호</Label>
+                            <Input name="phone" placeholder="전화번호를 입력해주세요" />
+                            <ErrorMessage name="phone" component="div" style={{ color: 'red' }} />
+                        </InputField>
+                        <InputField>
+                            <Label>주소</Label>
+                            <AddressSearchContainer>
+                                <Input name="zipCode" placeholder="우편번호" disabled />
+                                <AddressSearchButton type="button" onClick={() => handleAddressSearch(setFieldValue)}>주소 검색</AddressSearchButton>
+                            </AddressSearchContainer>
+                            <ErrorMessage name="zipCode" component="div" style={{ color: 'red' }} />
+                        </InputField>
+                        <InputField>
+                            <Input name="roadAddress" placeholder="도로명 주소" disabled />
+                            <ErrorMessage name="roadAddress" component="div" style={{ color: 'red' }} />
+                        </InputField>
+                        <InputField>
+                            <Input name="detailAddress" placeholder="상세 주소" />
+                            <ErrorMessage name="detailAddress" component="div" style={{ color: 'red' }} />
+                        </InputField>
+                        <InputField>
+                                <Label>결제 수단</Label>
+                                <PaymentMethodSelect as="select" name="paymentMethod">
+                                    <option value="신용카드">신용카드</option>
+                                    <option value="무통장입금">무통장입금</option>
+                                    <option value="카카오페이">카카오페이</option>
+                                </PaymentMethodSelect>
+                        </InputField>
+
+                        <Label>결제 상품</Label>
+                        {paymentItem.cartItems.filter(item => item.checked).map((item) => (
+                            <ItemContainer key={item.cartId}>
+                                <ItemImage src={item.itemImgUrl.split(",")[0]} alt={item.itemTitle} />
+                                <ItemDetails>
+                                    <p>상품명: {item.itemTitle}</p>
+                                    <p>수량: {item.count}</p>
+                                    <ItemPrice>{item.itemPrice.toLocaleString()}원</ItemPrice>
+                                </ItemDetails>
                             </ItemContainer>
-                            <p>최종 가격: {paymentItem.totalPrice}원</p>
-                            <button type="submit" disabled={isSubmitting}>결제하기</button>
-                        </FormBox>
-                    )}
-                </Formik>
-            </div>
-        );
-    } else {
-        return (
-            <div>
-                <LoadingPage />
-            </div>
-        );
-    }
+                        ))}
+
+                        <TotalPrice>총 결제금액: {totalPrice.toLocaleString()}원</TotalPrice>
+
+                        <CheckoutButtonContainer>
+                            <Button type="submit" disabled={isSubmitting}>결제하기</Button>
+                        </CheckoutButtonContainer>
+                    </FormBox>
+                )}
+            </Formik>
+        </Container>
+    );
 }
 
 export default Payment;

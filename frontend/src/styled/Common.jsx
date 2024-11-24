@@ -121,7 +121,7 @@ export const Card = styled.div`
 
 export const CardImage = styled.img`
     width: 100%;
-    height: 300px;
+    height: 250px;
     object-fit: cover;
 `;
 
@@ -129,8 +129,17 @@ export const ProductName = styled.div`
     font-size: 18px;
     font-weight: bold;
     padding: 10px 5px;
-    height: 50px;
+    height: 28px;
     overflow: hidden; // 텍스트가 길 때 잘림 처리
+    margin-top: 10px;
+`;
+
+export const BrandName = styled.div`
+    font-size: 12px;
+    padding: 10px 5px;
+    height: 20px;
+    margin-bottom: 10px;
+    color: #a0a0a0;
 `;
 
 export const Price = styled.div`
@@ -138,7 +147,33 @@ export const Price = styled.div`
     color: #555;
     padding: 5px;
     height: 50px;
+    flex: 1;
+    text-align: center;
 `;
+
+export const PriceContainer = styled.div`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 16px;
+    color: #555;
+    padding: 5px 0;
+    height: 40px;
+    width: 100%;
+    position: relative;
+`;
+
+export const LikeCount = styled.span`
+    font-size: 14px;
+    color: #ff4c4c;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    white-space: nowrap;
+    padding-right: 5px;
+`;
+
 export const PaginationContainer = styled.div`
     display: flex;
     justify-content: center; /* 페이지네이션을 중앙에 정렬 */
@@ -175,7 +210,7 @@ export const CreateButton = styled.button`
 
 export const FooterContainer = styled.footer`
     width: 100%;
-    padding: 10px 0;
+    padding: 5px 0;
     margin: 100px 0 0 0;
     background-color: #2c2c2c;
     color: #ffffff;
@@ -184,8 +219,8 @@ export const FooterContainer = styled.footer`
 export const FooterContent = styled.div`
     display: flex;
     justify-content: space-around;
-    gap: 2rem;
-    padding: 20px 0;
+    gap:15rem;
+    padding: 10px 0;
     max-width: 1200px;
     margin: 0 auto;
 `;
@@ -193,8 +228,8 @@ export const FooterContent = styled.div`
 export const Section = styled.div`
     flex: 2;
     text-align: left;
-    font-size: 0.9rem;
-    line-height: 2.5;
+    font-size: 0.8rem;
+    line-height: 2;
     color: #cccccc;
     white-space: nowrap;
 `;
@@ -202,9 +237,9 @@ export const Section = styled.div`
 export const FooterSection = styled.div`
     flex: 1.5;
     text-align: center;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     color: #cccccc;
-    line-height: 1.8;
+    line-height: 1.5;
     white-space: nowrap;
 `;
 
@@ -222,7 +257,7 @@ export const SocialIcons = styled.div`
     display: flex;
     justify-content: center;
     gap: 15px;
-    margin: 15px auto;
+    margin: 10px auto 5px auto;
     a {
         color: #ffffff;
         font-size: 1.2rem;
@@ -232,8 +267,8 @@ export const SocialIcons = styled.div`
         color: #ff6347;
     }
     img {
-        width: 30px;
-        height: 30px;
+        width: 25px;
+        height: 25px;
         transition: transform 0.3s;
     }
     img:hover {
@@ -243,9 +278,9 @@ export const SocialIcons = styled.div`
 
 export const Copyright = styled.div`
     text-align: center;
-    padding: 10px;
-    font-size: 0.8rem;
+    padding: 5px;
+    font-size: 0.7rem;
     color: #777;
-    margin-top: 20px;
+    padding-top: 10px;
     border-top: 1px solid #444;
 `;

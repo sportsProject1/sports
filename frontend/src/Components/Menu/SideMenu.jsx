@@ -28,7 +28,7 @@ export const SidebarFixed = styled.div.withConfig({
 export const SectionTitle = styled.h2`
     font-size: 18px;
     margin-bottom: 10px;
-    color: ${({ theme }) => theme.colors.text};
+    color: ${({ theme }) => theme.colors.primary};
 `;
 
 // 각 섹션 컨테이너
@@ -56,12 +56,11 @@ export const KeywordTag = styled.div`
 `;
 
 function SideMenu({ category, params,categoryTitle,subCategoryTitle,subCategory }) {
-    console.log("params:", params);
+
     // Memoize category links to prevent unnecessary re-renders
     const categoryLinks = useMemo(() => {
-        console.log("category:", category);  // category 값 확인
+
         return category?.map((item) => {
-            console.log("item.enName:", item.enName);  // 각 카테고리의 enName 확인
             return (
                 <Link key={item.id} to={`${params}/${item.enName}`}>{item.name}</Link>
             );

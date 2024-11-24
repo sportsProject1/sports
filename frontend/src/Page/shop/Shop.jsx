@@ -5,6 +5,7 @@ import { ShopContainer } from "../../styled/shopStyled";
 import SideMenu from "../../Components/Menu/SideMenu";
 import ItemWrapper from "./ItemWrapper";
 import LoadingPage from "../../Components/LoadingPage";
+import useLikeStatus from "../../hooks/useLikeStatus";
 
 function Shop() {
     const [items, setItems] = useState([]);
@@ -13,6 +14,8 @@ function Shop() {
     const location = useLocation(); // 현재 위치 (쿼리 파라미터 추출용)
     const navigate = useNavigate();
     const [searchQuery, setSearchQuery] = useState(''); // 검색어 상태
+    const itemIds = useMemo(() => items.map((item) => item.id), [items]); // 좋아요용 아이템 id 추출
+    const { likeStatus, error } = useLikeStatus(itemIds, "Item", "shop"); // 좋아요상태 훅 사용
 
     // 쿼리 파라미터에서 검색어 추출
     useEffect(() => {
@@ -31,6 +34,7 @@ function Shop() {
                     fetchData("/shop/list"),
                     fetchData("/category/get")
                 ]);
+                console.log(itemsResponse.data.items);
                 setItems(itemsResponse.data.items);
                 setCategory(categoryResponse.data);
             } catch (error) {
@@ -88,7 +92,7 @@ function Shop() {
                 categoryTitle={"카테고리"}
                 handleCategoryClick={handleCategoryClick}
             />
-            <ItemWrapper items={finalFilteredItems} />
+            <ItemWrapper items={finalFilteredItems} likeStatus={likeStatus}/>
         </ShopContainer>
     );
 }
