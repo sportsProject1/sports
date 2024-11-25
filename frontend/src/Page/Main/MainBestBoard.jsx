@@ -117,7 +117,7 @@ function MainBestBoard() {
                             return (
                                 <ListItem key={`${categoryName}-${post.id}`} onClick={() => navigate(postRoute)}>
                                     <ItemLeft>
-                                        <img src={thumbnailUrl} alt={`thumbnail ${post.title}`} />
+                                        <img src={thumbnailUrl} alt={`thumbnail ${post.title}`} style={{ width: '100%',objectFit: 'contain', background:'black'}} />
                                     </ItemLeft>
                                     <ItemRight>
                                         <PostCategoryTag>{post.category}</PostCategoryTag>
