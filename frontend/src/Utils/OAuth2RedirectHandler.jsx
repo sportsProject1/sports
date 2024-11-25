@@ -11,7 +11,7 @@ function OAuth2RedirectHandler() {
     useEffect(() => {
         const fetchTokensAndUserInfo = async () => {
             try {
-                const response = await axios.get("http://localhost:8090/oauth2/token", {
+                const response = await axios.get("https://localhost:8090/oauth2/token", {
                     withCredentials: true,
                 });
 

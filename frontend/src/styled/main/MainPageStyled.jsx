@@ -227,7 +227,52 @@ export const CardWrapper = styled.div`
     display: flex;
     transition: transform 0.5s ease-in-out;
     transform: translateX(${props => props.$translateX}%);
-    width: 200%; // 2 페이지 분량으로 설정
+    width: calc(${props => props.totalPages * 100}%);
+`;
+
+export const MainCard = styled.div`
+    flex: 0 0 calc(25% - 20px);
+    margin: 10px;
+    box-sizing: border-box;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+`;
+
+export const MainCardImage = styled.img`
+    width: 95%;
+    height: 180px;
+    object-fit: cover;
+`;
+
+export const MainProductName = styled.div`
+    font-size: 19px;
+    font-weight: bold;
+    padding: 10px 5px;
+    height: 28px;
+    overflow: hidden; // 텍스트가 길 때 잘림 처리
+    margin-top: 10px;
+`;
+
+export const MainPrice = styled.div`
+    font-size: 16px;
+    color: #555;
+    padding: 5px;
+    height: 50px;
+    flex: 1;
+    text-align: center;
+    margin-top: 10px;
+    color: gray;
+`;
+
+export const MainBrandName = styled.div`
+    font-size: 0.9rem;
 `;
 
 export const PostCardWrapper = styled.div`
