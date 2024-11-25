@@ -304,7 +304,7 @@ export const TotalPrice = styled.span`
 
 // 결제 버튼 스타일
 export const CheckoutButton = styled.button`
-    background-color: #4CAF50;
+    background-color: ${(props) => props.theme.colors.primary};
     color: white;
     border: none;
     padding: 10px 20px;
