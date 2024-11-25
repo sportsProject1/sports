@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
-import {AiTwotoneBell} from "react-icons/ai";
-import {fetchTokenData} from "../Server/ApiService";
-import {useSelector} from "react-redux";
+import { AiTwotoneBell } from "react-icons/ai";
+import { fetchTokenData } from "../Server/ApiService";
+import { shallowEqual, useSelector } from "react-redux";
+import _ from "lodash"; // lodash의 throttle 사용
 
 const UserInfoContainer = styled.div`
     position: fixed;
@@ -62,8 +63,10 @@ const Invite = styled.div`
     text-align: center;
     align-items: center;
     justify-content: center;
+    cursor: pointer;
+
     span {
-        position: relative; /* 부모 요소 기준으로 가상 요소 위치 지정 */
+        position: relative;
         border-radius: 50%;
         background-color: red;
         display: inline-block;
@@ -79,66 +82,72 @@ const Invite = styled.div`
     span::before {
         content: "";
         position: absolute;
-        left: -5px; /* 부모 요소 기준으로 왼쪽에 배치 */
-        top: 50%; /* 세로 중앙 정렬 */
-        transform: translateY(-50%); /* 세로 중앙 정렬 유지 */
+        left: -5px;
+        top: 50%;
+        transform: translateY(-50%);
         width: 0;
         height: 0;
         border-style: solid;
-        border-width: 5px 7px 5px 0; /* 왼쪽만 없도록 설정 */
-        border-color: transparent red transparent transparent; /* 왼쪽을 제외한 나머지 투명 */
+        border-width: 5px 7px 5px 0;
+        border-color: transparent red transparent transparent;
     }
-`
+`;
 
 function UserInfoBox() {
-    const [topPosition, setTopPosition] = useState(170); // 기본 위치 설정
-    const navigate = useNavigate(); // 리다이렉션을 위해 사용
-    const footerHeight = 250; // 푸터의 고정 높이
-    const footerMargin = 100; // 푸터와 겹칠 때 상단으로 이동하는 기준
+    const [topPosition, setTopPosition] = useState(170);
+    const [inviteLength, setInviteLength] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
 
-    const user = useSelector((state)=>state.auth.user);
+    const user = useSelector((state) => state.auth.user, shallowEqual);
+    const navigate = useNavigate();
 
-    console.log(user)
+    const footerHeight = 250;
+    const footerMargin = 100;
 
-    const [inviteLength, setInviteLength] = useState(null); // 초기값 null
-    const [isLoading, setIsLoading] = useState(true); // 로딩 상태
-
+    // 초대 데이터 로드
     useEffect(() => {
-
-        if(user){
-            fetchTokenData(`/chat/invitations/${user.userId}`).then((res)=>{
-                setInviteLength(res.data.length);
-                setIsLoading(false); // 로딩 상태 종료
-            })
+        if (user && inviteLength === null) {
+            setIsLoading(true);
+            fetchTokenData(`/chat/invitations/${user.userId}`)
+                .then((res) => {
+                    setInviteLength(res.data.length || 0);
+                })
+                .catch((error) => {
+                    console.error("Error fetching invitations:", error);
+                    setInviteLength(0);
+                })
+                .finally(() => {
+                    setIsLoading(false);
+                });
         }
+    }, [user, inviteLength]);
 
+    // 스크롤 이벤트 처리
+    const handleScroll = useCallback(
+        _.throttle(() => {
+            const windowHeight = window.innerHeight;
+            const scrollY = window.scrollY;
+            const documentHeight = document.body.scrollHeight;
 
-        // 스크롤 이벤트 핸들러
-        const handleScroll = () => {
-            const windowHeight = window.innerHeight; // 뷰포트 높이
-            const scrollY = window.scrollY; // 현재 스크롤 위치
-            const documentHeight = document.body.scrollHeight; // 문서 전체 높이
-
-            const footerStart = documentHeight - footerHeight; // 푸터 시작 위치
-            const visibleBottom = windowHeight + scrollY; // 현재 화면 하단의 위치
+            const footerStart = documentHeight - footerHeight;
+            const visibleBottom = windowHeight + scrollY;
 
             if (visibleBottom > footerStart) {
-                // 푸터와 겹칠 경우: 푸터 시작점에서 footerMargin만큼 위로 이동
                 const newTopPosition = footerStart - scrollY - footerHeight - footerMargin;
-
-                // 최소 상단 위치를 20px로 제한
                 setTopPosition(newTopPosition > 20 ? newTopPosition : 20);
             } else {
-                // 기본 위치로 복원
                 setTopPosition(170);
             }
-        };
+        }, 100), // 100ms 제한
+        []
+    );
 
+    useEffect(() => {
         window.addEventListener("scroll", handleScroll);
         return () => {
             window.removeEventListener("scroll", handleScroll);
         };
-    }, [footerHeight, footerMargin,user]);
+    }, [handleScroll]);
 
     const handleLogout = () => {
         localStorage.clear();
@@ -156,17 +165,16 @@ function UserInfoBox() {
                     <Avatar src={user.imgURL} alt="User Avatar" />
                     <h3>{user.nickname}님 환영합니다.</h3>
 
-                    {/* 데이터 로드 상태 확인 */}
                     {isLoading ? (
-                        <p>로딩 중...</p> // 로딩 상태
+                        <p>로딩 중...</p>
                     ) : (
-                        <Invite>
+                        <Invite onClick={()=>navigate('/chat/invite')}>
                             채팅 초대 <AiTwotoneBell />
                             <span>{inviteLength}</span>
                         </Invite>
                     )}
 
-                    <Button onClick={()=>navigate('/mypage')}>마이페이지</Button>
+                    <Button onClick={() => navigate("/mypage")}>마이페이지</Button>
                     <Button onClick={handleLogout}>로그아웃</Button>
                 </>
             ) : (
