@@ -55,7 +55,7 @@ export const KeywordTag = styled.div`
     margin-right: 5px;
 `;
 
-function SideMenu({ category, params,categoryTitle,subCategoryTitle,subCategory }) {
+function SideMenu({ category, params,categoryTitle,subCategoryTitle,subCategory,handleViewAll }) {
 
     // Memoize category links to prevent unnecessary re-renders
     const categoryLinks = useMemo(() => {
@@ -78,7 +78,7 @@ function SideMenu({ category, params,categoryTitle,subCategoryTitle,subCategory 
                 <SidebarFixed>
                     <CategorySection>
                         <SectionTitle>{categoryTitle}</SectionTitle>
-                        <Link to={params}>모두 보기</Link>
+                        <Link onClick={handleViewAll} to={params}>모두 보기</Link>
                         {categoryLinks}
                     </CategorySection>
 

@@ -2,10 +2,14 @@ import React, { useEffect, useState } from 'react';
 import {handleNextSlide, handlePrevSlide} from "../../Utils/MainItemSlide";
 import { MainCard, MainCardImage, MainPrice, MainProductName, MainBrandName, CardWrapper, NavButton, SectionContainer} from "../../styled/main/MainPageStyled";
 import { fetchData } from "../../Server/ApiServiceNoToken";
+import {useNavigate} from "react-router-dom";
 
 function MainBestItem() {
     const [pageIndex, setPageIndex] = useState(0);
     const [products, setProducts] = useState([]);
+
+    const navigate = useNavigate();
+
     const totalPages = Math.ceil(products.length / 4);
 
     // 이미지 URL 처리 함수
@@ -47,7 +51,7 @@ function MainBestItem() {
         <SectionContainer>
             <CardWrapper $translateX={-pageIndex * 100 / totalPages}>
                 {products.map((product, index) => (
-                    <MainCard key={`product-${product.id}-${index}`}>
+                    <MainCard onClick={()=>navigate(`/shop/detail/${product.id}`)} key={`product-${product.id}-${index}`}>
                         <MainCardImage src={product.imgurl} alt={product.title} />
                         <MainProductName>{product.title}</MainProductName>
                         <MainPrice>{formatPrice(product.price)}원</MainPrice>
