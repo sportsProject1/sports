@@ -42,7 +42,8 @@ function LoginForm() {
                     nickname : response.data.nickname,
                     role: response.data.role,
                     username:response.data.username,
-                    userId:response.data.userId
+                    userId:response.data.userId,
+                    imgURL:response.data.imgURL
                 }
                 dispatch(setCredentials({ user,token })); // 비구조할당으로 가져온 데이터 리덕스툴킷 스토어에 저장함 (리액트 모든 페이지에서 전역으로 사용가능)
 

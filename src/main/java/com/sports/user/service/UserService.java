@@ -78,7 +78,7 @@ public class UserService {
         userRefreshToken.updateRefreshToken(refreshToken);
         userRefreshTokenRepository.save(userRefreshToken);
 
-        return new AuthResponse(user.getId(), user.getUsername(), user.getNickname(), role, accessToken, refreshToken);
+        return new AuthResponse(user.getId(), user.getUsername(), user.getNickname(), role, accessToken, refreshToken, user.getImgURL());
     }
 
 
