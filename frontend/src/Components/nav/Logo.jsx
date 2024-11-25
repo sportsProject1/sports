@@ -8,9 +8,6 @@ const LogoContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 10%;
-  height: 100%;
-  margin: auto;
 `;
 
 // 스타일링된 Link 컴포넌트
