@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {handleNextSlide, handlePrevSlide} from "../../Utils/MainItemSlide";
-import {CardWrapper, NavButton, SectionContainer} from "../../styled/main/MainPageStyled";
-import {Card, CardImage, Price, ProductName} from "../../styled/Common";
+import { MainCard, MainCardImage, MainPrice, MainProductName, MainBrandName, CardWrapper, NavButton, SectionContainer} from "../../styled/main/MainPageStyled";
 import { fetchData } from "../../Server/ApiServiceNoToken";
 
 function MainBestItem() {
@@ -9,13 +8,15 @@ function MainBestItem() {
     const [products, setProducts] = useState([]);
     const totalPages = Math.ceil(products.length / 4);
 
-    const DEFAULT_IMAGE_URL = "https://via.placeholder.com/300"; // 변경필요
-
     // 이미지 URL 처리 함수
     const getFirstImageUrl = (imgurl) => {
-        if (!imgurl) return DEFAULT_IMAGE_URL; // 이미지가 없으면 기본 경로 반환
         const urls = imgurl.split(","); // 콤마로 나누기
-        return urls.length > 0 ? urls[0].trim() : DEFAULT_IMAGE_URL;
+        return urls[0].trim();
+    };
+
+    // 가격 콤마 처리 함수
+    const formatPrice = (price) => {
+        return new Intl.NumberFormat('ko-KR').format(price);
     };
 
     // 데이터 요청
@@ -46,12 +47,12 @@ function MainBestItem() {
         <SectionContainer>
             <CardWrapper $translateX={-pageIndex * 100 / totalPages}>
                 {products.map((product, index) => (
-                    <Card key={`product-${product.id}-${index}`}>
-                        <CardImage src={product.imgurl} alt={product.title} />
-                        <ProductName>{product.title}</ProductName>
-                        <Price>{product.price}</Price>
-                        <p>판매자: {product.nickname}</p>
-                    </Card>
+                    <MainCard key={`product-${product.id}-${index}`}>
+                        <MainCardImage src={product.imgurl} alt={product.title} />
+                        <MainProductName>{product.title}</MainProductName>
+                        <MainPrice>{formatPrice(product.price)}원</MainPrice>
+                        <MainBrandName>{product.nickname}</MainBrandName>
+                    </MainCard>
                 ))}
             </CardWrapper>
             <NavButton $left={true} onClick={() => setPageIndex(prevIndex => handlePrevSlide(prevIndex, totalPages))}>◀</NavButton>

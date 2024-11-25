@@ -70,6 +70,7 @@ public class SecurityConfig {
                                 .userService(principalOauth2UserService)
                         )
                         .defaultSuccessUrl("http://localhost:8090/login/oauth2/code/google", true) // 성공 후 리디렉트 URL 설정
+//                      .defaultSuccessUrl("http://localhost:3000/oauth2/redirect", true)
                 );
 
         return http.build();
