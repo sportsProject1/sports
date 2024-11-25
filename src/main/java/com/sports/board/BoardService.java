@@ -154,6 +154,7 @@ public class BoardService {
     private BoardResponseDTO toResponseDTO(Board board) {
         return BoardResponseDTO.builder()
                 .id(board.getId())
+                .userId(board.getAuthor().getId())
                 .title(board.getTitle())
                 .content(board.getContent())
                 .author(board.getAuthor().getUsername())

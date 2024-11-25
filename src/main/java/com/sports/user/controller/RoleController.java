@@ -1,7 +1,9 @@
 package com.sports.user.controller;
 
 import com.sports.user.entito.User;
+import com.sports.user.entito.UserDTO;
 import com.sports.user.repository.UserRepository;
+import com.sports.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +18,7 @@ import java.util.Map;
 public class RoleController {
 
     private final UserRepository userRepository;
+    private final UserService userService;
 
     // 사용자 목록 조회
     @GetMapping
@@ -44,6 +47,13 @@ public class RoleController {
         user.setRole(newRole);
         userRepository.save(user);
         return ResponseEntity.ok("Role updated successfully");
+    }
+
+    // 검색(유저)
+    @GetMapping("/search")
+    public ResponseEntity<List<UserDTO>> searchUsers(@RequestParam String keyword) {
+        List<UserDTO> searchResults = userService.searchBoardByEmail(keyword);
+        return ResponseEntity.ok(searchResults);
     }
 
 }

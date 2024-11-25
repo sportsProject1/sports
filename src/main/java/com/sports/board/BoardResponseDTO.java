@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 @ToString
 public class BoardResponseDTO {
     private Long id;                    // 게시글 ID
+    private Long userId;                // 작성자 ID
     private String title;               // 제목
     private String content;             // 내용
     private String imgUrl;              // 업로드 이미지
@@ -24,6 +25,7 @@ public class BoardResponseDTO {
     private boolean chatroom;
     private Double latitude;            // 위도
     private Double longitude;           // 경도
+
 
 //    // 메세지 반환용
 //    public BoardResponseDTO(String massage) {
