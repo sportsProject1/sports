@@ -103,7 +103,6 @@ function ShopDetail() {
 
             setLikeCount(updatedItem.likes);
         } catch (err) {
-            console.error("좋아요 처리 중 오류 발생:", err);
             try {
                 const fetchItemResponse = await fetchData(`/shop/detail/${id}`);
                 const updatedItemFromDb = fetchItemResponse.data.item;

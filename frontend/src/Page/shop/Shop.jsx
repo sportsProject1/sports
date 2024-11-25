@@ -74,9 +74,7 @@ function Shop() {
         const itemsCopy = [...finalFilteredItems];
         switch (sortOption) {
             case "latest":
-                return itemsCopy.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-            case "oldest":
-                return itemsCopy.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+                return itemsCopy.sort((a, b) => b.id - a.id);
             case "likes":
                 return itemsCopy.sort((a, b) => b.likes - a.likes);
             case "priceAsc":
