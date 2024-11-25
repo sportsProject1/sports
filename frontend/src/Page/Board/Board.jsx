@@ -7,54 +7,52 @@ import SideMenu from "../../Components/Menu/SideMenu";
 import BoardWrapper from "./BoardWrapper";
 import { Title } from "../../styled/Common";
 import useLikeStatus from "../../hooks/useLikeStatus";
+import NoItemBoardWrapper from "./NoItemBoardWrapper";
 
 function Board() {
-    const [boardItem, setBoardItem] = useState([]);
+    const [boardItem, setBoardItem] = useState([]); // 전체 게시글 데이터
     const { sport } = useParams(); // URL 파라미터에서 sport 값 가져오기
-    const [category, setCategory] = useState([]);
-    const [sortOption, setSortOption] = useState('latest');
-    const [searchQuery, setSearchQuery] = useState('');
+    const [category, setCategory] = useState([]); // 카테고리 데이터
+    const [sortOption, setSortOption] = useState('latest'); // 정렬 옵션
+    const [searchQuery, setSearchQuery] = useState(''); // 검색어 상태
+    const [isSearchMode, setIsSearchMode] = useState(false); // 검색 상태를 관리
     const navigate = useNavigate();
     const location = useLocation();
 
-    // boardItem에서 게시글 ID 추출
+    // 게시글 ID 추출
     const boardIds = useMemo(() => boardItem.map((item) => item.id), [boardItem]);
     const { likeStatus, error } = useLikeStatus(boardIds, "Board", "board");
 
-
-    // 쿼리 파라미터에서 검색어 추출
+    // 검색어 업데이트 (URL에서 검색어 추출)
     useEffect(() => {
         const params = new URLSearchParams(location.search);
         const keyword = params.get("keyword");
         if (keyword) {
             setSearchQuery(keyword);
+            setIsSearchMode(true); // 검색 상태 활성화
+        } else {
+            setSearchQuery('');
+            setIsSearchMode(false); // 검색 상태 비활성화
         }
     }, [location]);
 
-    // 데이터 요청 (전체 게시글과 카테고리 가져오기)
     useEffect(() => {
-        const fetchBoardData = async () => {
-            try {
-                let boardResponse;
-                if (searchQuery.trim()) {
-                    // 검색어가 있을 때 제목(title)만 기준으로 검색 API 호출
-                    boardResponse = await fetchData(`/board/search?keyword=${searchQuery}`);
-                } else {
-                    // 검색어가 없을 때 전체 게시글 가져오기
-                    boardResponse = await fetchData("/board/list");
-                }
-                setBoardItem(boardResponse.data);
+        if (isSearchMode && searchQuery.trim()){
+            fetchData(`/board/search?keyword=${searchQuery}`).then((res)=>{
+                setBoardItem(res.data)
+            })
+        }else{
+            fetchData("/board/list").then((res)=>{
+                console.log(res)
+                setBoardItem(res.data)
+            });
+        }
+        fetchData("/category/get").then((res)=>{
+            console.log(res)
+            setCategory(res.data)
+        });
+    }, [isSearchMode,searchQuery]);
 
-                // 카테고리 데이터 가져오기
-                const categoryResponse = await fetchData("/category/get");
-                setCategory(categoryResponse.data); // 카테고리 데이터를 가져옵니다.
-            } catch (error) {
-                console.error("데이터 로딩 중 오류:", error);
-            }
-        };
-
-        fetchBoardData();
-    }, [searchQuery]);  // 검색어가 변경될 때마다 실행
 
     // 카테고리 필터링 로직
     const filterByCategory = useMemo(() => {
@@ -69,12 +67,12 @@ function Board() {
 
     // 검색어로 필터링 (제목 기준)
     const filterBySearchQuery = useMemo(() => {
-        if (!searchQuery.trim()) return filterByCategory;
+        if (!searchQuery.trim() || !isSearchMode) return filterByCategory;
 
         return filterByCategory.filter(item =>
             item.title.toLowerCase().includes(searchQuery.toLowerCase())
         );
-    }, [filterByCategory, searchQuery]);
+    }, [filterByCategory, searchQuery, isSearchMode]);
 
     // 정렬 로직
     const sortedBoardItems = useMemo(() => {
@@ -108,13 +106,12 @@ function Board() {
         setSortOption(sortOption);
     };
 
-    if (boardItem.length === 0) {
-        return (
-            <div>
-                <Title>로딩중...</Title>
-            </div>
-        );
-    }
+    // 검색 상태 해제 (검색 초기화 함수)
+    const clearSearch = () => {
+        navigate("/board"); // 검색어를 제거하고 전체 게시글로 돌아갑니다.
+        setSearchQuery('');
+        setIsSearchMode(false);
+    };
 
     return (
         <BoardContainer>
@@ -125,7 +122,14 @@ function Board() {
                 subCategoryTitle={"그 외"}
                 subCategory={etcCategories}
             />
-            <BoardWrapper handleSortChange={handleSortChange} boardItem={sortedBoardItems} likeStatus={likeStatus} />
+            {boardItem.length===0 ?
+                <NoItemBoardWrapper handleSortChange={handleSortChange}/> : <BoardWrapper
+                handleSortChange={handleSortChange}
+                boardItem={sortedBoardItems}
+                likeStatus={likeStatus}
+                onClearSearch={clearSearch} // 검색 초기화 함수 전달
+            /> }
+
         </BoardContainer>
     );
 }
