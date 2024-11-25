@@ -16,15 +16,17 @@ public class AuthResponse {
     private String accessToken;
     private String refreshToken;
     private String errorMessage;
+    private String imgURL;
 
     // 기본적인 생성자 (에러 메세지 제외)
-    public AuthResponse(Long userId, String username, String nickname, String role, String accessToken, String refreshToken) {
+    public AuthResponse(Long userId, String username, String nickname, String role, String accessToken, String refreshToken, String imgURL) {
         this.userId = userId;
         this.username = username;
         this.nickname = nickname;
         this.role = role;
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
+        this.imgURL = imgURL;
     }
 
     // 에러 메세지만 보낼때
