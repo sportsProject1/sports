@@ -49,24 +49,34 @@ export const CommentSection = styled.div`
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 `;
 
+export const CommentInputBox = styled.div`
+    display:flex;
+    justify-content:center;
+    align-items:center;
+`;
+
 export const CommentInput = styled.textarea`
-    width: 100%;
-    height: 100px;
+    display:block;
+    flex:9.3;
+    height: 150px;
+    margin-right: 15px;
     padding: 0.5rem;
     border: 1px solid #ccc;
     border-radius: 4px;
-    margin-bottom: 1rem;
-    resize: vertical;
+    resize: none;
 `;
 
 export const SubmitButton = styled.button`
+    align-self:flex-end;
+    flex: 0.7;
+    height: 60px;
     padding: 0.5rem 1rem;
-    background-color: #1e90ff;
+    background-color: #007BFF;
     color: #fff;
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    font-size: 1rem;
+    font-size: 0.8rem;
 `;
 
 export const CommentLikeButton = styled.button`

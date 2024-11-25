@@ -14,6 +14,7 @@ import {useNavigate, useParams} from "react-router-dom";
 import {deleteTokenData, postTokenJsonData} from "../../Server/ApiService";
 import Comment from "../../Components/Comment";
 import Map from '../../Components/Map/Map';
+import { useSelector } from "react-redux";
 
 function BoardDetail(){
     const [detailBoard,setDetailBoard] = useState(null);
@@ -25,22 +26,27 @@ function BoardDetail(){
 
     const [chatRoomId,setChatRoomId] = useState();
 
+    const currentUserId = useSelector((state) => state.auth?.userId);
+    console.log("currentUserId:", currentUserId);
+
     useEffect(() => {
         fetchData(`/board/${id}`).then((res)=>{
+            console.log("Board Data:", res.data);
             setDetailBoard(res.data);
         })
         fetchData(`/comment/get/board/${id}`).then((res)=>{
+            console.log("Comment Data:", res.data.commentItems);
             setCommentData(res.data.commentItems)
         }).catch((err)=>{
             console.log("불러 올 댓글 없어")
         })
         fetchData(`/board/${id}/chatroom`).then((res)=>{
             if(res){
-                console.log(res)
+                console.log("Chat Room Data:", res.data);
                 setChatRoomId(res.data.id)
             }
         }).catch(()=>{
-
+            console.log("Chat Room 없음");
         })
     }, []);
     const formattedDate = detailBoard?.createdAt.split('T')[0].substring(2);
@@ -65,6 +71,7 @@ function BoardDetail(){
             setComment(''); // 댓글 입력란 초기화
             // 댓글 작성 후 새로 데이터를 가져와서 반영
             fetchData(`/comment/get/board/${id}`).then((res) => {
+                console.log("New Comment Data:", res.data.commentItems);
                 setCommentData(res.data.commentItems);
             }).catch((err) => {
                 console.log("댓글 불러오기 실패");
@@ -96,12 +103,16 @@ function BoardDetail(){
             <div>로딩중</div>
         )
     }else{
+                console.log("Detail Board User ID:", detailBoard.userId); // 작성자 ID 확인
+                console.log("Chat Room ID:", chatRoomId); // 채팅방 ID 확인
+                console.log("Comment Data Passed to Component:", commentData);
+
         return(
             <PageContainer>
                 {/* 제목 및 작성 날짜 */}
                 <TitleSection>
                     <Title>{detailBoard.title}</Title>
-                    <DateText>작성자:{detailBoard.author}  | 작성일: {formattedDate} </DateText>
+                    <DateText>작성자 {detailBoard.author} | 작성일 {formattedDate} </DateText>
                 </TitleSection>
                 {/* 본문 */}
                 <ContentSection>
@@ -117,16 +128,16 @@ function BoardDetail(){
 
                     <InteractionSection>
                         <LikeButton onClick={onLike}>좋아요 {detailBoard.likes}</LikeButton>
+                        {detailBoard.userId === currentUserId && (
                         <div>
                             <LikeButton
                             onClick={()=>navigate(`/board/update/${id}`)}>수정하기</LikeButton>
                             <LikeButton onClick={onDelete}>삭제하기</LikeButton>
-                            <ViewsText>조회수: {detailBoard.views}</ViewsText>
+                            <ViewsText>조회수 : {detailBoard.views}</ViewsText>
                         </div>
+                        )}
                     </InteractionSection>
                 </ContentSection>
-
-
 
                 {/* 댓글 섹션 */}
                 <Comment
@@ -135,7 +146,7 @@ function BoardDetail(){
                     onCreateComment={onCreateComment}
                     commentData={commentData}
                     setCommentData={setCommentData}
-                    boardId={id}
+                    postAuthorId={detailBoard.userId}
                     chatRoomId={chatRoomId}/>
 
             </PageContainer>

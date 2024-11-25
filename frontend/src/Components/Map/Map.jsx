@@ -163,28 +163,54 @@ const Map = ({ latitude, longitude, onChange }) => {
   };
 
   return (
-    <div>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem', padding: '1rem', border: '1px solid #ccc', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)', width: '100%', marginRight: 'auto' }}>
       <input
         type="text"
         value={address}
         onChange={handleAddressChange} // 주소 입력 상태 관리
         onKeyDown={handleKeyDown} // 엔터키 처리
         placeholder="주소를 입력하세요"
+        style={{ padding: '0.5rem', width: '100%', border: '1px solid #ddd', borderRadius: '4px' }}
       />
-      <button onClick={() => handleSearch(address)}>검색</button>
+      <button onClick={() => handleSearch(address)}
+          style={{
+                  width: '20%',
+                  padding: '0.5rem 1rem',
+                  backgroundColor: '#007BFF',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                }}
+          >검색</button>
 
       {/* 자동완성 주소 리스트 */}
       {addressSuggestions.length > 0 && (
-        <ul>
+        <ul style={{ listStyle: 'none', padding: 0, margin: '1rem 0', width: '100%', border: '1px solid #ddd', borderRadius: '4px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
           {addressSuggestions.map((suggestion, index) => (
-            <li key={index} onClick={() => handleSuggestionClick(suggestion)}>
+            <li key={index} onClick={() => handleSuggestionClick(suggestion)}
+                style={{
+                  padding: '0.5rem',
+                  cursor: 'pointer',
+                  borderBottom: '1px solid #ddd',
+                  backgroundColor: index % 2 === 0 ? '#f9f9f9' : '#fff',
+                }}
+                >
               {suggestion.place_name}
             </li>
           ))}
         </ul>
       )}
 
-      <div id="map" style={{ width: '50%', height: '400px' }}></div>
+      <div id="map"
+           style={{
+            width: '100%',
+            height: '300px',
+            borderRadius: '8px',
+            border: '1px solid #ddd',
+            boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+          }}
+      ></div>
     </div>
   );
 };

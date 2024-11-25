@@ -107,8 +107,8 @@ public class S3Service {
     // 기본 이미지 경로 뽑기 -> 사진 바꾸고싶으면 defaultImagePath 파일이름 변경하기
     public String defaultPath () {
         String basePath = "test/";
-        // logowhitebg, MovoLogo, MovoLogo시안
-        String defaultImagePath = "KakaoTalk_20241027_104848022_03.jpg";
+        // logowhitebg, MovoLogo, MovoLogo시안 (.png)
+        String defaultImagePath = "logoblackbg.png";
         return "https://" + bucket + ".s3.amazonaws.com/" + basePath + defaultImagePath;
     }
 
