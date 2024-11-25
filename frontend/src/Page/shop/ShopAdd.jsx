@@ -110,6 +110,13 @@ const RemoveButton = styled.button`
     }
 `;
 
+const Title = styled.h1`
+    text-align: center;
+    font-size: 28px;
+    margin-bottom: 30px;
+    color: #333;
+`;
+
 function ShopAdd() {
     const { id } = useParams(); // 상품 ID를 URL에서 가져옴
     const navigate = useNavigate();
@@ -211,8 +218,9 @@ function ShopAdd() {
 
     return (
         <Container>
-            <h1>{id ? "상품 수정" : "상품 추가"}</h1>
+
             <FormTest onSubmit={handleSubmit} encType="multipart/form-data">
+                <Title>{id ? "상품 수정" : "상품 추가"}</Title>
                 <Input
                     onChange={(e) => handleChange(e, addItem, setAddItem)}
                     type="text"
