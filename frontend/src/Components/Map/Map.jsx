@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-const Map = ({ latitude, longitude, onChange }) => {
+const Map = ({ latitude, longitude, onChange, isSearchEnabled = true }) => {
   const [map, setMap] = useState(null); // 지도 객체 상태
   const [marker, setMarker] = useState(null); // 마커 객체 상태
   const [address, setAddress] = useState(""); // 주소 입력 상태
@@ -156,34 +156,44 @@ const Map = ({ latitude, longitude, onChange }) => {
 
   // 엔터키로 검색하기
   const handleKeyDown = (e) => {
-    if (e.key === 'Enter' && addressSuggestions.length > 0) {
-      // 자동완성 목록에서 첫 번째 항목 선택
-      handleSuggestionClick(addressSuggestions[0]);
-    }
-  };
+      if (e.key === 'Enter') {
+        // Enter키가 눌렸을 때, 자동완성 목록에서 첫 번째 항목을 선택하도록
+        if (addressSuggestions.length > 0) {
+          // 첫 번째 항목을 클릭한 것처럼 처리
+          handleSuggestionClick(addressSuggestions[0]);
+          e.preventDefault(); // 기본 동작 (폼 제출) 방지
+        } else {
+          // 자동완성 목록이 없을 경우, 그냥 기본 동작을 허용 (폼 제출 등)
+          return;
+        }
+      }
+    };
 
   return (
     <div>
-      <input
-        type="text"
-        value={address}
-        onChange={handleAddressChange} // 주소 입력 상태 관리
-        onKeyDown={handleKeyDown} // 엔터키 처리
-        placeholder="주소를 입력하세요"
-      />
-      <button onClick={() => handleSearch(address)}>검색</button>
+      {isSearchEnabled && (
+        <>
+          <input
+            type="text"
+            value={address}
+            onChange={handleAddressChange} // 주소 입력 상태 관리
+            onKeyDown={handleKeyDown} // 엔터키 처리
+            placeholder="주소를 입력하세요"
+          />
+          <button onClick={() => handleSearch(address)}>검색</button>
 
-      {/* 자동완성 주소 리스트 */}
-      {addressSuggestions.length > 0 && (
-        <ul>
-          {addressSuggestions.map((suggestion, index) => (
-            <li key={index} onClick={() => handleSuggestionClick(suggestion)}>
-              {suggestion.place_name}
-            </li>
-          ))}
-        </ul>
+          {/* 자동완성 주소 리스트 */}
+          {addressSuggestions.length > 0 && (
+            <ul>
+              {addressSuggestions.map((suggestion, index) => (
+                <li key={index} onClick={() => handleSuggestionClick(suggestion)}>
+                  {suggestion.place_name}
+                </li>
+              ))}
+            </ul>
+          )}
+        </>
       )}
-
       <div id="map" style={{ width: '50%', height: '400px' }}></div>
     </div>
   );

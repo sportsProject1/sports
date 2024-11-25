@@ -191,9 +191,10 @@ function CreateForm({ updateData, updateId }) {
         {/* 지도 표시 조건 추가 */}
         {showMap && (
           <Map
-            latitude={formData.latitude ?? 33.450701} // 기본 위도 설정
-            longitude={formData.longitude ?? 126.570667} // 기본 경도 설정
+            latitude={formData.latitude ?? 33.450701} // 기본 위도
+            longitude={formData.longitude ?? 126.570667} // 기본 경도
             onChange={handleMapChange}
+            isSearchEnabled={true} // 검색 기능 활성화
           />
         )}
 

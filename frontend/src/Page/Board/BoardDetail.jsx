@@ -110,8 +110,9 @@ function BoardDetail(){
                     {/* 지도 섹션 */}
                     {detailBoard.latitude && detailBoard.longitude && (
                         <Map
-                            latitude={detailBoard.latitude}
-                            longitude={detailBoard.longitude}
+                          latitude={detailBoard.latitude}
+                          longitude={detailBoard.longitude}
+                          isSearchEnabled={false}
                         />
                     )}
 
