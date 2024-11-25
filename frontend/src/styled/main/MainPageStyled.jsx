@@ -22,15 +22,9 @@ export const BannerContainer = styled.div`
 
 export const Banner = styled.div`
     flex: 0 0 100%;
-    background-size: 80%;
+    background-size: 120%;
     background-repeat: no-repeat;
     background-position: center;
-    transition: background-size 3s ease, filter 1s ease;
-
-    &:hover {
-        filter: brightness(0.8);
-        background-size: 120%;
-    }
 `;
 
 export const BannerWrapper = styled.div`
@@ -61,10 +55,6 @@ export const BannerInfo = styled.div`
         font-weight: bold;
     }
 
-    line-height: 1.6;
-    white-space: pre-line;
-    transform: text-shadow 1s ease;
-    line-height: 1.15;
 
     ${BannerContainer}:hover & {
     text-shadow:
@@ -79,13 +69,11 @@ export const NavButton = styled.button`
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    background: #E7EDF0;
-    color: black;
+    color:black;
     border: none;
-    border-radius: 50%;
-    padding: 5px 10px 10px 10px;
     cursor: pointer;
-    font-size: 26px;
+    font-size: 40px;
+    background-color: rgba(0,0,0,0);
     ${({ $left }) => ($left ? 'left: 30px' : 'right: 30px')};
     z-index: 1;
 `;

@@ -29,7 +29,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/chat/ws") // WebSocket 엔드포인트 설정
+        registry.addEndpoint("/chat/wss") // WebSocket 엔드포인트 설정
                 .setAllowedOriginPatterns("*")
                 .withSockJS();
     }

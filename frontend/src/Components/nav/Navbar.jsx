@@ -11,7 +11,7 @@ const NavBox = styled.nav.withConfig({
     shouldForwardProp: (prop) => prop !== "showNavbar"
 })`
         width:100%;
-        height: 100px;
+        height: 80px;
         position: fixed;
         display: flex;
         justify-content: space-between;
@@ -61,7 +61,7 @@ function Navbar(){
     return(
         <NavContainer>
             <NavBox showNavbar={showNavbar}>
-                <Logo />
+
                 <Menu/>
             </NavBox>
         </NavContainer>

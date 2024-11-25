@@ -5,6 +5,7 @@ import {Banner, BannerContainer, BannerInfo, BannerWrapper, NavButton} from "../
 import banner1 from '../../assets/banner1.jpg';
 import banner2 from '../../assets/banner2.jpg';
 import banner3 from '../../assets/banner3.jpg';
+import {AiOutlineLeft, AiOutlineRight} from "react-icons/ai";
 
 function MainBanner() {
     const [bannerIndex, setBannerIndex] = useState(0);
@@ -46,8 +47,7 @@ function MainBanner() {
                 ))}
             </BannerWrapper>
             <BannerInfo dangerouslySetInnerHTML={{ __html: banners[bannerIndex].text }} />
-            <NavButton $left={true} onClick={handlePrev}>◀</NavButton>
-            <NavButton onClick={handleNext}>▶</NavButton>
+
         </BannerContainer>
     );
 }

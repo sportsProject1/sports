@@ -27,7 +27,6 @@ function BoardDetail(){
 
     useEffect(() => {
         fetchData(`/board/${id}`).then((res)=>{
-            console.log(res.data);
             setDetailBoard(res.data);
         })
         fetchData(`/comment/get/board/${id}`).then((res)=>{
@@ -37,6 +36,7 @@ function BoardDetail(){
         })
         fetchData(`/board/${id}/chatroom`).then((res)=>{
             if(res){
+                console.log(res)
                 setChatRoomId(res.data.id)
             }
         }).catch(()=>{

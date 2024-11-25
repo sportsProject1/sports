@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
+import {AiTwotoneBell} from "react-icons/ai";
+import {fetchTokenData} from "../Server/ApiService";
+import {useSelector} from "react-redux";
 
 const UserInfoContainer = styled.div`
     position: fixed;
@@ -54,18 +57,61 @@ const Avatar = styled.img`
     border: 2px solid ${({ theme }) => theme.colors.primary};
 `;
 
+const Invite = styled.div`
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    span {
+        position: relative; /* 부모 요소 기준으로 가상 요소 위치 지정 */
+        border-radius: 50%;
+        background-color: red;
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        text-align: center;
+        color: white;
+        line-height: 20px;
+        font-size: 12px;
+        margin-left: 5px;
+    }
+
+    span::before {
+        content: "";
+        position: absolute;
+        left: -5px; /* 부모 요소 기준으로 왼쪽에 배치 */
+        top: 50%; /* 세로 중앙 정렬 */
+        transform: translateY(-50%); /* 세로 중앙 정렬 유지 */
+        width: 0;
+        height: 0;
+        border-style: solid;
+        border-width: 5px 7px 5px 0; /* 왼쪽만 없도록 설정 */
+        border-color: transparent red transparent transparent; /* 왼쪽을 제외한 나머지 투명 */
+    }
+`
+
 function UserInfoBox() {
-    const [user, setUser] = useState(null);
     const [topPosition, setTopPosition] = useState(170); // 기본 위치 설정
     const navigate = useNavigate(); // 리다이렉션을 위해 사용
     const footerHeight = 250; // 푸터의 고정 높이
     const footerMargin = 100; // 푸터와 겹칠 때 상단으로 이동하는 기준
 
+    const user = useSelector((state)=>state.auth.user);
+
+    console.log(user)
+
+    const [inviteLength, setInviteLength] = useState(null); // 초기값 null
+    const [isLoading, setIsLoading] = useState(true); // 로딩 상태
+
     useEffect(() => {
-        const storedUser = localStorage.getItem("user");
-        if (storedUser) {
-            setUser(JSON.parse(storedUser)); // 로컬스토리지에서 유저 데이터 가져오기
+
+        if(user){
+            fetchTokenData(`/chat/invitations/${user.userId}`).then((res)=>{
+                setInviteLength(res.data.length);
+                setIsLoading(false); // 로딩 상태 종료
+            })
         }
+
 
         // 스크롤 이벤트 핸들러
         const handleScroll = () => {
@@ -92,7 +138,7 @@ function UserInfoBox() {
         return () => {
             window.removeEventListener("scroll", handleScroll);
         };
-    }, [footerHeight, footerMargin]);
+    }, [footerHeight, footerMargin,user]);
 
     const handleLogout = () => {
         localStorage.clear();
@@ -108,14 +154,19 @@ function UserInfoBox() {
             {user ? (
                 <>
                     <Avatar src={user.imgURL} alt="User Avatar" />
-                    <h3>{user.nickname}</h3>
-                    <p>{user.email}</p>
+                    <h3>{user.nickname}님 환영합니다.</h3>
 
-                    <div>뭐여기이제</div>
-                    <div>채팅방목록이라든가</div>
-                    <div>이제</div>
-                    <div>그런거추가</div>
+                    {/* 데이터 로드 상태 확인 */}
+                    {isLoading ? (
+                        <p>로딩 중...</p> // 로딩 상태
+                    ) : (
+                        <Invite>
+                            채팅 초대 <AiTwotoneBell />
+                            <span>{inviteLength}</span>
+                        </Invite>
+                    )}
 
+                    <Button onClick={()=>navigate('/mypage')}>마이페이지</Button>
                     <Button onClick={handleLogout}>로그아웃</Button>
                 </>
             ) : (

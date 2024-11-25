@@ -3,7 +3,7 @@ import { MainContainer, SectionTitle} from "../../styled/main/MainPageStyled";
 import MainBanner from "./MainBanner";
 import MainBestBoard from "./MainBestBoard";
 import MainBestItem from "./MainBestItem";
-import UserInfoBox from "./UserInfoBox";
+import UserInfoBox from "../../Components/UserInfoBox";
 import Advertisement from "./Advertisement";
 function Home() {
 

@@ -37,7 +37,7 @@ function ChatRoom({ chatRoomId, userId }) {
         if (!token) return;
 
         const stompClient = new Client({
-            webSocketFactory: () => new SockJS("http://localhost:8090/chat/ws"),
+            webSocketFactory: () => new SockJS("https://localhost:8090/chat/wss"),
             connectHeaders: { Authorization: `Bearer ${token}` },
             reconnectDelay: 5000,
             onConnect: () => {
