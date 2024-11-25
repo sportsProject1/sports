@@ -1,6 +1,7 @@
 import {
     CommentAuthor, CommentContent,
     CommentHeader,
+    CommentInputBox,
     CommentInput,
     CommentItem, CommentLikeButton,
     CommentListContainer,
@@ -73,14 +74,16 @@ function Comment({ commentData, comment, setComment, onCreateComment, setComment
 
     return (
         <CommentSection>
-            <CommentInput
-                placeholder="댓글을 작성하세요..."
-                value={comment}
-                onChange={(e) => {
-                    setComment(e.target.value);
-                }}
-            />
-            <SubmitButton onClick={onCreateComment}>댓글 작성</SubmitButton>
+            <CommentInputBox>
+                <CommentInput
+                    placeholder="댓글을 작성하세요..."
+                    value={comment}
+                    onChange={(e) => {
+                        setComment(e.target.value);
+                    }}
+                />
+                <SubmitButton onClick={onCreateComment}>댓글 입력</SubmitButton>
+            </CommentInputBox>
 
             <CommentListContainer>
                 {commentData?.map((comment, index) => (

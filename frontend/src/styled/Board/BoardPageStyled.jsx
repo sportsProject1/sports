@@ -19,7 +19,7 @@ export const PageContainer = styled.div`
 // 제목 및 작성날짜 영역
 export const TitleSection = styled.div`
   background-color: #fff;
-  padding: 1rem;
+  padding: 1.5rem;
   margin-bottom: 1rem;
   display: flex;
   justify-content: space-between;
@@ -29,7 +29,7 @@ export const TitleSection = styled.div`
 `;
 
 export const Title = styled.h1`
-  font-size: 2rem;
+  font-size: 1.8rem;
   font-weight: bold;
   margin: 0;
 `;
@@ -78,12 +78,24 @@ export const BoardPostImage = styled.img`
 
 // 본문 섹션
 export const ContentSection = styled.div`
-  background-color: #ffc0cb; /* 임시로 설정된 색상 */
+  background-color: #F0F4FF;
   padding: 1.5rem;
   margin-bottom: 1rem;
   border-radius: 8px;
   font-size: 1.1rem;
   line-height: 1.6;
+  min-height:400px;
+
+  p{
+    min-height:400px;
+  }
+
+  img {
+    max-width: 300px;
+    max-height: 300px;
+    object-fit: scale-down;
+  }
+
 `;
 
 // 좋아요 및 조회수 섹션
@@ -95,15 +107,17 @@ export const InteractionSection = styled.div`
 
 export const LikeButton = styled.button`
   padding: 0.5rem 1rem;
-  background-color: #ff4757;
+  background-color: #f54c5a;
   color: #fff;
   border: none;
   border-radius: 4px;
   cursor: pointer;
   font-size: 1rem;
+  margin-right: 10px;
 `;
 
 export const ViewsText = styled.span`
   font-size: 0.9rem;
   color: #555;
+  margin-left: 10px;
 `;

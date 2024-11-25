@@ -101,7 +101,7 @@ function BoardDetail(){
                 {/* 제목 및 작성 날짜 */}
                 <TitleSection>
                     <Title>{detailBoard.title}</Title>
-                    <DateText>작성자: {detailBoard.author} | 작성일: {formattedDate} </DateText>
+                    <DateText>작성자 {detailBoard.author} | 작성일 {formattedDate} </DateText>
                 </TitleSection>
                 {/* 본문 */}
                 <ContentSection>
@@ -121,7 +121,7 @@ function BoardDetail(){
                             <LikeButton
                             onClick={()=>navigate(`/board/update/${id}`)}>수정하기</LikeButton>
                             <LikeButton onClick={onDelete}>삭제하기</LikeButton>
-                            <ViewsText>조회수: {detailBoard.views}</ViewsText>
+                            <ViewsText>조회수 : {detailBoard.views}</ViewsText>
                         </div>
                     </InteractionSection>
                 </ContentSection>
