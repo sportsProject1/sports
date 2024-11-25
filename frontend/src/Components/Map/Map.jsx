@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-const Map = ({ latitude, longitude, onChange }) => {
+const Map = ({ latitude, longitude, onChange, isSearchEnabled = true }) => {
   const [map, setMap] = useState(null); // 지도 객체 상태
   const [marker, setMarker] = useState(null); // 마커 객체 상태
   const [address, setAddress] = useState(""); // 주소 입력 상태
@@ -156,61 +156,45 @@ const Map = ({ latitude, longitude, onChange }) => {
 
   // 엔터키로 검색하기
   const handleKeyDown = (e) => {
-    if (e.key === 'Enter' && addressSuggestions.length > 0) {
-      // 자동완성 목록에서 첫 번째 항목 선택
-      handleSuggestionClick(addressSuggestions[0]);
-    }
-  };
+      if (e.key === 'Enter') {
+        // Enter키가 눌렸을 때, 자동완성 목록에서 첫 번째 항목을 선택하도록
+        if (addressSuggestions.length > 0) {
+          // 첫 번째 항목을 클릭한 것처럼 처리
+          handleSuggestionClick(addressSuggestions[0]);
+          e.preventDefault(); // 기본 동작 (폼 제출) 방지
+        } else {
+          // 자동완성 목록이 없을 경우, 그냥 기본 동작을 허용 (폼 제출 등)
+          return;
+        }
+      }
+    };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem', padding: '1rem', border: '1px solid #ccc', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)', width: '100%', marginRight: 'auto' }}>
-      <input
-        type="text"
-        value={address}
-        onChange={handleAddressChange} // 주소 입력 상태 관리
-        onKeyDown={handleKeyDown} // 엔터키 처리
-        placeholder="주소를 입력하세요"
-        style={{ padding: '0.5rem', width: '100%', border: '1px solid #ddd', borderRadius: '4px' }}
-      />
-      <button onClick={() => handleSearch(address)}
-          style={{
-                  width: '20%',
-                  padding: '0.5rem 1rem',
-                  backgroundColor: '#007BFF',
-                  color: '#fff',
-                  border: 'none',
-                  borderRadius: '4px',
-                  cursor: 'pointer',
-                }}
-          >검색</button>
+    <div>
+      {isSearchEnabled && (
+        <>
+          <input
+            type="text"
+            value={address}
+            onChange={handleAddressChange} // 주소 입력 상태 관리
+            onKeyDown={handleKeyDown} // 엔터키 처리
+            placeholder="주소를 입력하세요"
+          />
+          <button onClick={() => handleSearch(address)}>검색</button>
 
-      {/* 자동완성 주소 리스트 */}
-      {addressSuggestions.length > 0 && (
-        <ul style={{ listStyle: 'none', padding: 0, margin: '1rem 0', width: '100%', border: '1px solid #ddd', borderRadius: '4px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
-          {addressSuggestions.map((suggestion, index) => (
-            <li key={index} onClick={() => handleSuggestionClick(suggestion)}
-                style={{
-                  padding: '0.5rem',
-                  cursor: 'pointer',
-                  borderBottom: '1px solid #ddd',
-                  backgroundColor: index % 2 === 0 ? '#f9f9f9' : '#fff',
-                }}
-                >
-              {suggestion.place_name}
-            </li>
-          ))}
-        </ul>
+          {/* 자동완성 주소 리스트 */}
+          {addressSuggestions.length > 0 && (
+            <ul>
+              {addressSuggestions.map((suggestion, index) => (
+                <li key={index} onClick={() => handleSuggestionClick(suggestion)}>
+                  {suggestion.place_name}
+                </li>
+              ))}
+            </ul>
+          )}
+        </>
       )}
-
-      <div id="map"
-           style={{
-            width: '100%',
-            height: '300px',
-            borderRadius: '8px',
-            border: '1px solid #ddd',
-            boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-          }}
-      ></div>
+      <div id="map" style={{ width: '50%', height: '400px' }}></div>
     </div>
   );
 };
