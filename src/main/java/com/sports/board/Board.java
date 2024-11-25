@@ -26,6 +26,8 @@ public class Board {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private Long userId; // 게시글 작성자아이디
+
     private String title; // 제목
 
     @Column(columnDefinition = "TEXT")
