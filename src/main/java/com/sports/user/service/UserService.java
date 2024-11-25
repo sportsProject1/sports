@@ -4,6 +4,8 @@ import com.sports.Item.S3Service;
 import com.sports.Security.dto.AuthResponse;
 import com.sports.Security.jwt.JwtTokenProvider;
 import com.sports.Security.dto.LoginRequest;
+import com.sports.board.Board;
+import com.sports.board.BoardResponseDTO;
 import com.sports.user.refresh.UserRefreshToken;
 import com.sports.user.refresh.UserRefreshTokenRepository;
 import com.sports.user.repository.UserRepository;
@@ -20,7 +22,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -170,6 +174,23 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         return user.getNickname();
+    }
+
+    //검색기능(유저)
+    public List<UserDTO> searchBoardByEmail(String keyword) {
+        List<User> users = userRepository.searchByEmail(keyword);
+        return users.stream()
+                .map(user -> new UserDTO(
+                        user.getId(),
+                        user.getUsername(),
+                        user.getNickname(),
+                        user.getPhone(),
+                        user.getEmail(),
+                        user.getAddress(),
+                        user.getImgURL(),
+                        user.getRole()
+                ))
+                .collect(Collectors.toList());
     }
 
 }

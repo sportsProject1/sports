@@ -10,10 +10,10 @@ export const BoardContainer = styled.div`
 // 상세페이지
 // 전체 페이지 컨테이너
 export const PageContainer = styled.div`
-  max-width: 1200px;
+  width: 60%;
   margin: 0 auto;
   padding: 1rem;
-  background-color: #f0f0f0; /* 배경색 설정 */
+  background-color: #f0f0f0;
 `;
 
 // 제목 및 작성날짜 영역
@@ -30,6 +30,7 @@ export const TitleSection = styled.div`
 
 export const Title = styled.h1`
   font-size: 2rem;
+  font-weight: bold;
   margin: 0;
 `;
 
