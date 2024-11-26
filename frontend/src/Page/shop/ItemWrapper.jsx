@@ -48,7 +48,7 @@ function ItemWrapper({ items, handleSortChange, isShop, likeStatus }) {
                         </PriceContainer>
                     </Card>
                 );
-            })};
+            })}
             </ItemContainer>
 
             <PagePagination
