@@ -5,7 +5,7 @@ import LoadingPage from "../LoadingPage";
 
 // 전체 사이드바 컨테이너
 export const SidebarContainer = styled.div`
-    width: 350px;
+    width: 17%;
 `;
 
 // `scrollDirection` prop을 DOM에 전달되지 않도록 설정

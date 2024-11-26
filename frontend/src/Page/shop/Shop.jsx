@@ -6,6 +6,7 @@ import SideMenu from "../../Components/Menu/SideMenu";
 import ItemWrapper from "./ItemWrapper";
 import LoadingPage from "../../Components/LoadingPage";
 import useLikeStatus from "../../hooks/useLikeStatus";
+import UserInfoBox from "../../Components/UserInfoBox";
 
 function Shop() {
     const [items, setItems] = useState([]);
@@ -116,6 +117,7 @@ function Shop() {
                 sortOption={sortOption} // 정렬 옵션 전달
                 likeStatus={likeStatus}
             />
+            <UserInfoBox/>
         </ShopContainer>
     );
 }

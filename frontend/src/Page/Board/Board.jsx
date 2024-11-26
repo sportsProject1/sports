@@ -8,6 +8,7 @@ import BoardWrapper from "./BoardWrapper";
 import { Title } from "../../styled/Common";
 import useLikeStatus from "../../hooks/useLikeStatus";
 import NoItemBoardWrapper from "./NoItemBoardWrapper";
+import UserInfoBox from "../../Components/UserInfoBox";
 
 function Board() {
     const [boardItem, setBoardItem] = useState([]); // 전체 게시글 데이터
@@ -141,6 +142,8 @@ function Board() {
                     onClearSearch={clearSearch} // 검색 초기화 함수 전달
                 />
             )}
+
+            <UserInfoBox/>
         </BoardContainer>
     );
 }

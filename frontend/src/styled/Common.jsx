@@ -106,7 +106,7 @@ export const ItemContainer = styled.div`
 // 카드 css
 
 export const Card = styled.div`
-    width:25%;
+    width:28%;
     background-color: #fff;
     border-radius: 8px;
     overflow: hidden;
