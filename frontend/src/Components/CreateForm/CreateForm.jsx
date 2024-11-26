@@ -12,6 +12,7 @@ const StyledContainer = styled.div`
   width: 80%;
   margin: auto;
   margin-top: 30px;
+
   .toastui-editor-defaultUI .toastui-editor-mode-switch {
     display: none !important;
   }
@@ -30,6 +31,36 @@ const StyledContainer = styled.div`
   }
 `;
 
+const StyledSelect = styled.select`
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 8px 10px;
+    font-size: 16px;
+    color: #333;
+    width: 100%;
+    max-width: 300px;
+    cursor: pointer;
+    margin-bottom: 10px;
+    margin-right: 10px;
+`;
+
+const StyledLabel = styled.label`
+    margin-right: 20px;
+`;
+
+const CheckboxInput = styled.input`
+    margin-left: 10px;
+    transform: scale(1.5);
+    cursor: pointer;
+`;
+
+const Mapbutton = styled.button`
+    padding: 5px;
+    margin-left: 8px;
+
+`;
+
 const StyledInput = styled.input`
   width: 100%;
   padding: 12px;
@@ -44,6 +75,17 @@ const StyledInput = styled.input`
     border-color: #333;
     box-shadow: 0 0 5px rgba(51, 51, 51, 0.3);
   }
+`;
+
+const SubmitButton = styled.button`
+  width: 10%;
+  height: 50px;
+  margin: 10px 0 10px auto;
+  display: block;
+  border:none;
+  border-radius:8px;
+  color:white;
+  background :#007BFF;
 `;
 
 function CreateForm({ updateData, updateId }) {
@@ -167,26 +209,26 @@ function CreateForm({ updateData, updateId }) {
           value={formData.title}
           onChange={(e) => setFormData({ ...formData, title: e.target.value })}
         />
-        <select onChange={(e) => setFormData({ ...formData, categoryId: e.target.value })} value={formData.categoryId}>
+        <StyledSelect onChange={(e) => setFormData({ ...formData, categoryId: e.target.value })} value={formData.categoryId}>
           {category?.map((item) => (
             <option key={item.id} value={item.id}>
               {item.name}
             </option>
           ))}
-        </select>
-        <label>
+        </StyledSelect>
+        <StyledLabel>
           채팅방 만들기
-          <input
+          <CheckboxInput
             type="checkbox"
             checked={formData.chatRoom}
             onChange={() => setFormData((prev) => ({ ...prev, chatRoom: !prev.chatRoom }))}
           />
-        </label>
+        </StyledLabel>
 
         {/* 지도 사용 버튼 */}
-        <button type="button" onClick={toggleMap}>
+        <Mapbutton type="button" onClick={toggleMap}>
           {showMap ? '지도 숨기기' : '지도 사용하기'}
-        </button>
+        </Mapbutton>
 
         {/* 지도 표시 조건 추가 */}
         {showMap && (
@@ -219,7 +261,7 @@ function CreateForm({ updateData, updateId }) {
             },
           }}
         />
-        <button type="submit">게시물 등록</button>
+        <SubmitButton type="submit">게시물 등록</SubmitButton>
       </form>
     </StyledContainer>
   );

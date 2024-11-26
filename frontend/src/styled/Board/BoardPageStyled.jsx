@@ -86,10 +86,6 @@ export const ContentSection = styled.div`
   line-height: 1.6;
   min-height:400px;
 
-  p{
-    min-height:400px;
-  }
-
   img {
     max-width: 300px;
     max-height: 300px;

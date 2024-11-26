@@ -157,9 +157,8 @@ export const ItemLeft = styled.div`
 
     img {
         display:block;
-        width: 100%;
         height: 50px;
-        background-color: rgba(0,0,0,0.05);
+        background-color: black;
         border-radius: 8px;
         object-fit: cover;
     }
