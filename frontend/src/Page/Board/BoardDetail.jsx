@@ -27,22 +27,18 @@ function BoardDetail(){
     const [chatRoomId,setChatRoomId] = useState();
 
     const currentUserId = useSelector((state) => state.auth.user?.userId);
-    console.log("currentUserId:", currentUserId);
 
     useEffect(() => {
         fetchData(`/board/${id}`).then((res)=>{
-            console.log("Board Data:", res.data);
             setDetailBoard(res.data);
         })
         fetchData(`/comment/get/board/${id}`).then((res)=>{
-            console.log("Comment Data:", res.data.commentItems);
             setCommentData(res.data.commentItems)
         }).catch((err)=>{
             console.log("불러 올 댓글 없어")
         })
         fetchData(`/board/${id}/chatroom`).then((res)=>{
             if(res){
-                console.log("Chat Room Data:", res.data);
                 setChatRoomId(res.data.id)
             }
         }).catch(()=>{
@@ -53,8 +49,13 @@ function BoardDetail(){
 
 
     const onDelete = async () =>{
+
+        const userConfirmed = window.confirm("정말로 삭제하시겠습니까?");
+        if (!userConfirmed) return;
+
         try{
             await deleteTokenData(`/board/${id}`).then((res)=>{
+                alert('게시글이 성공적으로 삭제되었습니다.');
                 navigate('/board')
             })
         }catch(e){
@@ -71,10 +72,8 @@ function BoardDetail(){
             setComment(''); // 댓글 입력란 초기화
             // 댓글 작성 후 새로 데이터를 가져와서 반영
             fetchData(`/comment/get/board/${id}`).then((res) => {
-                console.log("New Comment Data:", res.data.commentItems);
                 setCommentData(res.data.commentItems);
             }).catch((err) => {
-                console.log("댓글 불러오기 실패");
             });
         } catch (e) {
             console.log(e);
@@ -103,9 +102,6 @@ function BoardDetail(){
             <div>로딩중</div>
         )
     }else{
-                console.log("Detail Board User ID:", detailBoard.userId); // 작성자 ID 확인
-                console.log("Chat Room ID:", chatRoomId); // 채팅방 ID 확인
-                console.log("Comment Data Passed to Component:", commentData);
 
         return(
             <PageContainer>

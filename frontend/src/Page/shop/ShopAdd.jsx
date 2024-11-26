@@ -117,6 +117,12 @@ const Title = styled.h1`
     color: #333;
 `;
 
+const ErrorMessage = styled.p`
+    color: red;
+    font-size: 14px;
+    margin: 5px 0;
+`;
+
 function ShopAdd() {
     const { id } = useParams(); // 상품 ID를 URL에서 가져옴
     const navigate = useNavigate();
@@ -134,6 +140,14 @@ function ShopAdd() {
 
     const [category, setCategory] = useState([]);
     const [existingImages, setExistingImages] = useState([]); // 기존 이미지 상태 관리
+
+    const [errorMessages, setErrorMessages] = useState({
+        title: "",
+        price: "",
+        desc: "",
+        stock: "",
+        categoryId: ""
+    });
 
     useEffect(() => {
         const fetchDataForItem = async () => {
@@ -171,7 +185,6 @@ function ShopAdd() {
                     }));
                 }
             } catch (error) {
-                console.error("데이터 로딩 중 오류:", error);
             }
         };
 
@@ -183,8 +196,33 @@ function ShopAdd() {
         setExistingImages((prevImages) => prevImages.filter((_, i) => i !== index));
     };
 
+    const validateForm = () => {
+        const errors = {};
+
+        if (!addItem.title) errors.title = "상품명을 입력해주세요.";
+        if (!addItem.price || isNaN(addItem.price) || Number(addItem.price) <= 0) errors.price = "가격을 올바르게 입력해주세요.";
+        if (!addItem.desc) errors.desc = "상품 설명을 입력해주세요.";
+        if (!addItem.stock || isNaN(addItem.stock) || Number(addItem.stock) < 0) errors.stock = "재고 수량을 올바르게 입력해주세요.";
+        if (!addItem.categoryId) errors.categoryId = "카테고리를 선택해주세요.";
+        if (images.length === 0 && existingImages.length === 0) {
+                errors.image = "상품이미지를 등록해주세요.";
+        }
+
+        setErrorMessages(errors);
+
+        // 유효성 검사에서 오류가 있으면 false 반환
+        return Object.keys(errors).length === 0;
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        // 유효성 검사
+        const isValid = validateForm();
+        if (!isValid) return;
+
+        const userConfirmed = window.confirm(id ? '상품을 수정하시겠습니까?' : '상품을 등록하시겠습니까?');
+
         const addItemFormData = new FormData();
         addItemFormData.append("title", addItem.title);
         addItemFormData.append("price", addItem.price);
@@ -206,86 +244,96 @@ function ShopAdd() {
             if (id) {
                 // 수정 요청 (PUT)
                 await putTokenData(`/shop/update/${id}`, addItemFormData);
+                alert('상품이 성공적으로으로 수정되었습니다.');
             } else {
                 // 추가 요청 (POST)
                 await postTokenData("/shop/add", addItemFormData);
+                alert('상품이 성공적으로으로 등록되었습니다.');
             }
             navigate("/shop");
         } catch (error) {
-            console.error(error);
         }
     };
 
     return (
-        <Container>
+            <Container>
+                <FormTest onSubmit={handleSubmit} encType="multipart/form-data">
+                    <Title>{id ? "상품 수정" : "상품 추가"}</Title>
+                    <Input
+                        onChange={(e) => handleChange(e, addItem, setAddItem)}
+                        type="text"
+                        placeholder="상품명"
+                        name="title"
+                        value={addItem.title}
+                    />
+                    {errorMessages.title && <ErrorMessage>{errorMessages.title}</ErrorMessage>}
 
-            <FormTest onSubmit={handleSubmit} encType="multipart/form-data">
-                <Title>{id ? "상품 수정" : "상품 추가"}</Title>
-                <Input
-                    onChange={(e) => handleChange(e, addItem, setAddItem)}
-                    type="text"
-                    placeholder="상품명"
-                    name="title"
-                    value={addItem.title}
-                />
-                <Input
-                    onChange={(e) => handleChange(e, addItem, setAddItem)}
-                    type="text"
-                    placeholder="가격"
-                    name="price"
-                    value={addItem.price}
-                />
-                <Input
-                    onChange={(e) => handleChange(e, addItem, setAddItem)}
-                    type="text"
-                    placeholder="상품소개"
-                    name="desc"
-                    value={addItem.desc}
-                />
-                <Input type="file" name="file" multiple onChange={handleImageChange} />
-                <Input
-                    onChange={(e) => handleChange(e, addItem, setAddItem)}
-                    type="text"
-                    placeholder="재고"
-                    name="stock"
-                    value={addItem.stock}
-                />
-                <Select
-                    name="categoryId"
-                    onChange={(e) => handleChange(e, addItem, setAddItem)}
-                    value={addItem.categoryId}
-                >
-                    {category.map((item) => (
-                        <option key={item.id} value={item.id}>{item.name}</option>
-                    ))}
-                </Select>
+                    <Input
+                        onChange={(e) => handleChange(e, addItem, setAddItem)}
+                        type="text"
+                        placeholder="가격"
+                        name="price"
+                        value={addItem.price}
+                    />
+                    {errorMessages.price && <ErrorMessage>{errorMessages.price}</ErrorMessage>}
 
-                {/* 기존 이미지 표시 및 삭제 버튼 추가 */}
-                <ImageContainer>
-                    {existingImages.map((url, index) => (
-                        <ImageWrapper key={index}>
-                            <Image src={url} alt={`existing preview ${index}`} />
-                            <RemoveButton type="button" onClick={() => handleRemoveExistingImage(index)}>
-                                X
-                            </RemoveButton>
-                        </ImageWrapper>
-                    ))}
+                    <Input
+                        onChange={(e) => handleChange(e, addItem, setAddItem)}
+                        type="text"
+                        placeholder="상품소개"
+                        name="desc"
+                        value={addItem.desc}
+                    />
+                    {errorMessages.desc && <ErrorMessage>{errorMessages.desc}</ErrorMessage>}
 
-                    {/* 새로 추가된 이미지 표시 */}
-                    {images.map((image, index) => (
-                        <ImageWrapper key={index}>
-                            <Image src={image.preview} alt={`preview ${index}`} />
-                            <RemoveButton type="button" onClick={() => handleRemoveImage(index)}>
-                                X
-                            </RemoveButton>
-                        </ImageWrapper>
-                    ))}
-                </ImageContainer>
+                    <Input type="file" name="file" multiple onChange={handleImageChange} />
+                    {errorMessages.title && <ErrorMessage>{errorMessages.image}</ErrorMessage>}
+                    <Input
+                        onChange={(e) => handleChange(e, addItem, setAddItem)}
+                        type="text"
+                        placeholder="재고"
+                        name="stock"
+                        value={addItem.stock}
+                    />
+                    {errorMessages.stock && <ErrorMessage>{errorMessages.stock}</ErrorMessage>}
 
-                <Button type="submit">{id ? "상품 수정" : "상품 등록"}</Button>
-            </FormTest>
-        </Container>
-    );
-}
+                    <Select
+                        name="categoryId"
+                        onChange={(e) => handleChange(e, addItem, setAddItem)}
+                        value={addItem.categoryId}
+                    >
+                        {category.map((item) => (
+                            <option key={item.id} value={item.id}>{item.name}</option>
+                        ))}
+                    </Select>
+                    {errorMessages.categoryId && <ErrorMessage>{errorMessages.categoryId}</ErrorMessage>}
+
+                    {/* 기존 이미지 표시 및 삭제 버튼 추가 */}
+                    <ImageContainer>
+                        {existingImages.map((url, index) => (
+                            <ImageWrapper key={index}>
+                                <Image src={url} alt={`existing preview ${index}`} />
+                                <RemoveButton type="button" onClick={() => handleRemoveExistingImage(index)}>
+                                    X
+                                </RemoveButton>
+                            </ImageWrapper>
+                        ))}
+
+                        {/* 새로 추가된 이미지 표시 */}
+                        {images.map((image, index) => (
+                            <ImageWrapper key={index}>
+                                <Image src={image.preview} alt={`preview ${index}`} />
+                                <RemoveButton type="button" onClick={() => handleRemoveImage(index)}>
+                                    X
+                                </RemoveButton>
+                            </ImageWrapper>
+                        ))}
+                    </ImageContainer>
+
+                    <Button type="submit">{id ? "상품 수정" : "상품 등록"}</Button>
+                </FormTest>
+            </Container>
+        );
+    }
 
 export default ShopAdd;
