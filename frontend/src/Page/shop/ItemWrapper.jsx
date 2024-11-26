@@ -5,7 +5,8 @@ import { Card, ItemContainer, Price, ProductName, CardImage, PriceContainer, Lik
 import { useNavigate } from "react-router-dom";
 import PagePagination from "../../Components/Pagination/PagePagination";
 
-function ItemWrapper({ items, handleSortChange, isShop }) {
+function ItemWrapper({ items, handleSortChange, isShop, likeStatus }) {
+    console.log("Items:", items);
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 9;
 
@@ -31,20 +32,23 @@ function ItemWrapper({ items, handleSortChange, isShop }) {
         <ListWrap>
             <SubMenu isShop={isShop} handleSortChange={handleSortChange} />
             <ItemContainer>
-                {currentItems.map((item) => (
+                {currentItems.map((item) => {
+                    const isLikedByCurrentUser = likeStatus[item.id];
+                    return (
                     <Card key={item.id} onClick={() => navigate(`/shop/detail/${item.id}`)}>
                         <CardImage
-                            src={item.imgurl ? item.imgurl.split(',')[0] : 'default-image-url.jpg'}
+                            src={item.imgurl.split(',')[0]}
                             alt={item.name}
                         />
                         <ProductName>{item.title}</ProductName>
                         <BrandName>{item.nickname}</BrandName>
                         <PriceContainer>
                             <Price>{item.price.toLocaleString()}원</Price>
-                            <LikeCount>♡ {item.likes}</LikeCount>
+                            <LikeCount>{isLikedByCurrentUser ? "❤️ " : "🤍 "}{item.likes}</LikeCount>
                         </PriceContainer>
                     </Card>
-                ))}
+                );
+            })};
             </ItemContainer>
 
             <PagePagination
