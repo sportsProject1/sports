@@ -6,6 +6,7 @@ import SideMenu from "../../Components/Menu/SideMenu";
 import ItemWrapper from "./ItemWrapper";
 import LoadingPage from "../../Components/LoadingPage";
 import useLikeStatus from "../../hooks/useLikeStatus";
+import UserInfoBox from "../../Components/UserInfoBox";
 import NoItemBoardWrapper from "../Board/NoItemBoardWrapper";
 
 function Shop() {
@@ -119,6 +120,7 @@ function Shop() {
                 categoryTitle={"카테고리"}
                 handleCategoryClick={handleCategoryClick}
             />
+           
             {sortedItems.length === 0 ? ( // items가 비어있을 경우
                 <NoItemBoardWrapper handleSortChange={handleSortChange} text={"상품이"} />
             ) : (
@@ -130,6 +132,7 @@ function Shop() {
                     likeStatus={likeStatus}
                 />
             )}
+              <UserInfoBox/>
         </ShopContainer>
     );
 }

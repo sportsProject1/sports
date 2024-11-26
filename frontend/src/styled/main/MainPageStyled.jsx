@@ -289,7 +289,7 @@ export const PostCardWrapper = styled.div`
 `;
 
 export const PostCard = styled.div`
-    width: 25%;
+    width: 28%;
     background-color: #ffffff;
     border-radius: 12px;
     overflow: hidden;
