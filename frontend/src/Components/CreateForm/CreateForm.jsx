@@ -135,6 +135,9 @@ function CreateForm({ updateData, updateId }) {
     e.preventDefault();
     if (isSubmitting) return; // 이미 요청 중이라면 함수 종료
 
+    const userConfirmed = window.confirm(updateData ? '게시글을 수정하시겠습니까?' : '게시글을 등록하시겠습니까?');
+    if (!userConfirmed) return;
+
     setIsSubmitting(true); // 요청 시작 시 플래그 설정
 
     const content = editorRef.current.getInstance().getHTML();
@@ -153,6 +156,7 @@ function CreateForm({ updateData, updateId }) {
     try {
       if (updateData) {
         await putTokenData(`/board/${updateId}`, newFormData);
+        alert('게시글이 성공적으로으로 수정되었습니다.');
       } else {
         const res = await postTokenData('/board/add', newFormData);
         if (formData.chatRoom) {
@@ -161,6 +165,7 @@ function CreateForm({ updateData, updateId }) {
             roomName: formData.title,
           });
         }
+        alert('게시글이 성공적으로 등록되었습니다.');
       }
       navigate('/board', { replace: true });
     } catch (error) {
