@@ -12,6 +12,7 @@ function BoardAdd() {
     useEffect(() => {
         if(id){
             fetchTokenData(`/board/${id}`).then((res)=>{
+                console.log(res)
                 setUpdateData(res.data);
             })
         }

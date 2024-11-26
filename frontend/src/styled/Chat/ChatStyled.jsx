@@ -87,7 +87,8 @@ export const ChatRoomItem = styled.div`
         cursor: pointer;
     }
     img{
-        height: 100%;
+        width:80px;
+        height: 80px;
         border-radius: 15px;
         margin-right: 15px;
     }

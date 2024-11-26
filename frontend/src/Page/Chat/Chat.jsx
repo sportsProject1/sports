@@ -47,6 +47,7 @@ function Chat() {
         } catch (error) {
         }
     }, []);
+    console.log(chatRoomList)
 
     // 초대 내역 가져오기
     const fetchInviteList = useCallback(async () => {
@@ -66,6 +67,7 @@ function Chat() {
             fetchInviteList();
         }
     }, [location.pathname, fetchChatRooms, fetchInviteList]);
+    console.log(inviteList)
 
     // 경로에 따라 렌더링할 컴포넌트 결정
     const renderContent = useMemo(() => {

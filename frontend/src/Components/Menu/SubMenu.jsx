@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import {useDispatch} from "react-redux";
+import {CardType, ListType} from "../../Store/ItemTypeSlice";
 
 // 서브메뉴 전체 컨테이너
 const SubMenuContainer = styled.div`
@@ -56,9 +58,10 @@ const FilterButton = styled.button.withConfig({
     }
 `;
 
-function SubMenu({ handleSortChange, isShop = false, sortOption }) {
+function SubMenu({handleItemType, handleSortChange, isShop = false, sortOption }) {
     const [searchQuery, setSearchQuery] = useState("");
     const [activeButton, setActiveButton] = useState(sortOption || "latest");  // sortOption으로 초기화
+    const dispatch = useDispatch();
     const navigate = useNavigate();
 
     // 검색어를 URL로 전달하는 함수
@@ -133,6 +136,12 @@ function SubMenu({ handleSortChange, isShop = false, sortOption }) {
                 ) : (
                     // Board용 필터 버튼 (최신순, 오래된순, 조회수순, 좋아요순)
                     <>
+                        <FilterButton onClick={()=>dispatch(CardType())}>
+                            카드형
+                        </FilterButton>
+                        <FilterButton onClick={()=>dispatch(ListType())}>
+                            리스트형
+                        </FilterButton>
                         <FilterButton
                             $active={activeButton === "latest"}
                             onClick={() => handleButtonClick("latest")}
