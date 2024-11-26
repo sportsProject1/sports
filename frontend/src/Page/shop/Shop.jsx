@@ -6,6 +6,7 @@ import SideMenu from "../../Components/Menu/SideMenu";
 import ItemWrapper from "./ItemWrapper";
 import LoadingPage from "../../Components/LoadingPage";
 import useLikeStatus from "../../hooks/useLikeStatus";
+import NoItemBoardWrapper from "../Board/NoItemBoardWrapper";
 
 function Shop() {
     const [items, setItems] = useState([]);
@@ -119,13 +120,17 @@ function Shop() {
                 categoryTitle={"카테고리"}
                 handleCategoryClick={handleCategoryClick}
             />
-            <ItemWrapper
-                items={sortedItems} // 정렬된 아이템 전달
-                handleSortChange={handleSortChange}
-                isShop={true}
-                sortOption={sortOption} // 정렬 옵션 전달
-                likeStatus={likeStatus}
-            />
+            {sortedItems.length === 0 ? ( // items가 비어있을 경우
+                <NoItemBoardWrapper handleSortChange={handleSortChange} text={"상품이"} />
+            ) : (
+                <ItemWrapper
+                    items={sortedItems} // 정렬된 아이템 전달
+                    handleSortChange={handleSortChange}
+                    isShop={true}
+                    sortOption={sortOption} // 정렬 옵션 전달
+                    likeStatus={likeStatus}
+                />
+            )}
         </ShopContainer>
     );
 }

@@ -123,7 +123,7 @@ function Board() {
                 subCategory={etcCategories}
             />
             {boardItem.length===0 ?
-                <NoItemBoardWrapper handleSortChange={handleSortChange}/> : <BoardWrapper
+                <NoItemBoardWrapper handleSortChange={handleSortChange} text={"게시글이"}/> : <BoardWrapper
                 handleSortChange={handleSortChange}
                 boardItem={sortedBoardItems}
                 likeStatus={likeStatus}
