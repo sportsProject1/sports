@@ -84,8 +84,11 @@ function ShopDetail() {
     };
 
     const onDelete = async () => {
+        const userConfirmed = window.confirm("정말로 삭제하시겠습니까?");
+        if (!userConfirmed) return;
         try {
             await deleteTokenData(`/shop/delete/${id}`);
+            alert('상품이 성공적으로 삭제되었습니다.');
             navigate("/shop", { replace: true });
         } catch (err) {
             console.log(err);

@@ -53,8 +53,13 @@ function BoardDetail(){
 
 
     const onDelete = async () =>{
+
+        const userConfirmed = window.confirm("정말로 삭제하시겠습니까?");
+        if (!userConfirmed) return;
+
         try{
             await deleteTokenData(`/board/${id}`).then((res)=>{
+                alert('게시글이 성공적으로 삭제되었습니다.');
                 navigate('/board')
             })
         }catch(e){
