@@ -32,7 +32,6 @@ function Shop() {
                 setItems(itemsResponse.data.items);
                 setCategory(categoryResponse.data);
             } catch (error) {
-                console.error("데이터 로딩 중 오류:", error);
             }
         };
         fetchAllData();

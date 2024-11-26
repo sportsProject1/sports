@@ -185,7 +185,6 @@ function ShopAdd() {
                     }));
                 }
             } catch (error) {
-                console.error("데이터 로딩 중 오류:", error);
             }
         };
 
@@ -253,7 +252,6 @@ function ShopAdd() {
             }
             navigate("/shop");
         } catch (error) {
-            console.error(error);
         }
     };
 

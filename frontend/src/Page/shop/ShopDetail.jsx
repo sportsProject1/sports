@@ -73,6 +73,8 @@ function ShopDetail() {
         formData.append("cartCount", itemCount);
         formData.append("itemId", id);
         await postTokenData("/mypage/cart/add", formData);
+        alert('상품이 장바구니에 추가되었습니다.');
+        navigate('/shop');
     };
 
     const increaseCount = () => {
@@ -91,7 +93,7 @@ function ShopDetail() {
             alert('상품이 성공적으로 삭제되었습니다.');
             navigate("/shop", { replace: true });
         } catch (err) {
-            console.log(err);
+
         }
     };
 
@@ -111,7 +113,7 @@ function ShopDetail() {
                 const updatedItemFromDb = fetchItemResponse.data.item;
                 setLikeCount(updatedItemFromDb.likes);
             } catch (fetchError) {
-                console.error("상품 정보를 가져오는 데 오류 발생:", fetchError);
+
             }
         }
     };
