@@ -180,7 +180,7 @@ const Map = ({ latitude, longitude, onChange, isSearchEnabled = true }) => {
             onKeyDown={handleKeyDown} // 엔터키 처리
             placeholder="주소를 입력하세요"
           />
-          <button onClick={() => handleSearch(address)}>검색</button>
+          <button type="button" onClick={() => handleSearch(address)}>검색</button>
 
           {/* 자동완성 주소 리스트 */}
           {addressSuggestions.length > 0 && (
