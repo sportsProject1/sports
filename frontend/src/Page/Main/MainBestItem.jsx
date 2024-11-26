@@ -49,7 +49,7 @@ function MainBestItem() {
 
     return (
         <SectionContainer>
-            <CardWrapper $translateX={-pageIndex * 100 / totalPages}>
+            <CardWrapper $translateX={-pageIndex * 150 / totalPages}>
                 {products.map((product, index) => (
                     <MainCard onClick={()=>navigate(`/shop/detail/${product.id}`)} key={`product-${product.id}-${index}`}>
                         <MainCardImage src={product.imgurl} alt={product.title} />
