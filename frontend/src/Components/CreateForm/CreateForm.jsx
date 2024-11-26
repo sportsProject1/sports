@@ -113,6 +113,13 @@ function CreateForm({ updateData, updateId }) {
         longitude: updateData.longitude || null, // 기존 경도 설정
       }));
       editorRef.current?.getInstance().setHTML(updateData.content);
+
+      if (updateData.category) {
+        const categoryIdFromCategoryName = category?.find(cat => cat.name === updateData.category)?.id;
+        if (categoryIdFromCategoryName) {
+           setFormData(prev => ({ ...prev, categoryId: categoryIdFromCategoryName }));
+        }
+      }
     }
 
     fetchData('/category/get').then((res) => {
@@ -127,6 +134,9 @@ function CreateForm({ updateData, updateId }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (isSubmitting) return; // 이미 요청 중이라면 함수 종료
+
+    const userConfirmed = window.confirm(updateData ? '게시글을 수정하시겠습니까?' : '게시글을 등록하시겠습니까?');
+    if (!userConfirmed) return;
 
     setIsSubmitting(true); // 요청 시작 시 플래그 설정
 
@@ -146,6 +156,7 @@ function CreateForm({ updateData, updateId }) {
     try {
       if (updateData) {
         await putTokenData(`/board/${updateId}`, newFormData);
+        alert('게시글이 성공적으로으로 수정되었습니다.');
       } else {
         const res = await postTokenData('/board/add', newFormData);
         if (formData.chatRoom) {
@@ -154,6 +165,7 @@ function CreateForm({ updateData, updateId }) {
             roomName: formData.title,
           });
         }
+        alert('게시글이 성공적으로 등록되었습니다.');
       }
       navigate('/board', { replace: true });
     } catch (error) {
