@@ -10,13 +10,10 @@ function ChatInvite({ inviteList, setInviteList, fetchChatRooms }) {
     // 썸네일 데이터 가져오기
     useEffect(() => {
         const boardIds = inviteList.map((invite) => invite.boardId); // boardId 추출
-        console.log("Invite List1111:", inviteList);
-        console.log("Board IDs being sent:", boardIds);
 
         const fetchThumbnails = async () => {
             try {
                 const response = await postJsonData("/board/thumbnails", boardIds); // 썸네일 API 호출
-                console.log("Thumbnail Response:", response);
                 const thumbnailsMap = response.reduce((acc, { boardId, thumbnailUrl }) => {
                     acc[boardId] = thumbnailUrl;
                     return acc;

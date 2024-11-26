@@ -5,6 +5,7 @@ import lombok.Data;
 @Data
 public class ChatRoomInvitationDto {
     private Long id;
+    private Long boardId;
     private Long chatRoomId;
     private Long userId;
     private String status;

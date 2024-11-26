@@ -30,6 +30,7 @@ public class ChatRoomInvitationServiceImpl implements ChatRoomInvitationService 
         dto.setUserId(invitation.getUser().getId());
         dto.setStatus(invitation.getStatus().name());
         dto.setRoomName(invitation.getChatRoom().getRoomName()); // roomName 설정 추가
+        dto.setBoardId(invitation.getChatRoom().getBoard().getId()); // boardId 추가
         return dto;
     }
 

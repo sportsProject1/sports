@@ -70,7 +70,7 @@ function ChatList({ chatRoomList, onChatRoomClick }) {
             </ChatRoomItem>
             );
         },
-        [handleRoomClick, handleBoardClick, thumbnails ]
+        [handleRoomClick, handleBoardClick, thumbnails]
     );
 
     // 초대받은 채팅방이 없을 경우 로딩 페이지 표시
