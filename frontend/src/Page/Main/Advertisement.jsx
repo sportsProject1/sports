@@ -30,7 +30,7 @@ const HighlightText = styled.span`
 `;
 
 const Paragraph = styled.p`
-    font-size: 14px;
+    font-size: 13px;
     line-height: 1.6;
     margin-bottom: 15px;
 `;
