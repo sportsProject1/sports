@@ -31,7 +31,7 @@ function MainBestBoard() {
         "자유": "자유 게시판",
     };
     const categoryRoutesMap = {
-        "운동": "/board/sports",
+        "운동": "/board",
         "공지사항": "/board/notice",
         "모집": "/board/recruit",
         "자유": "/board/free",
