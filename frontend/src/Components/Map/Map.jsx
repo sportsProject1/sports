@@ -187,7 +187,7 @@ const Map = ({ latitude, longitude, onChange, isSearchEnabled = true }) => {
                 marginRight: "10px",
               }}
           />
-          <button onClick={() => handleSearch(address)}
+          <button type="button" onClick={() => handleSearch(address)}
               style={{
                       padding: "8px 16px",
                       backgroundColor: "#007bff",
@@ -197,7 +197,6 @@ const Map = ({ latitude, longitude, onChange, isSearchEnabled = true }) => {
                       cursor: "pointer",
                 }}
               >검색</button>
-
           {/* 자동완성 주소 리스트 */}
           {addressSuggestions.length > 0 && (
             <ul
