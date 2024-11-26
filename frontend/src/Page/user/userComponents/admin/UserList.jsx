@@ -97,7 +97,6 @@ function UserList() {
     const fetchUsers = async () => {
         try {
             const res = await fetchTokenData("/admin/users");
-            console.log("Fetched data:", res);
             setUsers(res.data);
             setCurrentPage(1);
         } catch (error) {

@@ -172,29 +172,60 @@ const Map = ({ latitude, longitude, onChange, isSearchEnabled = true }) => {
   return (
     <div>
       {isSearchEnabled && (
-        <>
+        <div style={{ marginBottom: "10px" }}>
           <input
             type="text"
             value={address}
             onChange={handleAddressChange} // 주소 입력 상태 관리
             onKeyDown={handleKeyDown} // 엔터키 처리
             placeholder="주소를 입력하세요"
+            style={{
+                width: "300px",
+                padding: "8px",
+                border: "1px solid #ccc",
+                borderRadius: "4px",
+                marginRight: "10px",
+              }}
           />
-          <button onClick={() => handleSearch(address)}>검색</button>
+          <button onClick={() => handleSearch(address)}
+              style={{
+                      padding: "8px 16px",
+                      backgroundColor: "#007bff",
+                      color: "#fff",
+                      border: "none",
+                      borderRadius: "4px",
+                      cursor: "pointer",
+                }}
+              >검색</button>
 
           {/* 자동완성 주소 리스트 */}
           {addressSuggestions.length > 0 && (
-            <ul>
+            <ul
+            style={{
+                listStyle: "none",
+                padding: "0",
+                margin: "0",
+                border: "1px solid #ccc",
+                borderRadius: "4px",
+                maxHeight: "150px",
+                overflowY: "auto",
+              }}
+            >
               {addressSuggestions.map((suggestion, index) => (
-                <li key={index} onClick={() => handleSuggestionClick(suggestion)}>
+                <li key={index} onClick={() => handleSuggestionClick(suggestion)}
+                    style={{
+                                        padding: "8px",
+                                        borderBottom: "1px solid #eee",
+                                        cursor: "pointer",
+                                      }}>
                   {suggestion.place_name}
                 </li>
               ))}
             </ul>
           )}
-        </>
+        </div>
       )}
-      <div id="map" style={{ width: '50%', height: '400px' }}></div>
+      <div id="map" style={{ width: "50%", height: "400px", border: "1px solid #ccc", borderRadius: "4px", marginBottom: "10px" }}/>
     </div>
   );
 };

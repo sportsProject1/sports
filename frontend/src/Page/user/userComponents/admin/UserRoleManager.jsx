@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import { fetchTokenData, putTokenJsonData } from "../../../../Server/ApiService";
 
 function UserRoleManager({ userId }) {
     const [role, setRole] = useState("");
@@ -7,19 +7,30 @@ function UserRoleManager({ userId }) {
 
     useEffect(() => {
         // 사용자 권한 가져오기
-        axios.get(`/admin/users/${userId}/role`).then((response) => {
-            setRole(response.data);
-        });
+        const getUserRole = async () => {
+            try {
+                const response = await fetchTokenData(`/admin/users/${userId}/role`);
+                setRole(response.data); // 응답 데이터에서 권한 설정
+            } catch (error) {
+                console.error("Failed to fetch user role:", error);
+            }
+        };
+
+        getUserRole();
     }, [userId]);
 
     const handleRoleChange = (e) => {
         setRole(e.target.value);
     };
 
-    const saveRole = () => {
-        axios.put(`/admin/users/${userId}/role`, { role }).then(() => {
+    const saveRole = async () => {
+        try {
+            await putTokenJsonData(`/admin/users/${userId}/role`, { role });
             alert("Role updated successfully!");
-        });
+        } catch (error) {
+            console.error("Failed to update role:", error);
+            alert("Failed to update role.");
+        }
     };
 
     return (

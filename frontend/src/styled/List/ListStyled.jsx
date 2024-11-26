@@ -26,15 +26,17 @@ export const PostInfo = styled.div`
 
     .time-ago {
         position: absolute;
-        top:-100px;
-        right:0;
+        top: -110px;
+        right: 0;
         font-weight: bold;
-        color: black;
+        color: white; /* 텍스트 색상 */
         font-size: 12px;
         padding: 4px 8px;
         border-radius: 12px;
+        background-color: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(2px);
         text-shadow: 0px 0px 4px rgba(0, 0, 0, 0.5),
-                     0px 0px 4px rgba(255, 255, 255, 0.3);/
+                     0px 0px 4px rgba(255, 255, 255, 0.3);
     }
 
     .details {
