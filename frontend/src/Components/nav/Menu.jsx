@@ -93,9 +93,10 @@ function Menu() {
             <li>
                 <Link to="/board/recruit">같이해요</Link>
             </li>
-            <li>
+            {user ? <li>
                 <Link to="/chat">채팅</Link>
-            </li>
+            </li> : null}
+
             <li>
                 <Link to="/shop">쇼핑</Link>
             </li>
@@ -120,12 +121,15 @@ function Menu() {
         ) : (
             <>
                 <li onClick={handleLogout}>
-                    로그아웃 <FaSignOutAlt />
+                    로그아웃 <FaSignOutAlt/>
                 </li>
                 <li>
                     <Link to="/mypage">
-                        마이페이지 <FaUserGear />
+                        마이페이지 <FaUserGear/>
                     </Link>
+                </li>
+                <li onClick={handleCartClick}>
+                    장바구니 <FaShoppingCart/>
                 </li>
             </>
         );
@@ -154,9 +158,7 @@ function Menu() {
             {/* 오른쪽 메뉴 */}
             <MenuList>
                 <UserMenu />
-                <li onClick={handleCartClick}>
-                    장바구니 <FaShoppingCart />
-                </li>
+
             </MenuList>
         </MenuContainer>
     );

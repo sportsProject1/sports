@@ -1,8 +1,10 @@
 import Pagination from "./Pagination";
 import {CreateButton, CreateButtonContainer, PaginationContainer} from "../../styled/Common";
 import React from "react";
+import {useSelector} from "react-redux";
 
 function PagePagination({totalItems,itemsPerPage,currentPage,onPageChange,Text,navigate}) {
+    const user = useSelector((state)=>state.auth.user);
     return (
         <PaginationContainer>
             <Pagination
@@ -13,8 +15,9 @@ function PagePagination({totalItems,itemsPerPage,currentPage,onPageChange,Text,n
             />
             {Text && (
             <CreateButtonContainer>
-                <CreateButton
-                onClick={navigate}>{Text}</CreateButton>
+                {user? <CreateButton
+                    onClick={navigate}>{Text}</CreateButton> : null}
+
             </CreateButtonContainer>
             )}
         </PaginationContainer>

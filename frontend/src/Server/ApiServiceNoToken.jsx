@@ -14,6 +14,18 @@ export const fetchData = async (url, setState) =>{
     }
 }
 
+export const registerFetchData = async (url,options = {}) =>{
+    try {
+        const response = await apiNoToken.get(url, {
+            params: options.params, // params 처리
+        });
+        return response;
+    } catch (error) {
+        console.error('Error in fetchData:', error);
+        throw error; // 에러를 호출한 곳에서 처리할 수 있도록 전달
+    }
+}
+
 export const postData = async (url,formData) => {
     try {
         const response = await apiNoToken.post(url, formData,{
