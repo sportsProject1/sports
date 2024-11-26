@@ -222,7 +222,7 @@ export const CategoryTag = styled.span`
     right: 10px;
     background-color: #f1f3f5;
     color: #495057;
-    font-size: 12px;
+    font-size: 11px;
     padding: 4px 8px;
     border-radius: 12px;
 `;
@@ -315,7 +315,7 @@ export const PostImage = styled.div`
 
 export const BoardPostImage = styled.div`
     width: 100%;
-    height: 180px;
+    height: 140px;
     overflow:hidden;
     background-color: #e9ecef;
     background-size: contain;
