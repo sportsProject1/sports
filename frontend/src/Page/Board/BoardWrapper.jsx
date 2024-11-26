@@ -1,19 +1,16 @@
 import SubMenu from "../../Components/Menu/SubMenu";
-import { ItemContainer } from "../../styled/Common";
-import {
-    Author,
-    CategoryTag, PlaceholderImg,
-    PostCard,
-    BoardPostImage,
-    PostTitle
-} from "../../styled/main/MainPageStyled";
-import React, { useMemo, useState, useEffect } from "react";
-import { ListWrap, PostInfo, PostContent, BoardWrapperImg } from "../../styled/List/ListStyled"; /////******** */
+import {ItemContainer} from "../../styled/Common";
+import React, {useEffect, useMemo, useState} from "react";
+import {ListWrap} from "../../styled/List/ListStyled"; /////******** */
 import PagePagination from "../../Components/Pagination/PagePagination";
-import { useNavigate } from "react-router-dom";
-import { postJsonData } from "../../Server/ApiServiceNoToken";
+import {useNavigate} from "react-router-dom";
+import {postJsonData} from "../../Server/ApiServiceNoToken";
+import BoardCardType from "./BoardCard";
+import BoardListType from "./BoardListType";
+import {useSelector} from "react-redux";
 
 function BoardWrapper({ boardItem, handleSortChange, likeStatus }) {
+    const itemViewType = useSelector((state)=>state.itemType.itemType)
     const navigate = useNavigate();
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 9;
@@ -92,28 +89,19 @@ function BoardWrapper({ boardItem, handleSortChange, likeStatus }) {
                     const formattedDate = formatDate(post.createdAt);
                     const isLiked = likeStatus[post.id];
 
-                    return (
-                        <PostCard onClick={() => navigate(`/board/detail/${post.id}`)} key={post.id}>
-                            <BoardPostImage>
-                                <BoardWrapperImg src={thumbnailUrl} alt={`thumbnail ${post.title}`} />
-                                <CategoryTag>{post.category}</CategoryTag>
-                            </BoardPostImage>
-                            <PostContent>
-                                <PostTitle>{post.title}</PostTitle>
-                                <Author>{post.author}</Author>
-                                <PostInfo>
-                                    <span className="time-ago">{timeAgo}</span>
-                                    <div className="details">
-                                        <span> 👀 {post.views}</span>
-                                        <span>{isLiked ? "❤️ " : "🤍 "}{post.likes}</span>
-                                    </div>
-                                </PostInfo>
-                                <div style={{ fontSize: "12px", color: "gray", marginTop: "4px" }}>
-                                    {formattedDate}
-                                </div>
-                            </PostContent>
-                        </PostCard>
-                    );
+                    return itemViewType === "card" ? <BoardCardType
+                            key={post.id}
+                            post={post}
+                            thumbnailUrl={thumbnailUrl}
+                            timeAgo={timeAgo}
+                            formattedDate={formattedDate}
+                            isLiked={isLiked}
+                        /> : <BoardListType key={post.id}
+                                            post={post}
+                                            thumbnailUrl={thumbnailUrl}
+                                            timeAgo={timeAgo}
+                                            formattedDate={formattedDate}
+                                            isLiked={isLiked}/>
                 })}
             </ItemContainer>
 

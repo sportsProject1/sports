@@ -101,7 +101,8 @@ function CreateForm({ updateData, updateId }) {
   });
   const [category, setCategory] = useState();
   const [showMap, setShowMap] = useState(false); // 지도 표시 여부 상태 추가
-  const userId = useSelector((state) => state.auth.user?.userId);
+  const userRole = useSelector((state) => state.auth.user?.role);
+  console.log(userRole)
 console.log(updateData)
   useEffect(() => {
     if (updateData) {
@@ -123,8 +124,22 @@ console.log(updateData)
     }
 
     fetchData('/category/get').then((res) => {
-      const filteredCategories = res.data.filter((item) => item.tag === '운동' || item.tag === 'etc');
+      const filteredCategories = res.data.filter((item) => {
+        if (item.tag === '운동') {
+          return true; // 운동 태그는 모두 표시
+        }
+        if (item.tag === 'etc') {
+          if (item.name === '공지사항') {
+            return userRole === 'ROLE_ADMIN'; // 공지사항은 ROLE_ADMIN만 표시
+          }
+          return true; // 나머지 etc는 모두 표시
+        }
+        return false; // 그 외 태그는 제외
+      });
+
       setCategory(filteredCategories);
+
+      // 기본 카테고리 선택 (새 게시글 작성 시)
       if (filteredCategories.length > 0 && !updateData) {
         setFormData((prev) => ({ ...prev, categoryId: filteredCategories[0].id }));
       }
@@ -135,28 +150,43 @@ console.log(updateData)
     e.preventDefault();
     if (isSubmitting) return; // 이미 요청 중이라면 함수 종료
 
+    // 제목과 본문 유효성 검사
+    if (!formData.title.trim()) {
+      alert('제목을 입력해주세요.');
+      setIsSubmitting(false); // 버튼 활성화
+      return;
+    }
+
+    const content = editorRef.current.getInstance().getMarkdown(); // Markdown 형식으로 본문 가져오기
+    if (!content.trim()) {
+      alert('본문 내용을 입력해주세요.');
+      setIsSubmitting(false); // 버튼 활성화
+      return;
+    }
+
     const userConfirmed = window.confirm(updateData ? '게시글을 수정하시겠습니까?' : '게시글을 등록하시겠습니까?');
-    if (!userConfirmed) return;
+    if (!userConfirmed) {
+      setIsSubmitting(false); // 버튼 활성화
+      return;
+    }
 
     setIsSubmitting(true); // 요청 시작 시 플래그 설정
 
-    const content = editorRef.current.getInstance().getHTML();
     const newFormData = new FormData();
     newFormData.append('title', formData.title);
     newFormData.append('categoryId', formData.categoryId);
-    newFormData.append('content', content);
+    newFormData.append('content', editorRef.current.getInstance().getHTML()); // 실제 전송은 HTML 형식으로
     newFormData.append('chatroom', formData.chatRoom);
 
-    // 지도 정보가 있을 경우에만 추가
     if (formData.latitude !== null && formData.longitude !== null) {
-      newFormData.append('latitude', formData.latitude); // 위도 추가
-      newFormData.append('longitude', formData.longitude); // 경도 추가
+      newFormData.append('latitude', formData.latitude);
+      newFormData.append('longitude', formData.longitude);
     }
 
     try {
       if (updateData) {
         await putTokenData(`/board/${updateId}`, newFormData);
-        alert('게시글이 성공적으로으로 수정되었습니다.');
+        alert('게시글이 성공적으로 수정되었습니다.');
       } else {
         const res = await postTokenData('/board/add', newFormData);
         if (formData.chatRoom) {
@@ -170,6 +200,8 @@ console.log(updateData)
       navigate('/board', { replace: true });
     } catch (error) {
       console.error('게시물 전송 중 오류 발생:', error);
+    } finally {
+      setIsSubmitting(false); // 요청 완료 후 플래그 해제
     }
   };
 
