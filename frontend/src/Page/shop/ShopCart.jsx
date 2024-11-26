@@ -37,12 +37,9 @@ function ShopCart() {
             const response = await putTokenJsonData(`/mypage/cart/update/checkbox/${cartId}`, payload);
 
             if (response.status === 200) {
-                console.log("체크박스 상태 업데이트 성공");
             } else {
-                console.error("Failed to update checkbox status:", response);
             }
         } catch (error) {
-            console.error("Failed to update checked status:", error);
         }
     };
 
@@ -63,7 +60,10 @@ function ShopCart() {
 
         try {
             if (type === 'delete') {
+                const userConfirmed = window.confirm("정말 이 항목을 삭제하시겠습니까?");
+                if (!userConfirmed) return;
                 await deleteTokenData(endpoint, payload);
+                alert("상품이 성공적으로 삭제되었습니다.");
                 // 삭제 후 최신 카트 데이터 다시 불러오기
                 fetchUpdatedCart();
             } else {
@@ -72,14 +72,13 @@ function ShopCart() {
                 fetchUpdatedCart();
             }
         } catch (error) {
-            console.error(`Failed to update ${type}:`, error);
+            alert("삭제에 실패했습니다");
         }
     };
 
     // 카트 데이터를 다시 불러오는 함수
     const fetchUpdatedCart = () => {
         fetchTokenData("/mypage/cart").then((res) => {
-            console.log(res);
             const cartItems = res.data.cartItems;
 
             // 카트 아이템의 체크 상태를 초기화하여 반영
@@ -104,14 +103,14 @@ function ShopCart() {
     const handleDeleteCheckedItems = async () => {
         try {
             const response = await deleteTokenData('/mypage/cart/delete/checked');
+            const userConfirmed = window.confirm("선택한 항목들을 삭제하시겠습니까?");
+            if (!userConfirmed) return;
 
             if (response.status === 200) {
-                console.log("선택한 항목이 삭제되었습니다.");
             } else {
-                console.error("선택 항목 삭제 실패", response);
+                alert("선택 항목 삭제에 실패했습니다.");
             }
         } catch (error) {
-            console.error("선택 항목 삭제 중 오류 발생:", error);
         } finally {
             fetchUpdatedCart();
         }
