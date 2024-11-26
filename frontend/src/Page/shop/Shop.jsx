@@ -5,6 +5,7 @@ import { ShopContainer } from "../../styled/shopStyled";
 import SideMenu from "../../Components/Menu/SideMenu";
 import ItemWrapper from "./ItemWrapper";
 import LoadingPage from "../../Components/LoadingPage";
+import useLikeStatus from "../../hooks/useLikeStatus";
 
 function Shop() {
     const [items, setItems] = useState([]);
@@ -14,6 +15,9 @@ function Shop() {
     const navigate = useNavigate();
     const [searchQuery, setSearchQuery] = useState(''); // 검색어 상태
     const [sortOption, setSortOption] = useState("latest"); // 정렬 옵션 상태
+
+    const itemIds = useMemo(() => items.map((item) => item.id), [items]);
+    const { likeStatus, error } = useLikeStatus(itemIds, "Item", "shop");
 
     // 쿼리 파라미터에서 검색어 추출
     useEffect(() => {
@@ -32,7 +36,6 @@ function Shop() {
                 setItems(itemsResponse.data.items);
                 setCategory(categoryResponse.data);
             } catch (error) {
-                console.error("데이터 로딩 중 오류:", error);
             }
         };
         fetchAllData();
@@ -111,6 +114,7 @@ function Shop() {
                 handleSortChange={handleSortChange}
                 isShop={true}
                 sortOption={sortOption} // 정렬 옵션 전달
+                likeStatus={likeStatus}
             />
         </ShopContainer>
     );

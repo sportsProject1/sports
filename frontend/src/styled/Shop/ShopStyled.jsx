@@ -314,7 +314,7 @@ export const CheckoutButton = styled.button`
     transition: background-color 0.3s;
 
     &:hover {
-        background-color: #45a049;
+        background-color: ${(props) => props.theme.colors.primary};
     }
 `;
 export const DeleteAllButton = styled.button`

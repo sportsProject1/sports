@@ -165,10 +165,10 @@ export const PriceContainer = styled.div`
 
 export const LikeCount = styled.span`
     font-size: 14px;
-    color: #ff4c4c;
+    color: black;
     position: absolute;
-    right: 10px;
-    top: 50%;
+    right: 15px;
+    top: 40%;
     transform: translateY(-50%);
     white-space: nowrap;
     padding-right: 5px;

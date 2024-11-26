@@ -221,6 +221,15 @@ function Payment() {
                 }}
                 validationSchema={validationSchema}
                 onSubmit={(values) => {
+
+                    const userConfirmed = window.confirm("결제를 진행하시겠습니까?");
+
+                    if (!userConfirmed) {
+                        alert("결제가 취소되었습니다.");
+                        navigate('/shop/cart');
+                        return;
+                    }
+
                     const formattedPhone = removePhoneNumberHyphens(values.phone);
                     const deliveryAddress = `${values.zipCode}, ${values.roadAddress}, ${values.detailAddress}`;
                     const cartItems = paymentItem.cartItems.filter(item => item.checked);
@@ -236,10 +245,10 @@ function Payment() {
                     };
 
                     postTokenJsonData("/payment/process", dataToSend).then((res) => {
-                        console.log(res);
+                        alert('결제가 완료되었습니다.');
                         navigate('/history');
                     }).catch((err) => {
-                        console.log(err);
+                        alert('결제가 실패되었습니다.');
                     });
                 }}
             >
