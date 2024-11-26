@@ -71,6 +71,18 @@ function Comment({ commentData, comment, setComment, onCreateComment, setComment
         })
     }
 
+    const formatDate = (dateString) => {
+            const date = new Date(dateString);
+            const year = date.getFullYear();
+            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+            const day = date.getDate().toString().padStart(2, '0');
+            const hours = date.getHours().toString().padStart(2, '0');
+            const minutes = date.getMinutes().toString().padStart(2, '0');
+            const seconds = date.getSeconds().toString().padStart(2, '0');
+
+            return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+    };
+
     return (
         <CommentSection>
             <CommentInputBox>
@@ -90,8 +102,7 @@ function Comment({ commentData, comment, setComment, onCreateComment, setComment
                         <CommentHeader>
                             <CommentAuthor>{comment.username}</CommentAuthor>
                             <div className="comment-actions">
-                                <CommentLikeButton onClick={() => {/* 좋아요 토글 로직 추가 */ }}>좋아요</CommentLikeButton>
-                                <CommentTime>{comment.createdAt}</CommentTime>
+                                <CommentTime>{formatDate(comment.createdAt)}</CommentTime>
                                 {/* 게시글 작성자인 경우 모든 댓글에 케밥 메뉴 표시 */}
                                 {/* 게시글 작성자가 아닌 경우 자신의 댓글에만 케밥 메뉴 표시 */}
                                 {(postAuthorId === currentUserId || comment.userId === currentUserId) && (
