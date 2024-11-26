@@ -113,6 +113,13 @@ function CreateForm({ updateData, updateId }) {
         longitude: updateData.longitude || null, // 기존 경도 설정
       }));
       editorRef.current?.getInstance().setHTML(updateData.content);
+
+      if (updateData.category) {
+        const categoryIdFromCategoryName = category?.find(cat => cat.name === updateData.category)?.id;
+        if (categoryIdFromCategoryName) {
+           setFormData(prev => ({ ...prev, categoryId: categoryIdFromCategoryName }));
+        }
+      }
     }
 
     fetchData('/category/get').then((res) => {
