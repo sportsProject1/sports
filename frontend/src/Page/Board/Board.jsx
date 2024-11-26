@@ -36,41 +36,32 @@ function Board() {
         }
     }, [location]);
 
-    // 데이터 로드
     useEffect(() => {
-        if (isSearchMode && searchQuery.trim()) {
-            // 검색 모드일 때
-            fetchData(`/board/search?keyword=${searchQuery}`).then((res) => {
-                setBoardItem(res.data);
-            });
-        } else {
-            // 일반 모드일 때
-            fetchData("/board/list").then((res) => {
-                setBoardItem(res.data);
+        if (isSearchMode && searchQuery.trim()){
+            fetchData(`/board/search?keyword=${searchQuery}`).then((res)=>{
+                setBoardItem(res.data)
+            })
+        }else{
+            fetchData("/board/list").then((res)=>{
+                console.log(res)
+                setBoardItem(res.data)
             });
         }
-        // 카테고리 데이터 로드
-        fetchData("/category/get").then((res) => {
-            setCategory(res.data);
+        fetchData("/category/get").then((res)=>{
+            console.log(res)
+            setCategory(res.data)
         });
-    }, [isSearchMode, searchQuery]);
+    }, [isSearchMode,searchQuery]);
+
 
     // 카테고리 필터링 로직
     const filterByCategory = useMemo(() => {
-        if (sport === undefined || sport === "board") {
-            // "모두 보기" 상태: tag가 "운동"인 게시글만 필터링
-            return boardItem.filter(item => {
-                const matchedCategory = category.find(cat => cat.name === item.category);
-                return matchedCategory?.tag === "운동";
-            });
-        }
+        if (!sport || !category) return boardItem;
 
-        // 특정 카테고리 상태
         const matchedCategory = category.find(cat => cat.enName === sport);
         if (matchedCategory) {
             return boardItem.filter(item => item.category === matchedCategory.name);
         }
-
         return boardItem;
     }, [boardItem, category, sport]);
 
@@ -101,14 +92,14 @@ function Board() {
         });
     }, [filterBySearchQuery, sortOption]);
 
-    // '운동' 태그가 있는 카테고리만 필터링
+    // 'sports' 태그가 있는 카테고리만 필터링
     const sportCategories = useMemo(() => {
-        return category.filter(item => item.tag === "운동" && item.enName); // '운동' 태그 및 enName이 있는 항목만 필터링
+        return category.filter(item => item.tag === "운동" && item.enName); // 'sports' 태그 및 enName이 있는 항목만 필터링
     }, [category]);
 
-    // '기타' 태그가 있는 카테고리만 필터링
+    // 'etc' 태그가 있는 카테고리만 필터링
     const etcCategories = useMemo(() => {
-        return category.filter(item => item.tag === "etc"); // '기타' 태그가 있는 카테고리
+        return category.filter(item => item.tag === "etc"); // 'etc' 태그가 있는 카테고리
     }, [category]);
 
     const handleSortChange = (sortOption) => {
@@ -131,16 +122,14 @@ function Board() {
                 subCategoryTitle={"그 외"}
                 subCategory={etcCategories}
             />
-            {boardItem.length === 0 ? (
-                <NoItemBoardWrapper handleSortChange={handleSortChange} />
-            ) : (
-                <BoardWrapper
-                    handleSortChange={handleSortChange}
-                    boardItem={sortedBoardItems}
-                    likeStatus={likeStatus}
-                    onClearSearch={clearSearch} // 검색 초기화 함수 전달
-                />
-            )}
+            {boardItem.length===0 ?
+                <NoItemBoardWrapper handleSortChange={handleSortChange} text={"게시글이"}/> : <BoardWrapper
+                handleSortChange={handleSortChange}
+                boardItem={sortedBoardItems}
+                likeStatus={likeStatus}
+                onClearSearch={clearSearch} // 검색 초기화 함수 전달
+            /> }
+
         </BoardContainer>
     );
 }
