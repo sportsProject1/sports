@@ -58,9 +58,41 @@ const FilterButton = styled.button.withConfig({
     }
 `;
 
+// 카드형 및 리스트형 Select Box 스타일
+const ViewTypeSelect = styled.select`
+    padding: 12px 20px;
+    border: 1px solid rgba(0,0,0,0.2);
+    background: linear-gradient(135deg, #f0f0f0, #e6e6e6);
+    font-size: 16px;
+    font-weight: 500;
+    color: #333;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+
+    &:hover {
+        background: linear-gradient(135deg, #e6e6e6, #d9d9d9);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    &:focus {
+        outline: none;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    }
+
+    & > option {
+        background-color: #fff;
+        color: #333;
+        font-size: 14px;
+        padding: 10px;
+    }
+`;
+
+
 function SubMenu({handleItemType, handleSortChange, isShop = false, sortOption }) {
     const [searchQuery, setSearchQuery] = useState("");
     const [activeButton, setActiveButton] = useState(sortOption || "latest");  // sortOption으로 초기화
+    const [viewType, setViewType] = useState("card");
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
@@ -84,6 +116,18 @@ function SubMenu({handleItemType, handleSortChange, isShop = false, sortOption }
         }
     };
 
+    // View Type 변경
+    const handleViewTypeChange = (event) => {
+        const selectedViewType = event.target.value;
+        setViewType(selectedViewType);
+
+        if (selectedViewType === "card") {
+            dispatch(CardType());
+        } else {
+            dispatch(ListType());
+        }
+    };
+
     // sortOption이 변경될 때마다 activeButton을 동기화
     useEffect(() => {
         setActiveButton(sortOption);
@@ -102,6 +146,12 @@ function SubMenu({handleItemType, handleSortChange, isShop = false, sortOption }
                 />
                 <SearchIcon onClick={handleSearch}>🔍</SearchIcon>
             </SearchInputWrapper>
+
+            {/* 카드형/리스트형 Select Box */}
+            <ViewTypeSelect value={viewType} onChange={handleViewTypeChange}>
+                <option value="card">카드형</option>
+                <option value="list">리스트형</option>
+            </ViewTypeSelect>
 
             {/* 필터 버튼들 */}
             <div>
@@ -136,12 +186,6 @@ function SubMenu({handleItemType, handleSortChange, isShop = false, sortOption }
                 ) : (
                     // Board용 필터 버튼 (최신순, 오래된순, 조회수순, 좋아요순)
                     <>
-                        <FilterButton onClick={()=>dispatch(CardType())}>
-                            카드형
-                        </FilterButton>
-                        <FilterButton onClick={()=>dispatch(ListType())}>
-                            리스트형
-                        </FilterButton>
                         <FilterButton
                             $active={activeButton === "latest"}
                             onClick={() => handleButtonClick("latest")}

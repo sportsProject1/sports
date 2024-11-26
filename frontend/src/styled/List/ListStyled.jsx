@@ -20,7 +20,7 @@ export const ListWrap = styled.div`
 
 export const PostContent = styled.div`
     position: relative;
-    padding: 16px;
+    padding: 13px;
     display: flex;
     flex-direction: column;
     gap: 5px;
@@ -36,22 +36,21 @@ export const PostInfo = styled.div`
     color: gray;
     display: flex;
     justify-content: space-between;
-    margin-top: 8px;
+    margin-top: 5px;
     position: relative;
 
     .time-ago {
         position: absolute;
-        top: -110px;
+        top: -103px;
         right: 0;
         font-weight: bold;
-        color: white; /* 텍스트 색상 */
-        font-size: 12px;
-        padding: 4px 8px;
-        border-radius: 12px;
+        color: white;
+        font-size: 11px;
+        padding: 4px 6px;
+        border-radius: 11px;
         background-color: rgba(255, 255, 255, 0.2);
         backdrop-filter: blur(2px);
-        text-shadow: 0px 0px 4px rgba(0, 0, 0, 0.5),
-        0px 0px 4px rgba(255, 255, 255, 0.3);
+        text-shadow: 0px 0px 4px rgba(0, 0, 0, 0.5), 0px 0px 4px rgba(255, 255, 255, 0.3);
 
         @media (max-width: 768px) {
             font-size: 10px; /* 모바일에서는 텍스트 크기 감소 */
@@ -80,7 +79,7 @@ export const PostInfo = styled.div`
 
 export const BoardWrapperImg = styled.img`
     width: 100%;
-    height: 180px;
+    height: 140px;
     object-fit: cover;
     border-radius: 8px;
 
