@@ -26,7 +26,7 @@ function BoardDetail(){
 
     const [chatRoomId,setChatRoomId] = useState();
 
-    const currentUserId = useSelector((state) => state.auth?.userId);
+    const currentUserId = useSelector((state) => state.auth.user?.userId);
     console.log("currentUserId:", currentUserId);
 
     useEffect(() => {

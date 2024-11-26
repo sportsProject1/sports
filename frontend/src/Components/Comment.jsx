@@ -17,8 +17,7 @@ function Comment({ commentData, comment, setComment, onCreateComment, setComment
     const [editIndex, setEditIndex] = useState(null);
     const [editContent, setEditContent] = useState("");
 
-    // 현재 로그인한 사용자 ID 가져오기 (Redux 사용 예시)
-    const currentUserId = useSelector((state) => state.auth?.userId);
+    const currentUserId = useSelector((state) => state.auth.user?.userId);
 
     const toggleMenu = (index) => {
         if (activeMenuIndex === index) {
@@ -93,14 +92,15 @@ function Comment({ commentData, comment, setComment, onCreateComment, setComment
                             <div className="comment-actions">
                                 <CommentLikeButton onClick={() => {/* 좋아요 토글 로직 추가 */ }}>좋아요</CommentLikeButton>
                                 <CommentTime>{comment.createdAt}</CommentTime>
-                                {/* 케밥 메뉴 버튼 조건부 렌더링 */}
-                                {(comment.userId === currentUserId || postAuthorId === currentUserId) && (
+                                {/* 게시글 작성자인 경우 모든 댓글에 케밥 메뉴 표시 */}
+                                {/* 게시글 작성자가 아닌 경우 자신의 댓글에만 케밥 메뉴 표시 */}
+                                {(postAuthorId === currentUserId || comment.userId === currentUserId) && (
                                     <KebabMenuButton onClick={() => toggleMenu(index)}>⋮</KebabMenuButton>
                                 )}
 
                                 {activeMenuIndex === index && (
                                     <MenuContainer>
-                                        {/* 댓글 작성자 본인일 경우 */}
+                                        {/* 본인이 쓴 댓글 */}
                                         {comment.userId === currentUserId && (
                                             <>
                                                 <MenuItemButton onClick={() => handleEditComment(index, comment.content)}>
@@ -112,15 +112,17 @@ function Comment({ commentData, comment, setComment, onCreateComment, setComment
                                             </>
                                         )}
 
-                                        {/* 게시글 작성자가 다른 사용자의 댓글에 접근할 경우 */}
-                                        {postAuthorId === currentUserId && comment.userId !== currentUserId && chatRoomId && (
+                                        {/* 게시글 작성자가 다른 사용자의 댓글에 접근한 경우 */}
+                                        {postAuthorId === currentUserId && comment.userId !== currentUserId && (
                                             <>
                                                 <MenuItemButton onClick={() => handleDeleteComment(comment.id)}>
                                                     삭제하기
                                                 </MenuItemButton>
-                                                <MenuItemButton onClick={() => onInvite(comment.userId)}>
-                                                    초대하기
-                                                </MenuItemButton>
+                                                {chatRoomId && (
+                                                    <MenuItemButton onClick={() => onInvite(comment.userId)}>
+                                                        초대하기
+                                                    </MenuItemButton>
+                                                )}
                                             </>
                                         )}
                                     </MenuContainer>
