@@ -85,6 +85,9 @@ export const ContentSection = styled.div`
   font-size: 1.1rem;
   line-height: 1.6;
   min-height:400px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 
   img {
     max-width: 300px;
@@ -98,7 +101,10 @@ export const ContentSection = styled.div`
 export const InteractionSection = styled.div`
   display: flex;
   justify-content: space-between;
+  align-items: flex-end;
   margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #ccc;
 `;
 
 export const LikeButton = styled.button`
@@ -110,7 +116,10 @@ export const LikeButton = styled.button`
   cursor: pointer;
   font-size: 1rem;
   margin-right: 10px;
+  display: inline-block;
+  /* 포지션 속성 제거로 유동적으로 배치 */
 `;
+
 
 export const ViewsText = styled.span`
   font-size: 0.9rem;
