@@ -179,9 +179,10 @@ function UserInfoBox() {
                 </>
             ) : (
                 <>
-                    <Avatar src="https://via.placeholder.com/80" alt="Default Avatar" />
-                    <h3>로그인 좀 해주세요</h3>
-                    <p>로그인 하시면 좋겠네요</p>
+                    <Avatar src="https://mystudy5350.s3.amazonaws.com/test/logoblackbg.png" alt="Default Avatar" />
+                    <h3>로그인하고</h3>
+                    <p>함께 운동할 사람을</p>
+                    <p>찾아보세요!</p>
                     <Button onClick={handleLogin}>로그인</Button>
                 </>
             )}
