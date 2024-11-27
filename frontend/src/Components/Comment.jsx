@@ -10,7 +10,8 @@ import {
 } from "../styled/CommentStyled";
 import { useState } from "react";
 import {deleteTokenData, postTokenJsonData, putTokenJsonData} from "../Server/ApiService";
-import { useSelector } from "react-redux"; // 사용자 정보를 가져오기 위해 추가
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 function Comment({ commentData, comment, setComment, onCreateComment, setCommentData, postAuthorId,chatRoomId }) {
     const [activeMenuIndex, setActiveMenuIndex] = useState(null);
@@ -18,6 +19,7 @@ function Comment({ commentData, comment, setComment, onCreateComment, setComment
     const [editContent, setEditContent] = useState("");
 
     const currentUserId = useSelector((state) => state.auth.user?.userId);
+    const navigate = useNavigate();
 
     const toggleMenu = (index) => {
         if (activeMenuIndex === index) {
@@ -83,6 +85,15 @@ function Comment({ commentData, comment, setComment, onCreateComment, setComment
             return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
     };
 
+    const handleCreateComment = () => {
+        if (!currentUserId) {
+            alert('로그인 후 작성할 수 있습니다.');
+            navigate('/login');  // 로그인 페이지로 리디렉션
+        } else {
+            onCreateComment();
+        }
+    };
+
     return (
         <CommentSection>
             <CommentInputBox>
@@ -93,7 +104,7 @@ function Comment({ commentData, comment, setComment, onCreateComment, setComment
                         setComment(e.target.value);
                     }}
                 />
-                <SubmitButton onClick={onCreateComment}>댓글 입력</SubmitButton>
+                <SubmitButton onClick={handleCreateComment}>댓글 입력</SubmitButton>
             </CommentInputBox>
 
             <CommentListContainer>

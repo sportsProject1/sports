@@ -7,6 +7,7 @@ import ItemWrapper from "./ItemWrapper";
 import LoadingPage from "../../Components/LoadingPage";
 import useLikeStatus from "../../hooks/useLikeStatus";
 import UserInfoBox from "../../Components/UserInfoBox";
+import NoItemBoardWrapper from "../Board/NoItemBoardWrapper";
 
 function Shop() {
     const [items, setItems] = useState([]);
@@ -15,6 +16,7 @@ function Shop() {
     const location = useLocation(); // 현재 위치 (쿼리 파라미터 추출용)
     const navigate = useNavigate();
     const [searchQuery, setSearchQuery] = useState(''); // 검색어 상태
+    const [isSearchMode, setIsSearchMode] = useState(false); // 검색 상태 관리
     const [sortOption, setSortOption] = useState("latest"); // 정렬 옵션 상태
 
     const itemIds = useMemo(() => items.map((item) => item.id), [items]);
@@ -26,6 +28,10 @@ function Shop() {
         const keyword = params.get("keyword");
         if (keyword) {
             setSearchQuery(keyword);
+            setIsSearchMode(true);
+        } else {
+            setSearchQuery(''); // 검색어 초기화
+            setIsSearchMode(false); // 검색 모드 비활성화
         }
     }, [location]);
 
@@ -62,11 +68,11 @@ function Shop() {
 
     // 검색어와 카테고리 필터링이 결합되지 않도록 처리
     const finalFilteredItems = useMemo(() => {
-        if (searchQuery.trim()) {
+        if (isSearchMode && searchQuery.trim()) {
             return filteredItemsBySearch; // 검색어가 있으면 검색어 필터링된 결과만 반환
         }
         return filteredItemsByCategory; // 검색어 없으면 카테고리 필터링된 결과 반환
-    }, [filteredItemsBySearch, filteredItemsByCategory, searchQuery]);
+    }, [filteredItemsBySearch, filteredItemsByCategory, isSearchMode, searchQuery]);
 
     // 정렬 변경 처리 함수
     const handleSortChange = (newSortOption) => {
@@ -90,10 +96,14 @@ function Shop() {
         }
     }, [finalFilteredItems, sortOption]);
 
-    // 카테고리 클릭 시 URL 변경
+    // 카테고리 클릭 시 URL 변경 및 검색 상태 초기화
     const handleCategoryClick = (category) => {
+        setSearchQuery(''); // 검색어 초기화
+        setIsSearchMode(false); // 검색 상태 비활성화
         if (category && category.enName) {
             navigate(`/shop/${category.enName}`); // 카테고리 클릭 시 URL 변경
+        } else {
+            navigate("/shop"); // 전체 카테고리로 돌아갈 때
         }
     };
 
@@ -110,14 +120,19 @@ function Shop() {
                 categoryTitle={"카테고리"}
                 handleCategoryClick={handleCategoryClick}
             />
-            <ItemWrapper
-                items={sortedItems} // 정렬된 아이템 전달
-                handleSortChange={handleSortChange}
-                isShop={true}
-                sortOption={sortOption} // 정렬 옵션 전달
-                likeStatus={likeStatus}
-            />
-            <UserInfoBox/>
+           
+            {sortedItems.length === 0 ? ( // items가 비어있을 경우
+                <NoItemBoardWrapper handleSortChange={handleSortChange} text={"상품이"} />
+            ) : (
+                <ItemWrapper
+                    items={sortedItems} // 정렬된 아이템 전달
+                    handleSortChange={handleSortChange}
+                    isShop={true}
+                    sortOption={sortOption} // 정렬 옵션 전달
+                    likeStatus={likeStatus}
+                />
+            )}
+              <UserInfoBox/>
         </ShopContainer>
     );
 }

@@ -23,6 +23,16 @@ function ShopCart() {
     const [userCart, setUserCart] = useState([]);
     const navigate = useNavigate();
 
+    useEffect(() => {
+            const user = JSON.parse(localStorage.getItem('user'));
+            if (!user) {
+                alert('잘못된 접근입니다. 로그인페이지로 이동합니다.');
+                navigate('/login');
+            } else {
+                fetchUpdatedCart();
+            }
+        }, [navigate]);
+
     // 체크박스 상태 업데이트 함수
     const handleUpdateChecked = async (cartId, checked) => {
         // UI에서 바로 반영
@@ -89,11 +99,6 @@ function ShopCart() {
         });
     };
 
-    useEffect(() => {
-        // 페이지 진입 시 카트 데이터 불러오기
-        fetchUpdatedCart();
-    }, []);
-
     // 체크된 항목들의 가격 합계 계산
     const totalPrice = userCart
         .filter(item => item.isChecked)  // isChecked로 상태 확인
@@ -101,10 +106,10 @@ function ShopCart() {
 
     //선택항목삭제함수
     const handleDeleteCheckedItems = async () => {
+        const userConfirmed = window.confirm("선택한 항목들을 삭제하시겠습니까?");
+        if (!userConfirmed) return;
         try {
             const response = await deleteTokenData('/mypage/cart/delete/checked');
-            const userConfirmed = window.confirm("선택한 항목들을 삭제하시겠습니까?");
-            if (!userConfirmed) return;
 
             if (response.status === 200) {
             } else {
