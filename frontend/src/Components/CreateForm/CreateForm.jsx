@@ -86,6 +86,7 @@ const SubmitButton = styled.button`
   border-radius:8px;
   color:white;
   background :#007BFF;
+  cursor:pointer;
 `;
 
 function CreateForm({ updateData, updateId }) {

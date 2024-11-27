@@ -15,7 +15,7 @@ function PagePagination({totalItems,itemsPerPage,currentPage,onPageChange,Text,n
             />
             {Text && (
             <CreateButtonContainer>
-                {userRole === "ROLE_USER" && Text === "글 작성" ?
+                {userRole && Text === "글 작성" ?
                     <CreateButton
                     onClick={navigate}>{Text}</CreateButton> :
                     Text === "상품 추가" && userRole !== "ROLE_USER" ? <CreateButton
