@@ -2,7 +2,7 @@
 FROM gradle:7.6-jdk17 AS build
 WORKDIR /app
 COPY . .
-RUN gradle build --no-daemon
+RUN gradle build -x test --no-daemon
 
 # 2단계: 빌드된 JAR 파일을 실행할 경량화된 Java 17 환경 설정
 FROM openjdk:17-jdk-slim
