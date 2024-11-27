@@ -4,9 +4,72 @@ import * as Yup from "yup";
 import React from "react";
 import { useDispatch } from "react-redux";
 import { setCredentials } from "../../Store/authSlice";
-import { Button, GoogleLogin, Input, KakaoLogin } from "../../styled/Common";
+import { Button, Input } from "../../styled/Common";
 import { ErrorText, InputGroup, Label, LoginFormWrap } from "../../styled/user/UserStyled";
 import { postData } from "../../Server/ApiServiceNoToken";
+import styled from "styled-components";
+import { FcGoogle } from "react-icons/fc";
+import { SiKakao } from "react-icons/si";
+
+export const RegisterLink = styled(Link)`
+    position: relative;
+    display:block;
+    margin-left:auto;
+    margin-bottom: 15px;
+`;
+
+export const LoginButton = styled.button`
+    width: 100%;
+    padding: 1rem;
+    background-color: #4285F4;
+    color: #FFFFFF;
+    font-size: 1rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 0.5rem;
+    transition: 0.3s ease;
+`;
+
+export const SocialBox = styled.div`
+    width: 80%;
+    color: #FFFFFF;
+    font-size: 1rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 0.5rem;
+    transition: 0.3s ease;
+    margin:auto;
+    margin-top:15px;
+    display:flex;
+    justify-content:center;
+    gap: 20%;
+`;
+
+export const SocialButton = styled.button`
+    width: 32%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: ${({ theme }) => theme.borderRadius || "8px"};
+    cursor: pointer;
+    background-color: ${({ color }) => color || "#ffffff"};
+
+    &:hover {
+        opacity: 0.9;
+    }
+`;
+
+// export const GoogleButton = styled(SocialButton)`
+//     background-color: #db4437; // Google 색상
+//     color: white;
+// `;
+//
+// export const KakaoButton = styled(SocialButton)`
+//     background-color: #fee500; // Kakao 색상
+//     color: black;
+// `;
+
 
 function LoginForm() {
     const navigate = useNavigate();
@@ -98,10 +161,16 @@ function LoginForm() {
             </InputGroup>
 
             {/* 회원가입 및 버튼 */}
-            <Link to="/register">회원가입</Link>
-            <Button type="submit">로그인</Button>
-            <GoogleLogin onClick={() => handleSocialLogin("google")}>구글 로그인</GoogleLogin>
-            <KakaoLogin onClick={() => handleSocialLogin("kakao")}>카카오 로그인</KakaoLogin>
+            <RegisterLink to="/register">▶ 회원가입 하러가기</RegisterLink>
+            <LoginButton type="submit">로그인</LoginButton>
+            <SocialBox>
+                <SocialButton>
+                    <FcGoogle size={50} onClick={() => handleSocialLogin("google")}/>
+                </SocialButton>
+                <SocialButton>
+                    <SiKakao size={70} onClick={() => handleSocialLogin("kakao")}/>
+                </SocialButton>
+            </SocialBox>
         </LoginFormWrap>
     );
 }
