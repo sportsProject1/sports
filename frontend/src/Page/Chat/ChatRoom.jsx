@@ -37,7 +37,7 @@ function ChatRoom({ chatRoomId, userId }) {
         if (!token) return;
 
         const stompClient = new Client({
-            webSocketFactory: () => new SockJS("https://localhost:8090/chat/wss"),
+            webSocketFactory: () => new SockJS(`${process.env.REACT_APP_BACKEND_URL}/chat/wss`),
             connectHeaders: { Authorization: `Bearer ${token}` },
             reconnectDelay: 5000,
             onConnect: () => {
@@ -68,7 +68,7 @@ function ChatRoom({ chatRoomId, userId }) {
         try {
             const token = localStorage.getItem("token");
             const response = await fetch(
-                `http://localhost:8090/${chatRoomId}/messages?page=${page}&size=20`,
+                `${process.env.REACT_APP_BACKEND_URL}/${chatRoomId}/messages?page=${page}&size=20`,
                 { headers: { Authorization: `Bearer ${token}` } }
             );
             const data = await response.json();

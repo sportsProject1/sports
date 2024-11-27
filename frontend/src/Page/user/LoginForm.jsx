@@ -118,7 +118,7 @@ function LoginForm() {
 
     // 소셜 로그인 핸들러
     const handleSocialLogin = (platform) => {
-        const url = `http://localhost:8090/oauth2/authorization/${platform}`;
+        const url = `${process.env.REACT_APP_BACKEND_URL}/oauth2/authorization/${platform}`;
         window.location.href = url;
     };
 
