@@ -172,10 +172,16 @@ function Payment() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        fetchTokenData("/mypage/cart/checkout").then((res) => {
-            setPaymentItem(res.data);
-        });
-    }, []);
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (!user) {
+            alert('잘못된 접근입니다. 로그인페이지로 이동합니다.');
+            navigate('/login');
+        } else {
+            fetchTokenData("/mypage/cart/checkout").then((res) => {
+                setPaymentItem(res.data);
+            });
+        }
+    }, [navigate]);
 
     const handleAddressSearch = (setFieldValue) => {
         const openPostcode = () => postcodeRef.current && postcodeRef.current.open();
