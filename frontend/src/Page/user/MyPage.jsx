@@ -17,6 +17,7 @@ function MyPage(){
 
     useEffect(() => {
         fetchTokenData("/user/mypage").then((res)=>{
+            console.log(res)
             setUserData(res.data)
         })
 

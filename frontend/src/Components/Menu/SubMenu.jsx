@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {CardType, ListType} from "../../Store/ItemTypeSlice";
 
 // 서브메뉴 전체 컨테이너
@@ -92,9 +92,10 @@ const ViewTypeSelect = styled.select`
 function SubMenu({handleItemType, handleSortChange, isShop = false, sortOption }) {
     const [searchQuery, setSearchQuery] = useState("");
     const [activeButton, setActiveButton] = useState(sortOption || "latest");  // sortOption으로 초기화
-    const [viewType, setViewType] = useState("card");
     const dispatch = useDispatch();
     const navigate = useNavigate();
+
+    const selectedViewType = useSelector((state)=>state.itemType.itemType)
 
     // 검색어를 URL로 전달하는 함수
     const handleSearch = () => {
@@ -118,12 +119,10 @@ function SubMenu({handleItemType, handleSortChange, isShop = false, sortOption }
 
     // View Type 변경
     const handleViewTypeChange = (event) => {
-        const selectedViewType = event.target.value;
-        setViewType(selectedViewType);
-
-        if (selectedViewType === "card") {
+        const selectedValue = event.target.value; // 선택된 값 가져오기
+        if (selectedValue === "card") {
             dispatch(CardType());
-        } else {
+        } else if (selectedValue === "list") {
             dispatch(ListType());
         }
     };
@@ -148,7 +147,7 @@ function SubMenu({handleItemType, handleSortChange, isShop = false, sortOption }
             </SearchInputWrapper>
 
             {/* 카드형/리스트형 Select Box */}
-            <ViewTypeSelect value={viewType} onChange={handleViewTypeChange}>
+            <ViewTypeSelect value={selectedViewType} onChange={handleViewTypeChange}>
                 <option value="card">카드형</option>
                 <option value="list">리스트형</option>
             </ViewTypeSelect>
