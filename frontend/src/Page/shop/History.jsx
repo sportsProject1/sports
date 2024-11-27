@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { fetchTokenData } from '../../Server/ApiService';
 import {
     HistoryContainer,
@@ -22,26 +23,33 @@ function History() {
     const [loading, setLoading] = useState(true);  // 로딩 상태
     const [error, setError] = useState(null);  // 에러 상태
     const [itemsToShow, setItemsToShow] = useState(5);  // 처음에 보여줄 결제 내역 수
+    const navigate = useNavigate();
 
     useEffect(() => {
-        const loadPaymentHistory = async () => {
-            try {
-                const response = await fetchTokenData("/payment/history");
-                if (response.data && Array.isArray(response.data)) {
-                    setPaymentHistory(response.data);
-                } else {
-                    throw new Error("잘못된 데이터");
-                }
-                setLoading(false);
-            } catch (err) {
-                console.error("결제 내역 불러오기 오류", err);
-                setError("결제 내역을 불러오는 데 실패했습니다.");
-                setLoading(false);
-            }
-        };
+            const user = JSON.parse(localStorage.getItem('user'));
+            if (!user) {
+                alert('잘못된 접근입니다. 로그인페이지로 이동합니다.');
+                navigate('/login');
+            } else {
+                const loadPaymentHistory = async () => {
+                    try {
+                        const response = await fetchTokenData("/payment/history");
+                        if (response.data && Array.isArray(response.data)) {
+                            setPaymentHistory(response.data);
+                        } else {
+                            throw new Error("잘못된 데이터");
+                        }
+                        setLoading(false);
+                    } catch (err) {
+                        console.error("결제 내역 불러오기 오류", err);
+                        setError("결제 내역을 불러오는 데 실패했습니다.");
+                        setLoading(false);
+                    }
+                };
 
-        loadPaymentHistory();
-    }, [itemsToShow]);  // itemsToShow가 바뀔 때마다 다시 호출
+                loadPaymentHistory();
+            }
+        }, [navigate, itemsToShow]);
 
     // 더 보기 버튼 클릭 시 호출되는 함수
     const loadMorePayments = () => {
