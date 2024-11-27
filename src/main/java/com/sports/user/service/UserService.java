@@ -133,7 +133,7 @@ public class UserService {
         existingUser.setAddress(userDTO.getAddress());
 
         // 이미지 파일 처리 로직
-        String newImgURL;
+        String newImgURL = existingUser.getImgURL();
 
         // 업로드된 파일이 있으면 해당 파일을 저장
         if (file != null && !file.isEmpty()) {

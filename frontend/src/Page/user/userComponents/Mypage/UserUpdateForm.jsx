@@ -43,12 +43,15 @@ function UserUpdateForm({userData,onUpdate}){
 
     useEffect(() => {
         if (userData) {
+            const [zipcode, roadAddress, detailAddress] = userData.address.split(',').map(item => item.trim());
             formik.setValues({
                 imgURL: userData.imgURL || '',
                 username: userData.username || '',
                 nickname: userData.nickname || '',
                 phone: userData.phone || '',
-                address: userData.address || '',
+                zipCode: zipcode || '',
+                roadAddress: roadAddress || '',
+                detailAddress: detailAddress || '',
                 email: userData.email || '',
                 file: '',
             });
@@ -79,13 +82,18 @@ function UserUpdateForm({userData,onUpdate}){
             formData.append("nickname", values.nickname);
             formData.append("phone", values.phone);
             formData.append("email", values.email);
-            formData.append("address", values.address);
+            formData.append("address",
+                `${values.zipCode}, ${values.roadAddress}, ${values.detailAddress}`
+            );
 
             if (images.length > 0) {
                 formData.append("file", images[0].file); // 새 이미지가 업로드된 경우
             } else if (isImageDeleted) {
                 formData.append("file", null); // 기존 이미지가 삭제된 경우
+            } else if (userData.imgURL) {
+                formData.append("imgURL", userData.imgURL); // 기존 이미지를 유지하려는 경우
             }
+
             try{
                 await putTokenData("/user/update",formData);
                 onUpdate();
