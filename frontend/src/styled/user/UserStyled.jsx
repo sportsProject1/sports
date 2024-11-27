@@ -130,11 +130,11 @@ export const ErrorMessage = styled.div`
 
 
 export const LoginFormWrap = styled.form`
-    max-width: 400px;
-    margin: 0 auto;
-    > button{
-        margin-top:15px;
-    }
+    width: 100%;
+    margin-bottom: ${({ theme }) => theme.spacing.large || "20px"};
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
 `
 
 export const InputGroup = styled.div`

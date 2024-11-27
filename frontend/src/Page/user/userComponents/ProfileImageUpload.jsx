@@ -1,6 +1,16 @@
 // ProfileImageUpload.jsx
 import React from 'react';
 import {ProfileImageWrapper} from "../../../styled/user/UserStyled";
+import styled from 'styled-components';
+
+const ProfileLabel = styled.label`
+    margin: 10px;
+    font-weight:bold;
+    cursor:pointer;
+    &:hover {
+        color: gray;
+    }
+`;
 
 function ProfileImageUpload({ images,
                                 handleImageChange,
@@ -9,7 +19,7 @@ function ProfileImageUpload({ images,
                                 userData,
                                 setIsImageDeleted,
                             update}) {
-    const defaultProfileImage = "https://mystudy5350.s3.amazonaws.com/test/222.jfif";
+    const defaultProfileImage = "https://mystudy5350.s3.amazonaws.com/test/logoblackbg.png";
     return (
         <ProfileImageWrapper>
             {images.length > 0 ? (
@@ -23,10 +33,10 @@ function ProfileImageUpload({ images,
             )}
             {update === true ?
             <>
-                <label>
-                    프로필 사진 변경
+                <ProfileLabel>
+                    프로필 사진 변경하기
                     <input style={{display: "none"}} type="file" name="file" onChange={handleImageChange}/>
-                </label>
+                </ProfileLabel>
                 <button type="button" onClick={() => {
                     resetImages(); // 이미지 삭제
                     setIsImageDeleted(true); // 이미지 삭제 상태 업데이트

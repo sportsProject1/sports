@@ -60,13 +60,57 @@ const RegisterButton = styled.div`
     }
 `;
 
+const GoEditButton = styled.button`
+    width: 30%;
+    padding: 10px 20px;
+    border:none;
+    border-radius:15px;
+    background: ${(props) => props.theme.colors.primary};
+    color: white;
+    &:hover {
+        background: ${(props) => props.theme.colors.secondary};
+    }
+`;
+
+const EditButtonContainer = styled.div`
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+`;
+
+const EditButton = styled.button`
+    width: 30%;
+    padding: 10px 20px;
+    border:none;
+    border-radius:15px;
+    background: ${(props) => props.theme.colors.primary};
+    color: white;
+    &:hover {
+        background: ${(props) => props.theme.colors.secondary};
+    }
+`;
+
+const CancelButton = styled.button`
+    width: 30%;
+    padding: 10px 20px;
+    border:none;
+    border-radius:15px;
+    background: #e74c3c;;
+    color: white;
+    &:hover {
+        background: #ff5240;
+    }
+`;
+
+
 function FormFields({ formik, handlePhoneChange,isSignUp,disable,onUpdate,handleAddressSearch }) {
     const fields =
         isSignUp === "sign"
             ? ["username", "password", "nickname", "phone", "email","zipCode","roadAddress", "detailAddress"]
             : isSignUp === "update"
                 ? ["nickname", "phone", "email", "address"]
-                : ["username", "password", "nickname", "phone", "email", "address"];
+                : ["username", "nickname", "phone", "email", "address"];
     return (
         <FormFieldsWrapper>
             {fields.map((field) => (
@@ -77,6 +121,7 @@ function FormFields({ formik, handlePhoneChange,isSignUp,disable,onUpdate,handle
                     {field === "phone" && "전화번호"}
                     {field === "email" && "이메일"}
                     {field === "zipCode" && "주소"}
+                    {field === "address" && "주소"}
 
                     {/* zipCode 필드와 주소 검색 버튼을 한 줄로 배치 */}
                     {field === "zipCode" ? (
@@ -128,13 +173,13 @@ function FormFields({ formik, handlePhoneChange,isSignUp,disable,onUpdate,handle
                     <button type="submit">회원가입</button>
                 </RegisterButton>
             ) : isSignUp === "update" ? (
-                <ButtonContainer>
-                    <button type="submit">변경하기</button>
-                    <button onClick={onUpdate} type="button">취소하기</button>
-                </ButtonContainer>
+                <EditButtonContainer>
+                    <CancelButton onClick={onUpdate} type="button">취소하기</CancelButton>
+                    <EditButton type="submit">변경하기</EditButton>
+                </EditButtonContainer>
             ) : isSignUp === "info" ? (
                 <ButtonContainer>
-                    <button onClick={onUpdate} type="button">수정하기</button>
+                    <GoEditButton onClick={onUpdate} type="button">수정하기</GoEditButton>
                 </ButtonContainer>
             ) : null}
 
