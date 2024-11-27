@@ -1,15 +1,16 @@
-import { FooterContainer,
-         FooterContent,
-         FooterSection,
-         FooterSectionTitle,
-         SocialIcons,
-         Copyright,
-         InquirySection,
-         Section} from "../../styled/Common";
-import styled from "styled-components";
 import kakaoIcon from '../../assets/kakao.png';
 import githubIcon from '../../assets/github.png';
 import instagramIcon from '../../assets/instagram.png';
+import {
+    Copyright,
+    FooterContainer,
+    FooterContent,
+    FooterSection,
+    FooterSectionTitle,
+    InquirySection,
+    Section,
+    SocialIcons
+} from "../../styled/Footer";
 
 const Footer = () => {
     return (

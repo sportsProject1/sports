@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {useFormik} from "formik";
 import * as Yup from "yup";
 import useImageUploader from "../../../../hooks/useImageUploader";
@@ -11,7 +11,35 @@ function UserUpdateForm({userData,onUpdate}){
 
     const {images,handleImageChange,resetImages} = useImageUploader(false);
 
+    const postcodeRef = useRef(null);
+
     const [isImageDeleted, setIsImageDeleted] = useState(false); // 이미지 삭제 여부를 추적하는 상태 변수
+
+    // 주소 검색 초기화
+    useEffect(() => {
+        const loadPostcodeScript = () => {
+            const script = document.createElement("script");
+            script.src = "//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js";
+            script.async = true;
+            script.onload = () => {
+                postcodeRef.current = new window.daum.Postcode({
+                    oncomplete: (data) => {
+                        formik.setFieldValue("zipCode", data.zonecode);
+                        formik.setFieldValue("roadAddress", data.roadAddress);
+                    },
+                });
+            };
+            document.body.appendChild(script);
+        };
+
+        loadPostcodeScript();
+    }, []);
+
+    const handleAddressSearch = () => {
+        if (postcodeRef.current) {
+            postcodeRef.current.open();
+        }
+    };
 
     useEffect(() => {
         if (userData) {
@@ -33,7 +61,10 @@ function UserUpdateForm({userData,onUpdate}){
             username:'',
             nickname:'',
             phone:'',
-            address:'',
+            address: "",
+            zipCode: "",
+            roadAddress: "",
+            detailAddress: "",
             email:'',
             file:'',
         },
@@ -91,7 +122,7 @@ function UserUpdateForm({userData,onUpdate}){
                 setIsImageDeleted={setIsImageDeleted}
                 update={true}/>
 
-            <FormFields onUpdate={onUpdate} formik={formik} handlePhoneChange={handlePhoneChange} isSignUp={"update"} disable={false} />
+            <FormFields handleAddressSearch={handleAddressSearch} onUpdate={onUpdate} formik={formik} handlePhoneChange={handlePhoneChange} isSignUp={"update"} disable={false} />
 
         </FormWrap>
     )
