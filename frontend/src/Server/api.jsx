@@ -33,7 +33,7 @@ api.interceptors.response.use(
                 const refreshToken = localStorage.getItem("refreshToken");
                 if (refreshToken) {
                     // 리프레시 토큰으로 새로운 액세스 토큰 요청
-                    const response = await axios.post('http://localhost:8090/refresh',
+                    const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/refresh`,
                         { refreshToken: refreshToken },
                         { headers: { 'Content-Type': 'application/json' } }
                     );
@@ -63,7 +63,7 @@ api.interceptors.response.use(
 
 // 인증이 필요 없는 요청을 위한 axios 인스턴스 생성
 const apiNoToken = axios.create({
-    baseURL: 'http://localhost:8090',
+    baseURL: process.env.REACT_APP_BACKEND_URL,
     timeout: 5000,
     headers: { 'Content-Type': 'application/json' }
 });
