@@ -45,6 +45,9 @@ public class SecurityConfig {
         http	.csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .httpBasic(httpBasic -> httpBasic.disable())
+                .requiresChannel(channel -> channel
+                        .anyRequest().requiresSecure() // HTTPS 강제적용
+                )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED) // 세션이 필요할 때만 생성
                 )
@@ -69,7 +72,7 @@ public class SecurityConfig {
                         .userInfoEndpoint(userInfo -> userInfo
                                 .userService(principalOauth2UserService)
                         )
-                        .defaultSuccessUrl("http://localhost:8090/login/oauth2/code/google", true) // 성공 후 리디렉트 URL 설정
+                        .defaultSuccessUrl("https://sport-team-project.web.app/oauth2/redirect", true) // 성공 후 리디렉트 URL 설정
 //                      .defaultSuccessUrl("http://localhost:3000/oauth2/redirect", true)
                 );
 
@@ -92,8 +95,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowCredentials(true);
-        configuration.addAllowedOrigin("http://localhost:3000"); // React 앱의 주소
-        configuration.addAllowedOrigin("https://localhost:3000");
+        configuration.addAllowedOrigin("https://sport-team-project.web.app/"); // 우리 React 앱의 도메인
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
         configuration.setExposedHeaders(List.of("Authorization", "Refresh-Token"));
