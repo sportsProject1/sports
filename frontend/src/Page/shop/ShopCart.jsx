@@ -101,10 +101,10 @@ function ShopCart() {
 
     //선택항목삭제함수
     const handleDeleteCheckedItems = async () => {
+        const userConfirmed = window.confirm("선택한 항목들을 삭제하시겠습니까?");
+        if (!userConfirmed) return;
         try {
             const response = await deleteTokenData('/mypage/cart/delete/checked');
-            const userConfirmed = window.confirm("선택한 항목들을 삭제하시겠습니까?");
-            if (!userConfirmed) return;
 
             if (response.status === 200) {
             } else {
