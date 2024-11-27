@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // 기본 axios 인스턴스 생성
 const api = axios.create({
-    baseURL: 'http://localhost:8090', // API의 기본 URL
+    baseURL: process.env.REACT_APP_BACKEND_URL, // API의 기본 URL .env 파일에 정의
     timeout: 5000,
     headers: { 'Content-Type': 'application/json' }
 });
