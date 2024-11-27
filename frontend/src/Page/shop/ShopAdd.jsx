@@ -150,6 +150,14 @@ function ShopAdd() {
     });
 
     useEffect(() => {
+        const user = JSON.parse(localStorage.getItem('user'));
+
+        if (!user || !['ROLE_SELLER', 'ROLE_MANAGER', 'ROLE_ADMIN'].includes(user.role)) {
+            alert('잘못된 접근입니다. 로그인페이지로 이동합니다.');
+            navigate('/login');
+            return;
+        }
+
         const fetchDataForItem = async () => {
             try {
                 if (id) {

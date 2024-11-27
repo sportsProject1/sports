@@ -109,7 +109,7 @@ function FormFields({ formik, handlePhoneChange,isSignUp,disable,onUpdate,handle
         isSignUp === "sign"
             ? ["username", "password", "nickname", "phone", "email","zipCode","roadAddress", "detailAddress"]
             : isSignUp === "update"
-                ? ["nickname", "phone", "email", "address"]
+                ? ["nickname", "phone", "email","zipCode","roadAddress", "detailAddress"]
                 : ["username", "nickname", "phone", "email", "address"];
     return (
         <FormFieldsWrapper>
