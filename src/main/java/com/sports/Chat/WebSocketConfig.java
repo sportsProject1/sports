@@ -52,6 +52,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
             // 헤더에서 Authorization 추출
             String authHeader = request.getHeaders().getFirst("Authorization");
 
+            System.out.println("Authorization header: " + authHeader); // 로그 추가
+
             if (authHeader != null && authHeader.startsWith("Bearer ")) {
                 String token = authHeader.substring(7);
 
@@ -60,7 +62,11 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                     String userId = jwtTokenProvider.extractUserId(token);
                     attributes.put("userId", userId); // WebSocket 세션에 사용자 정보 저장
                     return true;
+                } else {
+                    System.out.println("Invalid JWT token");
                 }
+            } else {
+                System.out.println("Authorization header is missing or invalid");
             }
 
             // 유효하지 않은 토큰인 경우 false 반환
