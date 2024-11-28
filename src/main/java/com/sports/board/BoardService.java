@@ -54,6 +54,7 @@ public class BoardService {
     }
 
     // 카테고리 태그별 게시글 가져오기
+    @Transactional
     public Map<String, List<BoardResponseDTO>> getMainBoardsByTags() {
         Map<String, List<BoardResponseDTO>> result = new LinkedHashMap<>();
 
