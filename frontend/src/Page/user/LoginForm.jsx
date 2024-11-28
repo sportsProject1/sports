@@ -101,7 +101,7 @@ function LoginForm() {
             formData.append("password", values.password);
 
             try {
-                const res = await postJsonData("/login", formData);
+                const res = await postData("/login", formData);
                 const { accessToken: token, refreshToken, nickname, role, username, userId, imgURL } = res;
 
                 const user = { nickname, role, username, userId, imgURL };
