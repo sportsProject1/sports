@@ -171,6 +171,7 @@ public class BoardService {
                 .build();
     }
 
+    @Transactional
     // Entity 변환 메서드
     private Board toEntity(BoardRequestDTO dto, User author, Category category) {
         return Board.builder()
@@ -222,6 +223,7 @@ public class BoardService {
 
 
 
+    @Transactional
     public List<BoardThumbnailDTO> extractThumbnailsForBoards(List<Long> boardIds) {
         List<Board> boards = boardRepository.findAllById(boardIds);
         List<BoardThumbnailDTO> thumbnails = new ArrayList<>();
@@ -255,6 +257,7 @@ public class BoardService {
 
 
     //검색기능(보드)
+    @Transactional
     public List<BoardResponseDTO> searchBoardByTitle(String keyword) {
         List<Board> boards = boardRepository.searchByTitle(keyword);
         return boards.stream()

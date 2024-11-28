@@ -71,6 +71,7 @@ public class BoardController {
 
     // 글 수정
     @PutMapping("/{id}")
+    @Transactional
     public ResponseEntity<String> updateBoard(@PathVariable Long id,
                                               @ModelAttribute BoardRequestDTO boardRequestDTO) throws IOException {
         System.out.println(boardRequestDTO);
