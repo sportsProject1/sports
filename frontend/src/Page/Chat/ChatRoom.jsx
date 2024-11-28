@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { Client } from "@stomp/stompjs";
+import {Client, Stomp} from "@stomp/stompjs";
 import SockJS from "sockjs-client";
 import {
     ChatHeader,
@@ -38,21 +38,22 @@ function ChatRoom({ chatRoomId, userId }) {
 
         console.log(token)
 
-        const stompClient = new Client({
-            webSocketFactory: () => new SockJS("https://sports-5ebw.onrender.com/chat/wss"),
-            connectHeaders: { Authorization: `Bearer ${token}` },
-            reconnectDelay: 5000,
-            onConnect: () => {
-                stompClient.subscribe(`/topic/chat/chatRoom/${chatRoomId}`, (message) => {
-                    console.log("연결성공")
-                    const receivedMessage = JSON.parse(message.body);
-                    setMessages((prevMessages) => [...prevMessages, receivedMessage]);
-                    scrollToBottom(); // 새 메시지 도착 시 스크롤 최하단
-                });
-            },
-            onStompError: (error) => {
-                console.error("STOMP 연결 오류:", error);
-            },
+        const socket = new SockJS("https://sports-5ebw.onrender.com/chat/wss");
+
+        const stompClient = Stomp.over(socket);
+
+        const headers = {
+            Authorization: "Bearer " + token // 실제 토큰을 여기에 넣습니다.
+        };
+
+        stompClient.connect(headers, (frame) => {
+            // 연결 성공 후 실행할 코드
+            console.log("Connected: " + frame);
+            stompClient.subscribe("/topic/chatRoom", function (messageOutput) {
+                console.log("Received message: ", messageOutput.body);
+            });
+        }, (error) => {
+            console.error("STOMP connection error: ", error);
         });
 
         stompClient.activate();
