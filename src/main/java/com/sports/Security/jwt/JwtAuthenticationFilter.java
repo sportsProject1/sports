@@ -29,6 +29,26 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
+        String path = request.getRequestURI();
+
+        // JWT가 필요 없는 경로는 필터를 건너뜁니다.
+        if (path.equals("/") ||
+                path.startsWith("/register") ||
+                path.startsWith("/login") ||
+                path.startsWith("/oauth") ||
+                path.startsWith("/oauth2") ||
+                path.startsWith("/refresh") ||
+                path.startsWith("/user") ||
+                path.startsWith("/shop") ||
+                path.startsWith("/board") ||
+                path.startsWith("/category/get") ||
+                path.startsWith("/comment/get") ||
+                path.startsWith("/map") ||
+                path.startsWith("/kakao")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         // Authorization 헤더에서 토큰 추출
         String token = resolveToken(request);
 
@@ -55,7 +75,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 return; // 필터 체인 중단하고 401 응답 전송
             }
         } else {
-            System.out.println("토큰이 null입니다."); // 토큰이 없는 경우 로그
             System.out.println("토큰이 null입니다."); // 토큰이 없는 경우 로그
         }
 
