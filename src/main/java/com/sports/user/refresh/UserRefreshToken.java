@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class UserRefreshToken {
     @Id
     private Long id;
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne
     @MapsId
     @JoinColumn(name = "user_id")
     private User user;
