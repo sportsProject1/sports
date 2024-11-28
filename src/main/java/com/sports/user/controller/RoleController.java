@@ -6,6 +6,7 @@ import com.sports.user.repository.UserRepository;
 import com.sports.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
@@ -14,6 +15,7 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
+@Transactional
 @RequestMapping("/admin/users")
 public class RoleController {
 

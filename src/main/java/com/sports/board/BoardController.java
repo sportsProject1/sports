@@ -4,10 +4,10 @@ import com.sports.Chat.ChatRoom.ChatRoom;
 import com.sports.Chat.ChatRoom.ChatRoomIdDto;
 import com.sports.Chat.ChatRoom.ChatRoomRepository;
 import com.sports.like.LikeService;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,6 +17,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/board")
+@Transactional
 @RequiredArgsConstructor
 //@Slf4j // 테스트 로거
 public class BoardController {
