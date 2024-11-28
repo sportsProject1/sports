@@ -36,6 +36,7 @@ public class ItemController {
     // 상품 목록 조회
     @GetMapping("/list")
     public ResponseEntity<ItemResponseDTO> shopList() {
+        System.out.println("API 호출: /list - 상품 목록 조회 요청 아이템 컨트롤러 shop list");
         List<Item> items = itemRepository.findAllByIsDeletedFalse();
         List<ItemDTO> itemDTOs = items.stream()
                 .map(item -> {

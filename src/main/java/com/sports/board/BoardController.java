@@ -40,6 +40,8 @@ public class BoardController {
     // 메인페이지 게시글 보내기 (최신글 기준)
     @GetMapping("/main")
     public Map<String, List<BoardResponseDTO>> getMainBoards() {
+        System.out.println("API 호출: /main - 게시판 목록 조회 요청 보드 컨트롤러 board main");
+
         // 운동, 공지사항, 모집, 자유 / 4개의 카테고리 글 / 5개씩 불러옴
         return boardService.getMainBoardsByTags();
     }
