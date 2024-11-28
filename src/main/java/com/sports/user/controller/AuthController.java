@@ -28,6 +28,7 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
+@Transactional
 public class AuthController {
 
     private final UserService userService;
