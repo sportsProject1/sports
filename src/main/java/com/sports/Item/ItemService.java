@@ -6,10 +6,10 @@ import com.sports.Item.DTO.ItemDTO;
 import com.sports.user.entito.User;
 import com.sports.user.repository.UserRepository;
 import com.sports.user.service.UserService;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
