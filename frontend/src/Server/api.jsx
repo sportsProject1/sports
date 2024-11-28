@@ -2,8 +2,8 @@ import axios from 'axios';
 
 // 기본 axios 인스턴스 생성
 const api = axios.create({
-    baseURL: process.env.REACT_APP_BACKEND_URL, // API의 기본 URL .env 파일에 정의
-    timeout: 5000,
+    baseURL: "https://sports-5ebw.onrender.com", // API의 기본 URL .env 파일에 정의
+    timeout: 15000,
     headers: { 'Content-Type': 'application/json' }
 });
 
@@ -33,7 +33,7 @@ api.interceptors.response.use(
                 const refreshToken = localStorage.getItem("refreshToken");
                 if (refreshToken) {
                     // 리프레시 토큰으로 새로운 액세스 토큰 요청
-                    const response = await axios.post('http://localhost:8090/refresh',
+                    const response = await axios.post("https://sports-5ebw.onrender.com/refresh",
                         { refreshToken: refreshToken },
                         { headers: { 'Content-Type': 'application/json' } }
                     );
@@ -63,8 +63,8 @@ api.interceptors.response.use(
 
 // 인증이 필요 없는 요청을 위한 axios 인스턴스 생성
 const apiNoToken = axios.create({
-    baseURL: 'http://localhost:8090',
-    timeout: 5000,
+    baseURL: "https://sports-5ebw.onrender.com",
+    timeout: 15000,
     headers: { 'Content-Type': 'application/json' }
 });
 

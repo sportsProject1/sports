@@ -6,7 +6,7 @@ import { useDispatch } from "react-redux";
 import { setCredentials } from "../../Store/authSlice";
 import { Button, Input } from "../../styled/Common";
 import { ErrorText, InputGroup, Label, LoginFormWrap } from "../../styled/user/UserStyled";
-import { postData } from "../../Server/ApiServiceNoToken";
+import {postData, postJsonData} from "../../Server/ApiServiceNoToken";
 import styled from "styled-components";
 import { FcGoogle } from "react-icons/fc";
 import { SiKakao } from "react-icons/si";
@@ -101,7 +101,7 @@ function LoginForm() {
             formData.append("password", values.password);
 
             try {
-                const res = await postData("/login", formData);
+                const res = await postJsonData("/login", formData);
                 const { accessToken: token, refreshToken, nickname, role, username, userId, imgURL } = res;
 
                 const user = { nickname, role, username, userId, imgURL };
@@ -118,7 +118,7 @@ function LoginForm() {
 
     // 소셜 로그인 핸들러
     const handleSocialLogin = (platform) => {
-        const url = `http://localhost:8090/oauth2/authorization/${platform}`;
+        const url = `https://sports-5ebw.onrender.com/oauth2/authorization/${platform}`;
         window.location.href = url;
     };
 

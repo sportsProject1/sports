@@ -9,7 +9,7 @@ const Map = ({ latitude, longitude, onChange, isSearchEnabled = true }) => {
 
   useEffect(() => {
     const mapScript = document.createElement('script');
-    const kakaoApiKey = process.env.REACT_APP_KAKAO_API_KEY;
+    const kakaoApiKey = "8fb1894cf2941fd7d6233a86e3b50494";
 
     // 카카오맵 API 스크립트를 비동기로 로드
     mapScript.async = true;

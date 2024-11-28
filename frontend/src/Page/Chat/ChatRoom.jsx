@@ -37,7 +37,7 @@ function ChatRoom({ chatRoomId, userId }) {
         if (!token) return;
 
         const stompClient = new Client({
-            webSocketFactory: () => new SockJS("https://localhost:8090/chat/wss"),
+            webSocketFactory: () => new SockJS("https://sports-5ebw.onrender.com/chat/wss"),
             connectHeaders: { Authorization: `Bearer ${token}` },
             reconnectDelay: 5000,
             onConnect: () => {
@@ -68,7 +68,7 @@ function ChatRoom({ chatRoomId, userId }) {
         try {
             const token = localStorage.getItem("token");
             const response = await fetch(
-                `http://localhost:8090/${chatRoomId}/messages?page=${page}&size=20`,
+                `https://sports-5ebw.onrender.com/${chatRoomId}/messages?page=${page}&size=20`,
                 { headers: { Authorization: `Bearer ${token}` } }
             );
             const data = await response.json();
