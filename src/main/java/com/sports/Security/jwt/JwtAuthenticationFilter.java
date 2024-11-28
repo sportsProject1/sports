@@ -56,6 +56,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
         } else {
             System.out.println("토큰이 null입니다."); // 토큰이 없는 경우 로그
+            System.out.println("토큰이 null입니다."); // 토큰이 없는 경우 로그
         }
 
         // 필터 체인 진행
