@@ -91,7 +91,7 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
         }
         // Redirect to client after successful OAuth2 login
         try {
-            response.sendRedirect("http://localhost:3000/oauth2/redirect");
+            response.sendRedirect("https://sport-team-project.web.app/oauth2/redirect");
         } catch (IOException e) {
             e.printStackTrace();
         }
