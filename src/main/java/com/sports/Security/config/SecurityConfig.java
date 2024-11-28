@@ -47,7 +47,7 @@ public class SecurityConfig {
                 .httpBasic(httpBasic -> httpBasic.disable())
                 // JWT 경로와 OAuth2 경로에 대해 세션 정책 분리
                 .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // 기본적으로 세션 비활성화 (JWT)
+                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED) // 필요할때만 세션 (소셜로그인) 사용
                 )
                 .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers("/admin").hasRole("ADMIN")
@@ -67,7 +67,6 @@ public class SecurityConfig {
                                 .userService(principalOauth2UserService)
                         )
                         .defaultSuccessUrl("https://sport-team-project.web.app/oauth2/redirect", true) // 성공 후 리디렉트 URL 설정
-                        .permitAll()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
