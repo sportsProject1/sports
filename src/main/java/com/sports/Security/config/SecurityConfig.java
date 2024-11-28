@@ -45,20 +45,18 @@ public class SecurityConfig {
         http	.csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .httpBasic(httpBasic -> httpBasic.disable())
-                .requiresChannel(channel -> channel
-                        .anyRequest().requiresSecure() // HTTPS 강제적용
-                )
+                // JWT 경로와 OAuth2 경로에 대해 세션 정책 분리
                 .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED) // 세션이 필요할 때만 생성
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // 기본적으로 세션 비활성화 (JWT)
                 )
                 .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers("/admin").hasRole("ADMIN")
                         .requestMatchers("/manager").hasRole("MANAGER")
                         .requestMatchers("/seller").hasRole("SELLER")
                         .requestMatchers("/board/fileAdd", "/board/{id}/like").authenticated() // 첫 번째 매칭되는 조건이 적용, 아래에서 permitAll 해줘도 인증이 적용됨
-                        .requestMatchers((request) ->
-                                request.getRequestURI().endsWith("/add") && "POST".equals(request.getMethod())
-                        ).authenticated() // 모든 POST /add 요청에 인증 필요
+//                        .requestMatchers((request) ->
+//                                request.getRequestURI().endsWith("/add") && "POST".equals(request.getMethod())
+//                        ).authenticated() // 모든 POST /add 요청에 인증 필요
                         .requestMatchers("/", "/register", "/login","/oauth", "/oauth2/**", "/refresh", "/user", "/shop", "/shop/**", "/board/**", "/category/get", "/comment/get/**", "/map/**", "/kakao/**").permitAll()
                         .anyRequest().authenticated())
                 .exceptionHandling(exceptionHandling -> exceptionHandling
@@ -67,14 +65,19 @@ public class SecurityConfig {
                 }))
                 .formLogin(formLogin -> formLogin.disable())
                 .logout(logout -> logout.disable())         // 시큐리티의 기본 로그인,로그아웃 비활성화
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class) // 주입받은 JWT 필터 사용
+                // OAuth2 설정
                 .oauth2Login(oauth2Login -> oauth2Login
                         .userInfoEndpoint(userInfo -> userInfo
                                 .userService(principalOauth2UserService)
                         )
                         .defaultSuccessUrl("https://sport-team-project.web.app/oauth2/redirect", true) // 성공 후 리디렉트 URL 설정
 //                      .defaultSuccessUrl("http://localhost:3000/oauth2/redirect", true)
-                );
+                )
+                // OAuth2 경로에만 세션 사용
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED) // OAuth2 로그인에만 세션 사용
+                )
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // JWT 필터 추가
 
         return http.build();
     }
@@ -96,7 +99,7 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowCredentials(true);
         configuration.addAllowedOrigin("https://sport-team-project.web.app"); // 우리 React 앱의 도메인
-        configuration.addAllowedOrigin("http://localhost:3000"); // 로컬 개발 환경
+        configuration.addAllowedOrigin("https://localhost:3000"); // 로컬 개발 환경
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
         configuration.setExposedHeaders(List.of("Authorization", "Refresh-Token"));

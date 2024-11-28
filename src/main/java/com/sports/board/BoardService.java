@@ -54,6 +54,7 @@ public class BoardService {
     }
 
     // 카테고리 태그별 게시글 가져오기
+    @Transactional
     public Map<String, List<BoardResponseDTO>> getMainBoardsByTags() {
         Map<String, List<BoardResponseDTO>> result = new LinkedHashMap<>();
 
@@ -170,6 +171,7 @@ public class BoardService {
                 .build();
     }
 
+    @Transactional
     // Entity 변환 메서드
     private Board toEntity(BoardRequestDTO dto, User author, Category category) {
         return Board.builder()
@@ -221,6 +223,7 @@ public class BoardService {
 
 
 
+    @Transactional
     public List<BoardThumbnailDTO> extractThumbnailsForBoards(List<Long> boardIds) {
         List<Board> boards = boardRepository.findAllById(boardIds);
         List<BoardThumbnailDTO> thumbnails = new ArrayList<>();
@@ -254,6 +257,7 @@ public class BoardService {
 
 
     //검색기능(보드)
+    @Transactional
     public List<BoardResponseDTO> searchBoardByTitle(String keyword) {
         List<Board> boards = boardRepository.searchByTitle(keyword);
         return boards.stream()
