@@ -103,8 +103,6 @@ function CreateForm({ updateData, updateId }) {
   const [category, setCategory] = useState();
   const [showMap, setShowMap] = useState(false); // 지도 표시 여부 상태 추가
   const userRole = useSelector((state) => state.auth.user?.role);
-  console.log(userRole)
-console.log(updateData)
   useEffect(() => {
     if (updateData) {
       setFormData((prev) => ({

@@ -36,12 +36,15 @@ function ChatRoom({ chatRoomId, userId }) {
         const token = localStorage.getItem("token");
         if (!token) return;
 
+        console.log(token)
+
         const stompClient = new Client({
             webSocketFactory: () => new SockJS("https://sports-5ebw.onrender.com/chat/wss"),
             connectHeaders: { Authorization: `Bearer ${token}` },
             reconnectDelay: 5000,
             onConnect: () => {
                 stompClient.subscribe(`/topic/chat/chatRoom/${chatRoomId}`, (message) => {
+                    console.log("연결성공")
                     const receivedMessage = JSON.parse(message.body);
                     setMessages((prevMessages) => [...prevMessages, receivedMessage]);
                     scrollToBottom(); // 새 메시지 도착 시 스크롤 최하단
