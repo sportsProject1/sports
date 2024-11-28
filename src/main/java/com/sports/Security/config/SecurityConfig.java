@@ -95,7 +95,8 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowCredentials(true);
-        configuration.addAllowedOrigin("https://sport-team-project.web.app/"); // 우리 React 앱의 도메인
+        configuration.addAllowedOrigin("https://sport-team-project.web.app"); // 우리 React 앱의 도메인
+        configuration.addAllowedOrigin("http://localhost:3000"); // 로컬 개발 환경
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
         configuration.setExposedHeaders(List.of("Authorization", "Refresh-Token"));
