@@ -50,7 +50,7 @@ public class SecurityConfig {
                         .requestMatchers("/admin").hasRole("ADMIN")
                         .requestMatchers("/manager").hasRole("MANAGER")
                         .requestMatchers("/seller").hasRole("SELLER")
-                        .requestMatchers("/board/fileAdd", "/board/{id}/like","/chat/**","/app/**").authenticated() // 첫 번째 매칭되는 조건이 적용, 아래에서 permitAll 해줘도 인증이 적용됨
+                        .requestMatchers("/board/fileAdd", "/board/{id}/like").authenticated() // 첫 번째 매칭되는 조건이 적용, 아래에서 permitAll 해줘도 인증이 적용됨
 //                        .requestMatchers((request) ->
 //                                request.getRequestURI().endsWith("/add") && "POST".equals(request.getMethod())
 //                        ).authenticated() // 모든 POST /add 요청에 인증 필요
