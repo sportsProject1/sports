@@ -35,6 +35,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                 .setAllowedOriginPatterns("https://sport-team-project.web.app") // CORS 설정
                 .addInterceptors(new JwtHandshakeInterceptor(jwtTokenProvider))
                 .withSockJS(); // SockJS 지원
+                .setTransports(Transport.WEBSOCKET, Transport.XHR_STREAMING);
     }
 
 
