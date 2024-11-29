@@ -38,7 +38,7 @@ function ChatRoom({ chatRoomId, userId }) {
 
         // WebSocket 클라이언트 설정 (wss 프로토콜 사용)
         const stompClient = new Client({
-            webSocketFactory: () => new SockJS("https://sports-5ebw.onrender.com/chat/wss"), // WebSocket URL 경로 수정
+            webSocketFactory: () => new SockJS("https://sports-5ebw.onrender.com/chat/ws"), // WebSocket URL 경로 수정
             connectHeaders: { Authorization: `Bearer ${token}` },
             reconnectDelay: 20000,
             onConnect: () => {
