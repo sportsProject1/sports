@@ -65,7 +65,12 @@ public class SecurityConfig {
                         )
                         .defaultSuccessUrl("https://sport-team-project.web.app/oauth2/redirect", true) // 성공 후 리디렉트 URL 설정
                 )
-                // JWT 경로와 OAuth2 경로에 대해 세션 정책 분리
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .headers(headers -> headers
+                        .contentSecurityPolicy(csp -> csp.policyDirectives("default-src 'self'; frame-ancestors 'self';")) // Content Security Policy 설정
+                        .httpStrictTransportSecurity(hsts -> hsts.includeSubDomains(true).maxAgeInSeconds(31536000)) // HSTS 설정
+                        .frameOptions(frameOptions -> frameOptions.sameOrigin()) // 'sameOrigin' 방식으로 프레임 옵션 설정
+                )// JWT 경로와 OAuth2 경로에 대해 세션 정책 분리
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED) // 필요할때만 세션 (소셜로그인) 사용
                 )
@@ -73,7 +78,6 @@ public class SecurityConfig {
                         .securityContextRepository(new HttpSessionSecurityContextRepository()) // SecurityContext를 세션에 저장
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-
         return http.build();
     }
 

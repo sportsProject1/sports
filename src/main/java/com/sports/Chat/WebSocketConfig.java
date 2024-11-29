@@ -21,6 +21,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     private final JwtTokenProvider jwtTokenProvider; // JwtTokenProvider 주입
 
+
+
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
         config.enableSimpleBroker("/topic", "/queue");
@@ -30,7 +32,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/chat/ws") // 엔드포인트 설정
-                .setAllowedOriginPatterns("*") // CORS 설정
+                .setAllowedOriginPatterns("https://sports-5ebw.onrender.com") // CORS 설정
                 .addInterceptors(new JwtHandshakeInterceptor(jwtTokenProvider))
                 .withSockJS(); // SockJS 지원
     }
