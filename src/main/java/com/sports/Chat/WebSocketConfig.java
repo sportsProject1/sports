@@ -34,8 +34,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         registry.addEndpoint("/chat/wss") // 엔드포인트 설정
                 .setAllowedOriginPatterns("https://sport-team-project.web.app") // CORS 설정
                 .addInterceptors(new JwtHandshakeInterceptor(jwtTokenProvider))
-                .withSockJS(); // SockJS 지원
-                .setTransports(Transport.WEBSOCKET, Transport.XHR_STREAMING);
+                .withSockJS();
     }
 
 
