@@ -72,7 +72,7 @@ public class SecurityConfig {
                         .frameOptions(frameOptions -> frameOptions.sameOrigin()) // 'sameOrigin' 방식으로 프레임 옵션 설정
                 )// JWT 경로와 OAuth2 경로에 대해 세션 정책 분리
                 .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED) // 필요할때만 세션 (소셜로그인) 사용
+                        .sessionCreationPolicy(SessionCreationPolicy.ALWAYS) // 필요할때만 세션 (소셜로그인) 사용이 아니라 웹소켓을 위해 always로변경
                 )
                 .securityContext(securityContext -> securityContext
                         .securityContextRepository(new HttpSessionSecurityContextRepository()) // SecurityContext를 세션에 저장
