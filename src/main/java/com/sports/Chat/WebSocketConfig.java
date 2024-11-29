@@ -31,7 +31,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/chat/ws") // 엔드포인트 설정
+        registry.addEndpoint("/chat/wss") // 엔드포인트 설정
                 .setAllowedOriginPatterns("https://sport-team-project.web.app") // CORS 설정
                 .addInterceptors(new JwtHandshakeInterceptor(jwtTokenProvider))
                 .withSockJS(); // SockJS 지원
