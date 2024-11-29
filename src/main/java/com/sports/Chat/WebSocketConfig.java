@@ -1,7 +1,10 @@
 package com.sports.Chat;
 
 import com.sports.Security.jwt.JwtTokenProvider;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
@@ -21,12 +24,17 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     private final JwtTokenProvider jwtTokenProvider; // JwtTokenProvider 주입
 
-
+    private static final Logger logger = LoggerFactory.getLogger(WebSocketConfig.class);
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
         config.enableSimpleBroker("/topic", "/queue");
         config.setApplicationDestinationPrefixes("/app");
+    }
+
+    @PostConstruct
+    public void init() {
+        System.out.println("WebSocket Server is up and running!"); // 웹소켓 서버가 시작되었을 때 출력
     }
 
     @Override
@@ -35,6 +43,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                 .setAllowedOriginPatterns("https://sport-team-project.web.app") // CORS 설정
                 .addInterceptors(new JwtHandshakeInterceptor(jwtTokenProvider))
                 .withSockJS();
+
+        logger.info("여기다 요가ㅣ /chat/ws");
     }
 
 
