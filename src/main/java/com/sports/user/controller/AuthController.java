@@ -10,13 +10,17 @@ import com.sports.user.refresh.UserRefreshTokenRepository;
 import com.sports.user.repository.ValidationGroups;
 import com.sports.user.service.UserContextService;
 import com.sports.user.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -64,7 +68,18 @@ public class AuthController {
 
     // 소셜 로그인 (JWT토큰, 소셜에서 전달되는 유저정보 전송)
     @GetMapping("/oauth2/token")
-    public ResponseEntity<Map<String, Object>> getToken() {
+    public ResponseEntity<Map<String, Object>> getToken(HttpServletRequest request) {
+
+        HttpSession session = request.getSession(false); // 세션 가져오기
+        if (session == null) {
+            throw new RuntimeException("세션이 없습니다.");
+        }
+
+        SecurityContext securityContext = (SecurityContext) session.getAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY);
+        if (securityContext == null || securityContext.getAuthentication() == null) {
+            throw new RuntimeException("SecurityContext에 인증 정보가 없습니다.");
+        }
+
         User currentUser = userContextService.getCurrentUser(); // 현재 사용자 정보 가져오기
         Map<String, Object> response = userService.generateTokenResponseWithUser(currentUser.getId(), jwtTokenProvider, userRefreshTokenRepository);
         return ResponseEntity.ok(response);
