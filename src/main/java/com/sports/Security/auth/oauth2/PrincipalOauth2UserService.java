@@ -6,6 +6,9 @@ import com.sports.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -22,13 +25,11 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
     @Lazy @Autowired
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final UserRepository userRepository;
-    private final HttpServletResponse response;
 
     @Autowired
-    public PrincipalOauth2UserService(BCryptPasswordEncoder bCryptPasswordEncoder, UserRepository userRepository, HttpServletResponse response) {
+    public PrincipalOauth2UserService(BCryptPasswordEncoder bCryptPasswordEncoder, UserRepository userRepository) {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.userRepository = userRepository;
-        this.response = response;
     }
 
     @Override
@@ -89,14 +90,16 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
                 userEntity = createUser(providerId, username, email, nickname, profileImageUrl, role, provider);
             }
         }
-        // Redirect to client after successful OAuth2 login
-        try {
-            response.sendRedirect("https://sport-team-project.web.app/oauth2/redirect");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        // PrincipalUserDetails 생성
+        PrincipalUserDetails userDetails = new PrincipalUserDetails(userEntity, oAuth2User.getAttributes());
 
-        return new PrincipalUserDetails(userEntity, oAuth2User.getAttributes());
+        // 인증 정보 SecurityContext에 수동 저장
+        Authentication authentication = new UsernamePasswordAuthenticationToken(
+                userDetails, null, userDetails.getAuthorities()
+        );
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        return userDetails;
     }
 
     private User createUser(String providerId, String username, String email, String nickname, String profileImageUrl, String role, String provider) {
