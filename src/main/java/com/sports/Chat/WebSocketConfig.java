@@ -29,9 +29,10 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/chat/wss") // WebSocket 엔드포인트 설정
-                .setAllowedOriginPatterns("*")
-                .withSockJS();
+        registry.addEndpoint("/chat/ws") // 엔드포인트 설정
+                .setAllowedOriginPatterns("*") // CORS 설정
+                .addInterceptors(new JwtHandshakeInterceptor(jwtTokenProvider))
+                .withSockJS(); // SockJS 지원
     }
 
 
@@ -39,7 +40,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
      * WebSocket 연결 핸드셰이크 과정에서 토큰 검증을 처리하는 HandshakeInterceptor
      */
     private static class JwtHandshakeInterceptor implements HandshakeInterceptor {
-
         private final JwtTokenProvider jwtTokenProvider;
 
         public JwtHandshakeInterceptor(JwtTokenProvider jwtTokenProvider) {
@@ -48,27 +48,22 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
         @Override
         public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Map<String, Object> attributes) {
-            // 헤더에서 Authorization 추출
             String authHeader = request.getHeaders().getFirst("Authorization");
 
             if (authHeader != null && authHeader.startsWith("Bearer ")) {
                 String token = authHeader.substring(7);
-
-                // 토큰 유효성 검증
                 if (jwtTokenProvider.validateToken(token)) {
                     String userId = jwtTokenProvider.extractUserId(token);
-                    attributes.put("userId", userId); // WebSocket 세션에 사용자 정보 저장
+                    attributes.put("userId", userId);
                     return true;
                 }
             }
-
-            // 유효하지 않은 토큰인 경우 false 반환
             return false;
         }
 
         @Override
         public void afterHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Exception ex) {
-            // 핸드셰이크 이후 처리할 내용이 있으면 구현
+            // 필요한 후속 작업 처리
         }
     }
 }
