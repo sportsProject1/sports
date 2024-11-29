@@ -25,13 +25,11 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
     @Lazy @Autowired
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final UserRepository userRepository;
-    private final HttpServletResponse response;
 
     @Autowired
-    public PrincipalOauth2UserService(BCryptPasswordEncoder bCryptPasswordEncoder, UserRepository userRepository, HttpServletResponse response) {
+    public PrincipalOauth2UserService(BCryptPasswordEncoder bCryptPasswordEncoder, UserRepository userRepository) {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.userRepository = userRepository;
-        this.response = response;
     }
 
     @Override
@@ -100,13 +98,6 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
                 userDetails, null, userDetails.getAuthorities()
         );
         SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        // Redirect to client after successful OAuth2 login
-        try {
-            response.sendRedirect("https://sport-team-project.web.app/oauth2/redirect");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
         return userDetails;
     }
