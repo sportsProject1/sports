@@ -43,7 +43,17 @@ function UserUpdateForm({userData,onUpdate}){
 
     useEffect(() => {
         if (userData) {
-            const [zipcode, roadAddress, detailAddress] = userData.address.split(',').map(item => item.trim());
+            let zipcode = '';
+            let roadAddress = '';
+            let detailAddress = '';
+
+            // address가 null 또는 빈 문자열이 아닐 경우에만 split 수행
+            if (userData.address) {
+                [zipcode, roadAddress, detailAddress] = userData.address
+                    .split(',')
+                    .map(item => item.trim());
+            }
+
             formik.setValues({
                 imgURL: userData.imgURL || '',
                 username: userData.username || '',
@@ -57,6 +67,7 @@ function UserUpdateForm({userData,onUpdate}){
             });
         }
     }, [userData]);
+
 
     const formik = useFormik({
         initialValues: {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import {Client, Stomp} from "@stomp/stompjs";
+import { Client } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
 import {
     ChatHeader,
@@ -38,7 +38,7 @@ function ChatRoom({ chatRoomId, userId }) {
 
         // WebSocket 클라이언트 설정 (wss 프로토콜 사용)
         const stompClient = new Client({
-            webSocketFactory: () => new SockJS("wss://sports-5ebw.onrender.com/chat/ws"), // WebSocket URL 경로 수정
+            webSocketFactory: () => new SockJS("https://sports-5ebw.onrender.com/chat/ws"), // WebSocket URL 경로 수정
             connectHeaders: { Authorization: `Bearer ${token}` },
             reconnectDelay: 20000,
             onConnect: () => {
@@ -78,7 +78,7 @@ function ChatRoom({ chatRoomId, userId }) {
         try {
             const token = localStorage.getItem("token");
             const response = await fetch(
-                `wss://sports-5ebw.onrender.com/${chatRoomId}/messages?page=${page}&size=20`,
+                `https://sports-5ebw.onrender.com/${chatRoomId}/messages?page=${page}&size=20`, // HTTP 프로토콜로 요청
                 { headers: { Authorization: `Bearer ${token}` } }
             );
             const data = await response.json();
