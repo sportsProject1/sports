@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { Client } from "@stomp/stompjs";
+import {Client, Stomp} from "@stomp/stompjs";
 import SockJS from "sockjs-client";
 import {
     ChatHeader,
@@ -36,14 +36,25 @@ function ChatRoom({ chatRoomId, userId }) {
         const token = localStorage.getItem("token");
         if (!token) return;
 
+        // WebSocket 클라이언트 설정 (wss 프로토콜 사용)
         const stompClient = new Client({
-            webSocketFactory: () => new SockJS("https://sports-5ebw.onrender.com/chat/wss"),
+            webSocketFactory: () => new SockJS("https://sports-5ebw.onrender.com/chat/wss"), // WebSocket URL 경로 수정
             connectHeaders: { Authorization: `Bearer ${token}` },
-            reconnectDelay: 5000,
+            reconnectDelay: 20000,
             onConnect: () => {
                 stompClient.subscribe(`/topic/chat/chatRoom/${chatRoomId}`, (message) => {
+                    console.log("연결성공");
                     const receivedMessage = JSON.parse(message.body);
-                    setMessages((prevMessages) => [...prevMessages, receivedMessage]);
+
+                    // 상태 업데이트 최적화
+                    setMessages((prevMessages) => {
+                        // 이미 있는 메시지인지 체크하여 불필요한 추가 방지
+                        if (prevMessages.some((msg) => msg.id === receivedMessage.id)) {
+                            return prevMessages; // 이미 있으면 상태 변경하지 않음
+                        }
+                        return [...prevMessages, receivedMessage];
+                    });
+
                     scrollToBottom(); // 새 메시지 도착 시 스크롤 최하단
                 });
             },
@@ -52,7 +63,6 @@ function ChatRoom({ chatRoomId, userId }) {
             },
         });
 
-        stompClient.activate();
         setClient(stompClient);
 
         return () => {
@@ -117,19 +127,31 @@ function ChatRoom({ chatRoomId, userId }) {
 
     // 메시지 전송
     const sendMessage = useCallback(() => {
-        if (client && newMessage.trim() !== "") {
-            const message = {
-                chatRoomId,
-                senderId: userId,
-                content: newMessage,
-            };
+        // 클라이언트가 연결되어 있고 메시지가 비어 있지 않은 경우에만 전송
+        if (client) {
+            if (!client.connected) {
+                console.error("STOMP 연결이 끊어졌습니다. 재연결을 시도합니다.");
+                client.activate();  // 클라이언트 재연결 시도
+                return;
+            }
 
-            client.publish({
-                destination: "/app/chatRoom/sendMessage",
-                body: JSON.stringify(message),
-            });
+            if (newMessage.trim() !== "") {
+                const message = {
+                    chatRoomId,
+                    senderId: userId,
+                    content: newMessage,
+                };
 
-            setNewMessage("");
+                // 메시지 전송
+                client.publish({
+                    destination: "/app/chatRoom/sendMessage",
+                    body: JSON.stringify(message),
+                });
+
+                setNewMessage(""); // 메시지 전송 후 입력 필드 초기화
+            }
+        } else {
+            console.error("클라이언트가 없습니다.");
         }
     }, [client, newMessage, chatRoomId, userId]);
 

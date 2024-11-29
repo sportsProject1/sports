@@ -6,7 +6,7 @@ import { useDispatch } from "react-redux";
 import { setCredentials } from "../../Store/authSlice";
 import { Button, Input } from "../../styled/Common";
 import { ErrorText, InputGroup, Label, LoginFormWrap } from "../../styled/user/UserStyled";
-import { postData } from "../../Server/ApiServiceNoToken";
+import {postData, postJsonData} from "../../Server/ApiServiceNoToken";
 import styled from "styled-components";
 import { FcGoogle } from "react-icons/fc";
 import { SiKakao } from "react-icons/si";

@@ -3,8 +3,9 @@ import axios from 'axios';
 // 기본 axios 인스턴스 생성
 const api = axios.create({
     baseURL: "https://sports-5ebw.onrender.com", // API의 기본 URL .env 파일에 정의
-    timeout: 15000,
-    headers: { 'Content-Type': 'application/json' }
+    timeout: 20000,
+    headers: { 'Content-Type': 'application/json' },
+    withCredentials: true,  // 쿠키를 포함한 요청을 보내려면 withCredentials 설정
 });
 
 // 요청 인터셉터: 모든 요청에 인증 토큰 추가
@@ -64,8 +65,8 @@ api.interceptors.response.use(
 // 인증이 필요 없는 요청을 위한 axios 인스턴스 생성
 const apiNoToken = axios.create({
     baseURL: "https://sports-5ebw.onrender.com",
-    timeout: 15000,
-    headers: { 'Content-Type': 'application/json' }
+    timeout: 20000,
+    headers: { 'Content-Type': 'application/json' },
 });
 
 export { api, apiNoToken };
