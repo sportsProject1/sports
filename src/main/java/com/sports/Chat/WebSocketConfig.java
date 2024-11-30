@@ -23,30 +23,30 @@ import java.util.Map;
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     private final JwtTokenProvider jwtTokenProvider; // JwtTokenProvider 주입
-
     private static final Logger logger = LoggerFactory.getLogger(WebSocketConfig.class);
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
+        // 클라이언트가 구독하는 경로
         config.enableSimpleBroker("/topic", "/queue");
+        // 클라이언트가 메시지를 보낼 때 사용하는 경로
         config.setApplicationDestinationPrefixes("/app");
+        logger.info("MessageBroker 설정 완료: /topic, /queue");
     }
 
     @PostConstruct
     public void init() {
-        System.out.println("WebSocket Server is up and running!"); // 웹소켓 서버가 시작되었을 때 출력
+        logger.info("WebSocket Server is up and running!"); // 서버 시작 로그
     }
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/chat/wss") // 엔드포인트 설정
-                .setAllowedOriginPatterns("*") // CORS 설정
-                .addInterceptors(new JwtHandshakeInterceptor(jwtTokenProvider))
-                .withSockJS();
-
-        logger.info("여기다 요가ㅣ /chat/ws");
+                .setAllowedOriginPatterns("*") // CORS 허용
+                .addInterceptors(new JwtHandshakeInterceptor(jwtTokenProvider)) // JWT 인터셉터 추가
+                .withSockJS(); // SockJS 지원
+        logger.info("Stomp 엔드포인트 등록: /chat/wss");
     }
-
 
     /**
      * WebSocket 연결 핸드셰이크 과정에서 토큰 검증을 처리하는 HandshakeInterceptor
@@ -59,23 +59,29 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         }
 
         @Override
-        public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Map<String, Object> attributes) {
+        public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response,
+                                       WebSocketHandler wsHandler, Map<String, Object> attributes) {
             String authHeader = request.getHeaders().getFirst("Authorization");
-
             if (authHeader != null && authHeader.startsWith("Bearer ")) {
                 String token = authHeader.substring(7);
                 if (jwtTokenProvider.validateToken(token)) {
                     String userId = jwtTokenProvider.extractUserId(token);
-                    attributes.put("userId", userId);
+                    attributes.put("userId", userId); // WebSocket 세션에 사용자 정보 저장
+                    logger.info("WebSocket 핸드셰이크 성공: userId={}", userId);
                     return true;
+                } else {
+                    logger.warn("WebSocket 핸드셰이크 실패: 유효하지 않은 토큰");
                 }
+            } else {
+                logger.warn("WebSocket 핸드셰이크 실패: Authorization 헤더 누락");
             }
             return false;
         }
 
         @Override
-        public void afterHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Exception ex) {
-            // 필요한 후속 작업 처리
+        public void afterHandshake(ServerHttpRequest request, ServerHttpResponse response,
+                                   WebSocketHandler wsHandler, Exception ex) {
+            logger.info("WebSocket 핸드셰이크 완료");
         }
     }
 }
