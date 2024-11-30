@@ -44,15 +44,12 @@ function ChatRoom({ chatRoomId, userId }) {
 
         console.log("STOMP 클라이언트 초기화 시작");
         const stompClient = new Client({
-            webSocketFactory: () => new SockJS("https://sports-5ebw.onrender.com/chat/wss"),
+            brokerURL: "wss://sports-5ebw.onrender.com/chat/wss", // WebSocket URL 사용
             debug: (str) => console.log("STOMP 디버그 메시지:", str),
-            connectHeaders: { Authorization: `Bearer ${token}` }, // 헤더 추가
+            connectHeaders: { Authorization: `Bearer ${token}` },
             reconnectDelay: 20000,
             onConnect: () => {
                 console.log("STOMP 연결 성공");
-                stompClient.subscribe(`/topic/chat/chatRoom/${chatRoomId}`, (message) => {
-                    console.log("구독 성공, 메시지 수신:", message.body);
-                });
             },
             onStompError: (error) => {
                 console.error("STOMP 연결 오류:", error);
