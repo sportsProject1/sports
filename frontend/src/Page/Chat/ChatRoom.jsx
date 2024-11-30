@@ -31,31 +31,27 @@ function ChatRoom({ chatRoomId, userId }) {
 
     // WebSocket 클라이언트 설정
     useEffect(() => {
-        if (!chatRoomId) return;
-
+        console.log("useEffect 실행됨");
+        if (!chatRoomId) {
+            console.error("chatRoomId가 유효하지 않음");
+            return;
+        }
         const token = localStorage.getItem("token");
-        if (!token) return;
+        if (!token) {
+            console.error("토큰이 유효하지 않음");
+            return;
+        }
 
-        // WebSocket 클라이언트 설정 (wss 프로토콜 사용)
+        console.log("STOMP 클라이언트 초기화 시작");
         const stompClient = new Client({
-            webSocketFactory: () => new SockJS("https://sports-5ebw.onrender.com/chat/wss"), // WebSocket URL 경로 수정
+            webSocketFactory: () => new SockJS("https://sports-5ebw.onrender.com/chat/wss"),
+            debug: (str) => console.log("STOMP 디버그 메시지:", str),
             connectHeaders: { Authorization: `Bearer ${token}` },
             reconnectDelay: 20000,
             onConnect: () => {
+                console.log("STOMP 연결 성공");
                 stompClient.subscribe(`/topic/chat/chatRoom/${chatRoomId}`, (message) => {
-                    console.log("연결성공");
-                    const receivedMessage = JSON.parse(message.body);
-
-                    // 상태 업데이트 최적화
-                    setMessages((prevMessages) => {
-                        // 이미 있는 메시지인지 체크하여 불필요한 추가 방지
-                        if (prevMessages.some((msg) => msg.id === receivedMessage.id)) {
-                            return prevMessages; // 이미 있으면 상태 변경하지 않음
-                        }
-                        return [...prevMessages, receivedMessage];
-                    });
-
-                    scrollToBottom(); // 새 메시지 도착 시 스크롤 최하단
+                    console.log("구독 성공, 메시지 수신:", message.body);
                 });
             },
             onStompError: (error) => {
@@ -63,12 +59,18 @@ function ChatRoom({ chatRoomId, userId }) {
             },
         });
 
-        setClient(stompClient);
+        try {
+            stompClient.activate();
+            console.log("STOMP 클라이언트 활성화 완료");
+        } catch (error) {
+            console.error("STOMP 활성화 중 오류 발생:", error);
+        }
 
         return () => {
+            console.log("STOMP 클라이언트 비활성화");
             stompClient.deactivate();
         };
-    }, [chatRoomId, scrollToBottom]);
+    }, [chatRoomId]);
 
     // 초기 메시지 로드 및 스크롤 이동
     const loadInitialMessages = useCallback(async () => {
