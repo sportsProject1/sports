@@ -46,7 +46,7 @@ function ChatRoom({ chatRoomId, userId }) {
         const stompClient = new Client({
             webSocketFactory: () => new SockJS("https://sports-5ebw.onrender.com/chat/wss"),
             debug: (str) => console.log("STOMP 디버그 메시지:", str),
-            connectHeaders: { Authorization: `Bearer ${token}` },
+            connectHeaders: { Authorization: `Bearer ${token}` }, // 헤더 추가
             reconnectDelay: 20000,
             onConnect: () => {
                 console.log("STOMP 연결 성공");
