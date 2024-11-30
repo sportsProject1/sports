@@ -76,7 +76,7 @@ function ChatRoom({ chatRoomId, userId }) {
             console.log("STOMP 클라이언트 비활성화");
             stompClient.deactivate();
         };
-    }, [chatRoomId]);
+    }, [chatRoomId,scrollToBottom]);
 
     // 초기 메시지 로드 및 스크롤 이동
     const loadInitialMessages = useCallback(async () => {
