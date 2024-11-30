@@ -62,20 +62,23 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response,
                                        WebSocketHandler wsHandler, Map<String, Object> attributes) {
             String authHeader = request.getHeaders().getFirst("Authorization");
+            if (authHeader == null) {
+                // 쿼리 파라미터에서 토큰 읽기
+                String token = request.getURI().getQuery(); // ex) token=eyJhbGci...
+                if (token != null && token.startsWith("token=")) {
+                    authHeader = "Bearer " + token.substring(6);
+                }
+            }
 
             if (authHeader != null && authHeader.startsWith("Bearer ")) {
                 String token = authHeader.substring(7);
                 if (jwtTokenProvider.validateToken(token)) {
                     String userId = jwtTokenProvider.extractUserId(token);
-                    attributes.put("userId", userId); // WebSocket 세션에 사용자 정보 저장
-                    logger.info("WebSocket 핸드셰이크 성공: userId={}", userId);
+                    attributes.put("userId", userId);
                     return true;
-                } else {
-                    logger.warn("WebSocket 핸드셰이크 실패: 유효하지 않은 토큰");
                 }
-            } else {
-                logger.warn("WebSocket 핸드셰이크 실패: Authorization 헤더 누락");
             }
+
             return false;
         }
 
