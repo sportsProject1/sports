@@ -62,6 +62,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response,
                                        WebSocketHandler wsHandler, Map<String, Object> attributes) {
             String authHeader = request.getHeaders().getFirst("Authorization");
+
             if (authHeader != null && authHeader.startsWith("Bearer ")) {
                 String token = authHeader.substring(7);
                 if (jwtTokenProvider.validateToken(token)) {
