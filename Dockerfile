@@ -11,7 +11,6 @@ COPY --from=build /app/build/libs/*.jar app.jar
 
 # Render에서 일반적으로 사용되는 포트 8080과 HTTPS용 포트 443 추가
 EXPOSE 8080
-EXPOSE 443
 
 ENTRYPOINT ["java", "-jar", "app.jar"]
 s
