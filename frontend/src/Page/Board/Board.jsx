@@ -54,6 +54,8 @@ function Board() {
         });
     }, [isSearchMode,searchQuery]);
 
+    // 경로가 "/board"일 때만 "운동" 태그의 카테고리만 필터링
+    const isBoardPage = location.pathname === "/board";
 
     // 카테고리 필터링 로직
     const filterByCategory = useMemo(() => {
@@ -66,14 +68,24 @@ function Board() {
         return boardItem;
     }, [boardItem, category, sport]);
 
+    // "운동" 태그 카테고리만 필터링 (경로가 "/board"일 때만)
+    const filterBySportCategory = useMemo(() => {
+        if (!isBoardPage) return filterByCategory;
+
+        return filterByCategory.filter(item => {
+            const matchedCategory = category.find(cat => cat.name === item.category);
+            return matchedCategory && matchedCategory.tag === "운동"; // "운동" 태그만 필터링
+        });
+    }, [filterByCategory, isBoardPage, category]);
+
     // 검색어로 필터링 (제목 기준)
     const filterBySearchQuery = useMemo(() => {
-        if (!searchQuery.trim() || !isSearchMode) return filterByCategory;
+        if (!searchQuery.trim() || !isSearchMode) return filterBySportCategory;
 
-        return filterByCategory.filter(item =>
+        return filterBySportCategory.filter(item =>
             item.title.toLowerCase().includes(searchQuery.toLowerCase())
         );
-    }, [filterByCategory, searchQuery, isSearchMode]);
+    }, [filterBySportCategory, searchQuery, isSearchMode]);
 
     // 정렬 로직
     const sortedBoardItems = useMemo(() => {

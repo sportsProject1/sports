@@ -27,6 +27,9 @@ function BoardDetail(){
     const [chatRoomId,setChatRoomId] = useState();
 
     const currentUserId = useSelector((state) => state.auth.user?.userId);
+    const userRole = useSelector((state) => state.auth.user?.role);
+
+    console.log(userRole)
 
     useEffect(() => {
         fetchData(`/board/${id}`).then((res)=>{
@@ -125,14 +128,18 @@ function BoardDetail(){
 
                     <InteractionSection>
                         <LikeButton onClick={onLike}>좋아요 {detailBoard.likes}</LikeButton>
-                        {detailBoard.userId === currentUserId && (
+
+
                         <div>
-                            <LikeButton
-                            onClick={()=>navigate(`/board/update/${id}`)}>수정하기</LikeButton>
-                            <LikeButton onClick={onDelete}>삭제하기</LikeButton>
+                            {(detailBoard.userId === currentUserId || userRole === "ROLE_ADMIN") && (
+                                <>
+                                    <LikeButton onClick={() => navigate(`/board/update/${id}`)}>수정하기</LikeButton>
+                                    <LikeButton onClick={onDelete}>삭제하기</LikeButton>
+                                </>
+                            )}
                             <ViewsText>조회수 : {detailBoard.views}</ViewsText>
                         </div>
-                        )}
+
                     </InteractionSection>
                 </ContentSection>
 
