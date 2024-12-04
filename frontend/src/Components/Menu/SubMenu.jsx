@@ -147,10 +147,12 @@ function SubMenu({handleItemType, handleSortChange, isShop = false, sortOption }
             </SearchInputWrapper>
 
             {/* 카드형/리스트형 Select Box */}
-            <ViewTypeSelect value={selectedViewType} onChange={handleViewTypeChange}>
-                <option value="card">카드형</option>
-                <option value="list">리스트형</option>
-            </ViewTypeSelect>
+            {isShop ? null :
+                <ViewTypeSelect value={selectedViewType} onChange={handleViewTypeChange}>
+                    <option value="card">카드형</option>
+                    <option value="list">리스트형</option>
+                </ViewTypeSelect>}
+
 
             {/* 필터 버튼들 */}
             <div>

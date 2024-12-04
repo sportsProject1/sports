@@ -125,4 +125,5 @@ export const ViewsText = styled.span`
   font-size: 0.9rem;
   color: #555;
   margin-left: 10px;
+    padding-bottom: 8px;
 `;
