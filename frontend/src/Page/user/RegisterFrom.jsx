@@ -58,19 +58,7 @@ function RegisterForm({ onSuccess }) {
         validationSchema: Yup.object({
             username: Yup.string()
                 .min(3, "아이디는 최소 6자 이상이어야 합니다.")
-                .required("아이디는 6~20자 사이여야 합니다.")
-                .test("check-username", "이미 사용 중인 아이디입니다.", async (value) => {
-                    if (!value) return false;
-                    try {
-                        const response = await registerFetchData("/oauth2/check-username", {
-                            params: { username: value },
-                        });
-                        return !response.data.isDuplicate;
-                    } catch (error) {
-                        console.error("아이디 중복 확인 오류:", error);
-                        return false;
-                    }
-                }),
+                .required("아이디는 6~20자 사이여야 합니다."),
             password: Yup.string()
                 .min(8, "비밀번호는 최소 8자 이상 영어와 숫자를 섞어주세요.")
                 .required("비밀번호를 입력하세요."),
