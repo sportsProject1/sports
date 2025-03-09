@@ -63,7 +63,7 @@ public class SecurityConfig {
                         .userInfoEndpoint(userInfo -> userInfo
                                 .userService(principalOauth2UserService)
                         )
-                        .defaultSuccessUrl("https://sport-team-project.web.app/oauth2/redirect", true) // 성공 후 리디렉트 URL 설정
+                        .defaultSuccessUrl("http://116.34.191.73:3000/oauth2/redirect", true) // 성공 후 리디렉트 URL 설정
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .headers(headers -> headers
@@ -97,7 +97,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowCredentials(true);
-        configuration.addAllowedOrigin("https://sport-team-project.web.app"); // 우리 React 앱의 도메인
+        configuration.addAllowedOrigin("http://116.34.191.73:3000"); // 우리 React 앱의 도메인
         configuration.addAllowedOrigin("https://localhost:3000"); // 로컬 개발 환경
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
