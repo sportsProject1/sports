@@ -11,7 +11,7 @@ function OAuth2RedirectHandler() {
     useEffect(() => {
         const fetchTokensAndUserInfo = async () => {
             try {
-                const response = await axios.get("https://sports-5ebw.onrender.com/oauth2/token", {
+                const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/oauth2/token`, {
                     withCredentials: true,
                 });
 
