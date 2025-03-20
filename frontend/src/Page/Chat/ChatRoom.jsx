@@ -43,7 +43,7 @@ function ChatRoom({ chatRoomId, userId }) {
         }
 
         const stompClient = new Client({
-            webSocketFactory: () => new SockJS(`https://sports-5ebw.onrender.com/chat/wss?token=${token}`),
+            webSocketFactory: () => new SockJS(`${process.env.REACT_APP_API_BASE_URL}/chat/wss?token=${token}`),
             debug: (str) => console.log("STOMP 디버그 메시지:", str),
             reconnectDelay: 20000,
             onConnect: () => {
@@ -86,7 +86,7 @@ function ChatRoom({ chatRoomId, userId }) {
         try {
             const token = localStorage.getItem("token");
             const response = await fetch(
-                `https://sports-5ebw.onrender.com/${chatRoomId}/messages?page=${page}&size=20`, // HTTP 프로토콜로 요청
+                `${process.env.REACT_APP_API_BASE_URL}/${chatRoomId}/messages?page=${page}&size=20`, // HTTP 프로토콜로 요청
                 { headers: { Authorization: `Bearer ${token}` } }
             );
             const data = await response.json();
